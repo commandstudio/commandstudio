@@ -1,0 +1,133 @@
+* {
+  margin:0;
+  padding:0;
+  border-width:0;
+  font:inherit;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* General */
+
+body {
+  font:14px/1 'Open Sans',sans-serif;
+  background-color:#262626;
+  color:#EBEFE7;
+}
+
+h1 {
+  font-size:36px;
+  margin:50px 0;
+  color:#EBEFE7;
+  padding-bottom:15px;
+  border-bottom:2px #599eff solid;
+}
+
+h2 {
+  font-size:24px;
+  margin:30px 0;
+  color:#EBEFE7;
+}
+
+p {
+  margin:15px 0;
+  line-height:1.5;
+}
+
+/* Blocks */
+
+.wrapper {
+  margin:50px auto;
+  padding:0 50px;
+  max-width:1040px;
+}
+
+.table {
+  border:1px #444 solid;
+  border-collapse:collapse;
+}
+
+.table th, .table td {
+  padding:5px;
+  border:1px #444 solid;
+}
+
+.table th {
+  color:#EBEFE7;
+  font-weight:600;
+}
+
+.documentation .CodeMirror {
+  height:auto;
+}
+
+.documentation {
+  color:#aaa;
+  background-color:#323232;
+}
+
+.documentation p [class^="cm-"] {
+  font-family:monospace;
+}
+
+.documentation-modifiers td:first-child {
+  text-align:center;
+  font-family:monospace;
+}
+
+.commandPile {
+  padding:4px;
+  background-color:#262626;
+  font-family:monospace;
+}
+
+b {
+  position:relative;
+  display:inline-block;
+  width:24px;
+  height:24px;
+  vertical-align:middle;
+  background-color:#202020;
+  background-size:cover;
+}
+
+b:after {
+  display:none;
+  position:absolute;
+  top:0;
+  left:100%;
+  margin-left:4px;
+  z-index:10;
+  padding:0 4px;
+  line-height:24px;
+  background-color:#111;
+  white-space:nowrap
+}
+
+b:hover:after {
+  display:block;
+}
+
+.b-i { background-image:url(../img/command_block.png); }
+.b-i:after { content:"Impulse Command Block"; }
+.b-ic { background-image:url(../img/command_block_conditional.png); }
+.b-ic:after { content:"Conditional Impulse Command Block"; }
+.b-c { background-image:url(../img/chain_command_block.png); }
+.b-c:after { content:"Chain Command Block"; }
+.b-cc { background-image:url(../img/chain_command_block_conditional.png); }
+.b-cc:after { content:"Conditional Chain Command Block"; }
+.b-r { background-image:url(../img/repeating_command_block.png); }
+.b-r:after { content:"Repeating Command Block"; }
+.b-rc { background-image:url(../img/repeating_command_block_conditional.png); }
+.b-rc:after { content:"Conditional Repeating Command Block"; }
+.b-0 { background-image:url(../img/redstone_torch_off.png); }
+.b-0:after { content:"Needs redstone"; }
+.b-1 { background-image:url(../img/redstone_torch_on.png); }
+.b-1:after { content:"Always active"; }
+
+/* Helpers */
+
+.clearfix:before, .clearfix:after { content: ""; display: table; }
+.clearfix:after { clear: both; }
+.clearfix { *zoom: 1; }

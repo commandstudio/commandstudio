@@ -1,0 +1,30 @@
+TODO :
+Jolie UI
+màj coloration syntaxique
+DOCUMENTATION
+About
+Ignorer les parenthèses fermantes
+@e[score_objectif_eq=50]
+Passer sur Github
+console.log
+
+FUTUR PRIO :
+Indentation intelligente
+Doc auto
+Popin avec liens utiles
+Clean coordinates (remove espaces + simplifier ~0)
+Bouton copier commande
+Passer fonctions ui vers commander
+Réordonner fichiers
+Indiquer ligne bug
+Ordonner fichiers (nouveau format projet)
+
+FUTUR LOIN :
+Tout passer dans parseExpression
+jshint
+use strict
+Option de compilation
+-> strip / devant commandes
+utiliser requirejs
+Commenter code
+Coloration syntaxique de roxor ?
