@@ -9,26 +9,32 @@
 <link rel="stylesheet" href="codemirror/lib/codemirror.css">
 <link rel="stylesheet" href="codemirror/theme/lesser-dark.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700">
-<link rel="stylesheet" href="css/documentation.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="css/manual.css">
 
 <script src="js/jquery-2.2.0.min.js"></script>
 <script src="codemirror/lib/codemirror.js"></script>
 <script src="codemirror/addon/mode/simple.js"></script>
+<script src="codemirror/addon/runmode/runmode.js"></script>
 <script src="js/commander.mode.js"></script>
 
 </head>
-<body class="documentation">
+<body>
 
-<div class="wrapper cm-s-lesser-dark">
+<div class="header-background"></div>
+
+<div class="wrapper manual cm-s-lesser-dark">
 
 <h1>CommandStudio</h1>
 
 <h2>What is CommandStudio?</h2>
 
 <p>
-  CommandStudio is an editor that let you easily write complex sequences of command blocks and import them into Minecraft.
+  CommandStudio is an editor that let you easily write complex sequences of command blocks and easily import them into Minecraft.
   It has a lot of convenient tools which will simplify your life.
 </p>
+
+<h2>How does it works?</h2>
 
 <p>
   In CommandStudio you work with code instead of command blocks. In your code, each line represents a command block.
@@ -38,10 +44,11 @@
   If you compile the following code:
 </p>
 
-<code>
-i0:say hello
+<div class="code">
+say hello
 say world
-</code>
+summon Zombie ~ ~1 ~
+</div>
 
 <p>
   CommandStudio will give you a single command that you have to paste into Minecraft. Once activated this command will
@@ -49,12 +56,14 @@ say world
 </p>
 
 <div class="commandPile">
-  <b class="b-c"></b><b class="b-1"></b> say world<br>
-  <b class="b-i"></b><b class="b-0"></b> say hello
+  <b class="b-c"></b><b class="b-1"></b> <span class="command">summon Zombie ~ ~1 ~</span><br>
+  <b class="b-c"></b><b class="b-1"></b> <span class="command">say world</span><br>
+  <b class="b-c"></b><b class="b-1"></b> <span class="command">say hello</span>
 </div>
 
-<p>
-  Note: commands are in a reversed order because command blocks are oriented upward.
+<p class="note">
+  <span class="note-title"><i class="fa fa-info-circle"></i> Note:</span><br>
+  Commands are in a reversed order because command blocks are oriented upward.
 </p>
 
 
@@ -66,25 +75,6 @@ say world
   CommandStudio is designed to work with vertical pile of command blocks. Each blocks of the pile is pointing upward.
 </p>
 
-<h2>Commands on multiple lines</h2>
-
-<p>
-  If you write very long commands you might want to split them on multiple lines. You can do it by adding spaces at the beginning of lines you want
-  to join. For example:
-</p>
-
-<code>
-execute @r ~ ~ ~
-  setblock minecraft:chest 0 replace
-  {Items:[{id:"minecraft:potato",Count:2}]}
-</code>
-
-<p>
-  Will compile to a single command block containing:
-</p>
-
-<code>execute @r ~ ~ ~ setblock minecraft:chest 0 replace {Items:[{id:"minecraft:potato",Count:2}]}</code>
-
 <h2>Block attributes</h2>
 
 <p>
@@ -92,7 +82,7 @@ execute @r ~ ~ ~
   You can change a block attributes by beginning a line with a mask like this one:
 </p>
 
-<code>r0:say ok</code>
+<div class="code">r0:say ok</div>
 
 <p>
   This command block will be a repeating command block that needs redstone to be active.
@@ -102,46 +92,56 @@ execute @r ~ ~ ~
   You can use all those characters to change attributes of a command block:
 </p>
 
-<table class="table documentation-modifiers">
+<table class="table modifiers">
 <tr>
   <th>Modifier</th>
   <th>Effect</th>
 </tr>
 <tr>
-  <td><span class="cm-keyword">i</span></td> <td><b class="b-i"></b> The command block will be an impulse command block</td>
+  <td><span class="cm-quote">i</span></td> <td><b class="b-i"></b> The command block will be an impulse command block</td>
 </tr>
 <tr>
-  <td><span class="cm-keyword">r</span></td> <td><b class="b-r"></b> The command block will be an repeating command block</td>
+  <td><span class="cm-quote">r</span></td> <td><b class="b-r"></b> The command block will be an repeating command block</td>
 </tr>
 <tr>
-  <td><span class="cm-keyword">c</span></td> <td><b class="b-c"></b> The command block will be an chain command block</td>
+  <td><span class="cm-quote">c</span></td> <td><b class="b-c"></b> The command block will be an chain command block</td>
 </tr>
 <tr>
-  <td><span class="cm-keyword">0</span></td> <td><b class="b-0"></b> The command block will need redstone to be active</td>
+  <td><span class="cm-quote">0</span></td> <td><b class="b-0"></b> The command block will need redstone to be active</td>
 </tr>
 <tr>
-  <td><span class="cm-keyword">1</span></td> <td><b class="b-1"></b> The command block will always be active</td>
+  <td><span class="cm-quote">1</span></td> <td><b class="b-1"></b> The command block will always be active</td>
 </tr>
 <tr>
-  <td><span class="cm-keyword">?</span></td> <td><b class="b-ic"></b> The command block will be conditionnal</td>
+  <td><span class="cm-quote">?</span></td> <td><b class="b-ic"></b> The command block will be conditionnal</td>
 </tr>
 <tr>
-  <td><span class="cm-keyword">!</span></td> <td><b class="b-i"></b> The command block will be unconditionnal</td>
+  <td><span class="cm-quote">!</span></td> <td><b class="b-i"></b> The command block will be unconditionnal</td>
 </tr>
 </table>
 
 <p>
-  By default a block is: <span class="cm-keyword">c1!</span>. But you can change it using the keyword <span class="cm-header">default</span>:
+  By default a block is: <span class="cm-quote">c1!</span>. But you can change it using the keyword <span class="cm-header">default</span>:
 </p>
 
-<code>
+<div class="code">
 default r0
 say I'm a repeating command block that needs redstone to be active
 say Same as above
 
 default 1
 say I'm a repeating command block that doesn't need redstone to be active
-</code>
+</div>
+
+<p>
+  Will compile to :
+</p>
+
+<div class="commandPile">
+  <b class="b-r"></b><b class="b-1"></b> <span class="command">say I'm a repeating command block that doesn't need redstone to be active</span><br>
+  <b class="b-r"></b><b class="b-0"></b> <span class="command">say Same as above</span><br>
+  <b class="b-r"></b><b class="b-0"></b> <span class="command">say I'm a repeating command block that needs redstone to be active</span>
+</div>
 
 <h2>Command blocks pile position</h2>
 
@@ -150,7 +150,7 @@ say I'm a repeating command block that doesn't need redstone to be active
   certain place using the keyword <span class="cm-header">position</span>:
 </p>
 
-<code>
+<div class="code">
 position 150 50 40
 i0:say I'm a command block and I live at 150 50 40
 say I'm a command block and I live at 150 51 40
@@ -160,7 +160,45 @@ i0:say I'm a command block and I live at 153 50 40
 say I'm a command block and I live at 153 51 40
 
 // The command you will get by compiling this file summons 2 command block piles
-</code>
+</div>
+
+<h2>Commands on multiple lines</h2>
+
+<p>
+  If you write very long commands you might want to split them on multiple lines. You can do it by adding spaces at the beginning of lines you want
+  to join. For example:
+</p>
+
+<div class="code">
+execute @r ~ ~ ~
+  setblock minecraft:chest 0 replace
+  {Items:[{id:"minecraft:potato",Count:2}]}
+</div>
+
+<p>
+  Will compile to a single command block containing:
+</p>
+
+<div class="commandPile">
+  <b class="b-c"></b><b class="b-1"></b> <span class="command">execute @r ~ ~ ~ setblock minecraft:chest 0 replace {Items:[{id:"minecraft:potato",Count:2}]}</span>
+</div>
+
+<p>
+  By default, a space is inserted between joined lines. To avoid this behavior, insert a <span class="char">+</span> before your line.
+</p>
+
+<div class="code">
+say joined
+  +lines
+</div>
+
+<p>
+  Will compile to a single command block containing:
+</p>
+
+<div class="commandPile">
+  <b class="b-c"></b><b class="b-1"></b> <span class="command">say joinedlines</span>
+</div>
 
 <h2>Coordinates operations</h2>
 
@@ -168,63 +206,66 @@ say I'm a command block and I live at 153 51 40
   You can perform addition on coordinates using this syntax:
 </p>
 
-<code>
-setblock {{ 1345 ~56 -257 + -10 5 20 }} stone
-</code>
+<div class="code">
+setblock {# 1345 ~56 -257 + -10 5 20 #} stone
+</div>
 
 <p>
   Will compile to:
 </p>
 
 <div class="commandPile">
-  <b class="b-c"></b><b class="b-1"></b> setblock 1335 ~61 -237 stone
+  <b class="b-c"></b><b class="b-1"></b> <span class="command">setblock 1335 ~61 -237 stone</span>
 </div>
 
 <h2>Variables</h2>
 
 <p>
-  You can define variables and re-use them later:
+  Variables let you save data and re-use them later.
+  All variable names must be preceded by a <span class="char">$</span>.
 </p>
 
-<code>
+<div class="code">
 $position = 1345 56 -257
 setblock $position stone
-</code>
+</div>
 
 <p>
   Will compile to:
 </p>
 
 <div class="commandPile">
-  <b class="b-c"></b><b class="b-1"></b> setblock 1345 56 -257 stone
+  <b class="b-c"></b><b class="b-1"></b> <span class="command">setblock 1345 56 -257 stone</span>
 </div>
 
-<h2>Definitions</h2>
+<h2>Procedures</h2>
 
 <p>
-  You can define complex things using the <span class="cm-header">def</span> keyword:
+  A procedure will let you re-use one or more commands.
+  You can define procedures using the <span class="cm-header">def</span> keyword.
+  All procedures name must be preceded by a <span class="char">^</span>.
 </p>
 
-<code>
-def inline_def( $y = ~ )
+<div class="code">
+def ^inline_def( $y = ~ )
   50 $y 70
 
-def multiple_lines( $e, $block )
+def ^multiple_lines( $e, $block )
   execute $e ~ ~ ~ setblock ~ ~ ~ $block
   kill $e
 
-i0:multiple_lines( @e[type=Bat], tnt )
-tp @p inline_def( 37 )
-</code>
+i0:^multiple_lines( @e[type=Bat], tnt )
+tp @p ^inline_def( 37 )
+</div>
 
 <p>
   Will compile to:
 </p>
 
 <div class="commandPile">
-  <b class="b-c"></b><b class="b-1"></b> tp @p 50 37 70<br>
-  <b class="b-c"></b><b class="b-1"></b> kill @e[type=Bat]<br>
-  <b class="b-i"></b><b class="b-0"></b> execute @e[type=Bat] ~ ~ ~ setblock ~ ~ ~ tnt
+  <b class="b-c"></b><b class="b-1"></b> <span class="command">tp @p 50 37 70</span><br>
+  <b class="b-c"></b><b class="b-1"></b> <span class="command">kill @e[type=Bat]</span><br>
+  <b class="b-i"></b><b class="b-0"></b> <span class="command">execute @e[type=Bat] ~ ~ ~ setblock ~ ~ ~ tnt</span>
 </div>
 
 </div>
@@ -232,18 +273,20 @@ tp @p inline_def( 37 )
 <script>
 
 var options = {
-  lineWrapping: false,
-  lineNumbers: true,
+  // lineNumbers: true,
   mode: "commander",
-  theme: 'lesser-dark'
+  theme: 'lesser-dark',
+  readOnly: true
 };
 
-$( 'code' ).each( function() {
-  var code = this;
-  options.value = code.innerHTML.trim();
-  CodeMirror(function(elt) {
-    code.parentNode.replaceChild(elt, code);
-  }, options);
+$( '.code' ).each( function() {
+  options.value = this.innerHTML.trim();
+  this.innerHTML = '';
+  CodeMirror(this, options);
+});
+
+$( '.command' ).each( function() {
+  CodeMirror.runMode( this.innerHTML, 'commander', this );
 });
 
 </script>

@@ -1,0 +1,193 @@
+* {
+  margin:0;
+  padding:0;
+  border-width:0;
+  font:inherit;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* General */
+
+body {
+  font:14px/1.2 'Open Sans',sans-serif;
+  background-color:#212121;
+  color:#a7a7a7;
+}
+
+h1 {
+  font-size:36px;
+  margin:50px 0;
+  color:#dadada;
+  padding-bottom:20px;
+  font-weight: 600;
+  border-bottom:3px #72B248 solid;
+  letter-spacing: -2px;
+  text-shadow:0 2px 0 #000;
+}
+
+h2 {
+  font-size:24px;
+  letter-spacing: -1px;
+  margin:50px 0 20px;
+  color:#dadada;
+  font-weight: 600;
+  text-shadow:0 2px 0 #000;
+}
+
+p {
+  margin:20px 0;
+  line-height:1.5;
+}
+
+/* Blocks */
+
+.header-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 500px;
+  background-color: #3D6C20;
+  border-bottom: 10px #4e7d30 solid;
+  box-shadow:inset 0 -150px 150px -150px rgba(0,0,0,.4);
+}
+
+.wrapper {
+  margin-left: auto;
+  margin-right: auto;
+  padding:50px;
+  max-width:1040px;
+}
+
+.manual {
+  margin-top: 50px;
+  margin-bottom: 50px;
+  position: relative;
+  z-index: 5;
+  line-height: 1.2;
+  background-color: #262626;
+  box-shadow: 0 0 50px rgba(0,0,0,.2);
+}
+
+.table {
+  border-collapse:collapse;
+}
+
+.table th, .table td {
+  padding:10px;
+}
+
+.table th {
+  color:#EBEFE7;
+  font-weight:600;
+  border-bottom: 2px #333 solid;
+}
+
+.table td {
+  border-bottom: 1px #333 solid;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.code {
+  border-left: 2px #333 solid;
+  padding: 10px;
+}
+
+.code .CodeMirror {
+  height:auto;
+}
+
+.manual p [class^="cm-"] {
+  font-family:monospace;
+}
+
+.manual > :first-child {
+  margin-top: 0;
+}
+
+.manual > :last-child {
+  margin-bottom: 0;
+}
+
+.note {
+  padding: 10px 15px;
+  border-left: 2px #3D6C20 solid;
+}
+
+.note-title {
+  font-weight: 600;
+  color: #72B248;
+}
+
+.modifiers td:first-child {
+  text-align:center;
+  font-family:monospace;
+}
+
+.commandPile {
+  border-left: 2px #333 solid;
+  padding: 15px;
+  font-family:monospace;
+}
+
+.char {
+  padding: 5px;
+  background-color: #101010;
+  color: #e4e4e4;
+  font-family:monospace;
+}
+
+b {
+  position:relative;
+  display:inline-block;
+  width:20px;
+  height:20px;
+  vertical-align:middle;
+  background-color:#202020;
+  background-size:cover;
+}
+
+b:after {
+  display:none;
+  position:absolute;
+  top:0;
+  left:100%;
+  margin-left:4px;
+  z-index:10;
+  padding:0 4px;
+  line-height:24px;
+  background-color:#111;
+  white-space:nowrap
+}
+
+b:hover:after {
+  display:block;
+}
+
+.b-i { background-image:url(../img/blocks/impulse-up.png); }
+.b-i:after { content:"Impulse Command Block"; }
+.b-ic { background-image:url(../img/blocks/impulse-conditional-up.png); }
+.b-ic:after { content:"Conditional Impulse Command Block"; }
+.b-c { background-image:url(../img/blocks/chain-up.png); }
+.b-c:after { content:"Chain Command Block"; }
+.b-cc { background-image:url(../img/blocks/chain-conditional-up.png); }
+.b-cc:after { content:"Conditional Chain Command Block"; }
+.b-r { background-image:url(../img/blocks/repeating-up.png); }
+.b-r:after { content:"Repeating Command Block"; }
+.b-rc { background-image:url(../img/blocks/repeating-conditional-up.png); }
+.b-rc:after { content:"Conditional Repeating Command Block"; }
+.b-0 { background-image:url(../img/blocks/redstone-torch-off.png); }
+.b-0:after { content:"Needs redstone"; }
+.b-1 { background-image:url(../img/blocks/redstone-torch-on.png); }
+.b-1:after { content:"Always active"; }
+
+/* Helpers */
+
+.clearfix:before, .clearfix:after { content: ""; display: table; }
+.clearfix:after { clear: both; }
+.clearfix { *zoom: 1; }

@@ -161,7 +161,8 @@ input, button {
 
 .ui-dropdown-item {
   display:block;
-  padding:8px 80px 8px 12px;
+  padding:12px;
+  padding-right: 80px;
   white-space:nowrap;
   cursor:pointer;
 }
