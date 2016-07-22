@@ -26,6 +26,9 @@ body {
   color:#cecece;
 }
 
+strong { font-weight: bold; }
+em { font-style: italic; }
+
 a {
   color:#fff;
   text-decoration:none;
@@ -255,6 +258,30 @@ input, button {
 
 .ui-fileInput {
   display: none;
+}
+
+.about {
+  text-align: center;
+  max-width: 500px;
+}
+
+.about-name {
+  color: #eee;
+  font-size: 32px;
+  font-weight: 600px;
+  letter-spacing: -2px;
+}
+
+.about-version {
+  color: #999;
+}
+
+.about-by {
+  margin-top: 10px;
+}
+
+.about-credits {
+  margin-top: 30px;
 }
 
 /* Popin */

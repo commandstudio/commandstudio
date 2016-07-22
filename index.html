@@ -5,21 +5,14 @@
 <meta charset="UTF-8">
 <title>CommandStudio</title>
 
-<link rel="stylesheet" href="codemirror/lib/codemirror.css">
-<link rel="stylesheet" href="codemirror/theme/lesser-dark.css">
+<link rel="stylesheet" href="vendor/codemirror/lib/codemirror.css">
+<link rel="stylesheet" href="vendor/codemirror/theme/lesser-dark.css">
+<link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700">
-<link rel="stylesheet" href="css/app.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
 
-<script src="js/jquery-2.2.0.min.js"></script>
-<script src="codemirror/lib/codemirror.js"></script>
-<script src="codemirror/addon/mode/simple.js"></script>
-<script src="js/commander.mode.js"></script>
-<script src="js/lib.js"></script>
-<script src="js/commandtools.js"></script>
-<script src="js/compiler.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/commander.js"></script>
+<link rel="stylesheet" href="css/app.css">
+
+<script src="vendor/requirejs/require.js" data-main="js/main.js"></script>
 
 </head>
 <body>
@@ -44,8 +37,8 @@
   <span class="ui-toolbar-item ui-action" data-command="compile-file"><i class="fa fa-first-order"></i> Compile</span>
   <div class="ui-toolbar-right">
     <span class="ui-toolbar-version">CommandStudio v0.1-alpha</span>
-    <span class="ui-toolbar-item ui-action" data-command="commander-manual"><i class="fa fa-book"></i> Manual</span>
-    <span class="ui-toolbar-item ui-action" data-command="commander-about"><i class="fa fa-info-circle"></i> About</span>
+    <a class="ui-toolbar-item" href="manual.html" target="_blank"><i class="fa fa-book"></i> Manual</a>
+    <span class="ui-toolbar-item ui-action" data-command="app-about"><i class="fa fa-info-circle"></i> About</span>
   </div>
 </div>
 
@@ -117,9 +110,30 @@
   </div>
 </div>
 
+<div class="popin-template" data-template="about">
+  <div class="popin-header">
+    <div class="popin-exit on-click" data-action="close">&times;</div>
+    About
+  </div>
+  <div class="popin-content">
+    <div class="about">
+      <div class="about-name">CommandStudio</div>
+      <div class="about-version">v0.1-alpha</div>
+      <div class="about-by">Made with <i class="fa fa-heart"></i> by <a href="http://monsieurtouf.fr/youtube" target="_blank">Marcantouf</a></div>
+      <p class="about-credits">
+        <strong>Credits</strong><br>
+        Initial idea strongly inspired by <em>tossha</em> and his <a href="https://youtu.be/q-l0Q5lhm6Q" target="_blank">Redstone Programming Language</a>
+      </p>
+    </div>
+    <div class="popin-buttons">
+      <button class="button button-main on-click" data-action="close"><i class="fa fa-check"></i> Ok</button>
+    </div>
+  </div>
+</div>
+
 <input type="file" class="ui-fileInput">
 
-<script>var commander = new Commander();</script>
+<!-- <script>var commander = new Commander();</script> -->
 
 </body>
 </html>

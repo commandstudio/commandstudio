@@ -1,11 +1,23 @@
-var Compiler = (function() {
+define( [
+  "compiler/scope",
+  "utils/scanner",
+  "compiler/def",
+  "compiler/blockpile",
+  "commandtools"
+], function(
+  Scope,
+  Scanner,
+  Def,
+  BlockPile,
+  CT
+) {
 
   var expressionRes = {
-    'openingDef' : /\^\w+\s*\(/,
-    'closingDef' : /\)/,
-    'openingOperation' : /\{#/,
-    'closingOperation' : /#\}/,
-    'variable' : /\$\w+/
+    "openingDef" : /\^\w+\s*\(/,
+    "closingDef" : /\)/,
+    "openingOperation" : /\{#/,
+    "closingOperation" : /#\}/,
+    "variable" : /\$\w+/
   };
 
   function extractRe( re ) {
@@ -15,17 +27,17 @@ var Compiler = (function() {
 
   function combineRes() {
     var res = [],
-        i = arguments.length,
-        j, re;
+      i = arguments.length,
+      j, re;
 
     while( i-- ) {
-      for( var j in arguments[i] ) {
+      for( j in arguments[i] ) {
         re = arguments[i][j];
-        res.push( extractRe(re) );
+        res.push( extractRe( re ) );
       }
     }
 
-    return new RegExp( '(?:' + res.join('|') + ')' );
+    return new RegExp( "(?:" + res.join( "|" ) + ")" );
   }
 
   var expressionRe = combineRes( expressionRes );
@@ -42,10 +54,10 @@ var Compiler = (function() {
 
     compile : function( fileName ) {
       var code = this.files[ fileName ],
-          scope = new Scope(),
-          output = '',
+        scope = new Scope(),
+        output = "",
 
-          match, replace;
+        match, replace;
 
       scope.addInclude( fileName );
       this.prepareScope( code, scope );
@@ -54,7 +66,7 @@ var Compiler = (function() {
       output = this.parseSection( code, scope );
       var blockPiles = this.generateBlocks( output );
 
-      console.log( 'blockPiles', blockPiles );
+      console.log( "blockPiles", blockPiles );
 
       var command = CT.summonPiles( blockPiles );
       if( command.length > 32500 ) alert( "Warning: summon command is too long! (" + command.length + " characters)" );
@@ -66,7 +78,7 @@ var Compiler = (function() {
       code = this.cleanCode( code );
 
       var scanner = new Scanner( code ),
-          line;
+        line;
 
       // Includes
 
@@ -74,12 +86,12 @@ var Compiler = (function() {
         scanner.scanUntil( /^include(?:\s|$)/m );
         line = scanner.scan( /.*/ );
 
-        if( line.match(/^include(?:\s|$)/) ) {
+        if( line.match( /^include(?:\s|$)/ ) ) {
           match = line.match( /^include\s+(\w+)$/ );
-          if( match === null ) throw 'Incorrect include on line : ' + line;
+          if( match === null ) throw "Incorrect include on line : " + line;
 
           var include = match[1];
-          if( typeof this.files[ include ] === 'undefined' ) throw 'Missing file for include : ' + include;
+          if( typeof this.files[ include ] === "undefined" ) throw "Missing file for include : " + include;
 
           if( ! scope.hasInclude( include ) ) {
             scope.addInclude( include );
@@ -96,15 +108,15 @@ var Compiler = (function() {
         scanner.scanUntil( /^def(?:\s|$)/m );
         line = scanner.scan( /.*/ );
 
-        if( line.match(/^def(?:\s|$)/) ) {
+        if( line.match( /^def(?:\s|$)/ ) ) {
           match = line.match( /^def\s+\^(\w+)\s*\(([^\)]*)\)$/ );
-          if( match === null ) throw 'Incorrect def on line : ' + line;
+          if( match === null ) throw "Incorrect def on line : " + line;
 
           scanner.scan( /\n/ );
           var defName = match[1],
-              defArgs = match[2],
-              defCode = scanner.scanBlock(),
-              def = new Def( defArgs, defCode );
+            defArgs = match[2],
+            defCode = scanner.scanBlock(),
+            def = new Def( defArgs, defCode );
 
           scope.setDef( defName, def );
           // console.log( 'def', def );
@@ -114,9 +126,9 @@ var Compiler = (function() {
 
     parseSection : function( code, scope ) {
       var compiler = this,
-          output = '',
+        output = "",
 
-          match, replace;
+        match, replace;
 
       code = this.cleanCode( code );
 
@@ -128,14 +140,14 @@ var Compiler = (function() {
         block = this.reduceBlock( block );
 
         // Includes
-        if( block.match(/^include(?:\s|$)/) ) {
+        if( block.match( /^include(?:\s|$)/ ) ) {
           match = block.match( /^include\s+(\w+)$/ );
-          if( match === null ) throw 'Incorrect include on line : ' + block;
+          if( match === null ) throw "Incorrect include on line : " + block;
 
           var include = match[1];
-          if( typeof this.files[ include ] === 'undefined' ) throw 'Missing file for include : ' + include;
+          if( typeof this.files[ include ] === "undefined" ) throw "Missing file for include : " + include;
 
-          if( !scope.hasInclude(include) ) {
+          if( !scope.hasInclude( include ) ) {
             scope.addInclude( include );
             this.parseSection( this.files[ include ], scope );
           }
@@ -149,24 +161,24 @@ var Compiler = (function() {
 
         // Variable
         if( match = block.match( /^\$(\w+)\s*=\s*(.+)/ ) ) {
-          scope.setVar( match[1], this.parseExpressions( new Scanner(match[2]), scope ) );
+          scope.setVar( match[1], this.parseExpressions( new Scanner( match[2] ), scope ) );
           continue;
         }
 
-        block = this.parseExpressions( new Scanner(block), scope );
+        block = this.parseExpressions( new Scanner( block ), scope );
 
         // Compiler instructions
-        if( block.match(/^position(?:\s|$)/) ) {
+        if( block.match( /^position(?:\s|$)/ ) ) {
           match = block.match( /^position\s+(?:~?-?\d+|~)\s+(?:~?-?\d+|~)\s+(?:~?-?\d+|~)$/ );
-          if( match === null ) throw 'Incorrect position on line : ' + block;
+          if( match === null ) throw "Incorrect position on line : " + block;
         }
 
-        if( block.match(/^default(?:\s|$)/) ) {
+        if( block.match( /^default(?:\s|$)/ ) ) {
           match = block.match( /^default\s+([irc\?!01]+)$/ );
-          if( match === null ) throw 'Incorrect default on line : ' + block;
+          if( match === null ) throw "Incorrect default on line : " + block;
         }
 
-        if( output === '' ) output = block;
+        if( output === "" ) output = block;
         else output += "\n" + block;
 
         // console.log('block', block);
@@ -174,22 +186,22 @@ var Compiler = (function() {
 
       output = this.unescapeCharacters( output );
 
-      console.log('output', output);
+      console.log( "output", output );
       return output;
     },
 
     unescapeCharacters : function( str ) {
-      return str.replace( /\\(.?)/g, '$1' );
+      return str.replace( /\\(.?)/g, "$1" );
     },
 
     cleanCode : function( code ) {
-      return code.replace( /[\t ]*(?:\/\/.*)?$/mg, '' );
+      return code.replace( /[\t ]*(?:\/\/.*)?$/mg, "" );
     },
 
     parseExpressions : function( scanner, scope, context ) {
-      if( typeof context === 'undefined' ) context = null;
+      if( typeof context === "undefined" ) context = null;
 
-      var output = '', escape, tag;
+      var output = "", escape, tag;
 
       while( !scanner.eos() ) {
         output += scanner.scanUntil( expressionRe );
@@ -204,20 +216,20 @@ var Compiler = (function() {
         }
 
         // Variable
-        if( tag.match(expressionRes.variable) ) {
+        if( tag.match( expressionRes.variable ) ) {
           var varName = tag.match( /\w+/ )[0];
           output += scope.getVar( varName );
         }
 
         // Def
-        if( tag.match(expressionRes.openingDef) ) {
+        if( tag.match( expressionRes.openingDef ) ) {
           var defName = tag.match( /\w+/ )[0],
-              defArgs = this.parseExpressions( scanner, scope, 'def' );
+            defArgs = this.parseExpressions( scanner, scope, "def" );
           output += this.executeDef( scope, defName, defArgs );
         }
-        else if( tag.match(expressionRes.closingDef) ) {
+        else if( tag.match( expressionRes.closingDef ) ) {
           // if( context !== 'def' ) throw 'Unexpected def ending ")"';
-          if( context === 'def' ) {
+          if( context === "def" ) {
             context = null;
             break;
           }
@@ -228,19 +240,19 @@ var Compiler = (function() {
         }
 
         // Operations
-        else if( tag.match(expressionRes.openingOperation) ) {
-          var operation = this.parseExpressions( scanner, scope, 'operation' );
+        else if( tag.match( expressionRes.openingOperation ) ) {
+          var operation = this.parseExpressions( scanner, scope, "operation" );
           output += this.calculateOperation( operation );
         }
-        else if( tag.match(expressionRes.closingOperation) ) {
-          if( context !== 'operation' ) throw 'Unexpected operation ending "}}"';
+        else if( tag.match( expressionRes.closingOperation ) ) {
+          if( context !== "operation" ) throw "Unexpected operation ending \"}}\"";
           context = null;
           break;
         }
 
       }
 
-      if( context !== null ) throw 'Unbalanced ' + context;
+      if( context !== null ) throw "Unbalanced " + context;
       return output;
     },
 
@@ -254,7 +266,7 @@ var Compiler = (function() {
     calculateOperation : function( operation ) {
       operation = operation.trim();
 
-      while( operation.match(/(?:~?-?\d+|~)\s+(?:~?-?\d+|~)\s+(?:~?-?\d+|~)\s*\+\s*(?:~?-?\d+|~)\s+(?:~?-?\d+|~)\s+(?:~?-?\d+|~)/) ) {
+      while( operation.match( /(?:~?-?\d+|~)\s+(?:~?-?\d+|~)\s+(?:~?-?\d+|~)\s*\+\s*(?:~?-?\d+|~)\s+(?:~?-?\d+|~)\s+(?:~?-?\d+|~)/ ) ) {
         operation = operation.replace( /((?:~?-?\d+|~)\s+(?:~?-?\d+|~)\s+(?:~?-?\d+|~))\s*\+\s*((?:~?-?\d+|~)\s+(?:~?-?\d+|~)\s+(?:~?-?\d+|~))/,
           function( match, c1, c2 ) {
             return CT.addCoordinates( c1, c2 );
@@ -266,41 +278,42 @@ var Compiler = (function() {
     },
 
     reduceBlock : function( block ) {
-      var reducedBlock = '',
-          lines = block.split( /$/m );
+      var reducedBlock = "",
+        lines = block.split( /$/m );
 
-      lines = lines.map(function(line, i) {
+      lines = lines.map( function( line, i ) {
         line = line.trim();
-        if( line !== '' && i > 0 ) {
-          if( line[0] === '+' ) line = line.slice(1);
-          else line = ' ' + line;
+        if( line !== "" && i > 0 ) {
+          if( line[0] === "+" ) line = line.slice( 1 );
+          else line = " " + line;
         }
         return line;
-      });
+      } );
 
-      return lines.join('');
+      return lines.join( "" );
     },
 
     generateBlocks : function( code ) {
       var compiler = this,
-          currentPile = new BlockPile(),
-          blockPiles = [ currentPile ],
-          scanner = new Scanner( code ),
-          defaultAttr = 'c1!', blockAttr;
+        currentPile = new BlockPile(),
+        blockPiles = [ currentPile ],
+        scanner = new Scanner( code ),
+        defaultAttr = "c1!", blockAttr,
+        match;
 
       while( !scanner.eos() ) {
         var line = scanner.scanUntil( /\n/ );
         scanner.scan( /\n/ );
 
         // Position
-        if( match = line.match( /^position\s+((?:~?-?\d+|~))\s+((?:~?-?\d+|~))\s+((?:~?-?\d+|~))$/ ) ) {
-          currentPile = new BlockPile( match.slice(1).join(' ') );
+        if( ( match = line.match( /^position\s+((?:~?-?\d+|~))\s+((?:~?-?\d+|~))\s+((?:~?-?\d+|~))$/ ) ) !== null ) {
+          currentPile = new BlockPile( match.slice( 1 ).join( " " ) );
           blockPiles.push( currentPile );
           continue;
         }
 
         // Default
-        if( match = line.match( /^default\s+([irc\?!01]+)$/ ) ) {
+        if( ( match = line.match( /^default\s+([irc\?!01]+)$/ ) ) !== null ) {
           defaultAttr = this.reduceAttr( defaultAttr + match[1] );
           continue;
         }
@@ -309,8 +322,8 @@ var Compiler = (function() {
         blockAttr = defaultAttr;
         line = line.replace( /^([irc01\?!]+):/, function( match, attr ) {
           blockAttr = compiler.reduceAttr( blockAttr + attr );
-          return '';
-        });
+          return "";
+        } );
 
         currentPile.pushCommandBlock( blockAttr, line );
       }
@@ -318,152 +331,24 @@ var Compiler = (function() {
     },
 
     reduceAttr : function( attr ) {
-      var type = '',
-          active = '',
-          conditional = '',
+      var type = "",
+        active = "",
+        conditional = "",
 
-          i = attr.length, c;
+        i = attr.length, c;
 
       while( i-- ) {
         c = attr[i];
-        if( c.match( /[irc]/ ) && type === '' ) type = c;
-        else if( c.match( /[\?!]/ ) && conditional === '' ) conditional = c;
-        else if( c.match( /[01]/ ) && active === '' ) active = c;
+        if( c.match( /[irc]/ ) && type === "" ) type = c;
+        else if( c.match( /[\?!]/ ) && conditional === "" ) conditional = c;
+        else if( c.match( /[01]/ ) && active === "" ) active = c;
       }
 
       return type + active + conditional;
-    },
-
-  };
-
-  function BlockPile( position ) {
-    this.position = typeof position === 'undefined' ? null : position;
-    this.blocks = [];
-  }
-
-  BlockPile.prototype = {
-
-    pushCommandBlock : function( attr, command ) {
-      var type, auto, condition;
-
-      if( attr.match(/i/) ) type = 'command_block';
-      if( attr.match(/c/) ) type = 'chain_command_block';
-      if( attr.match(/r/) ) type = 'repeating_command_block';
-      if( attr.match(/0/) ) auto = false;
-      if( attr.match(/1/) ) auto = true;
-      if( attr.match(/\?/) ) condition = true;
-      if( attr.match(/!/) ) condition = false;
-
-      var block = {Block:type,Data:'1b',TileEntityData:{Command:command}};
-      if( auto === true ) block.TileEntityData.auto = '1b';
-      if( condition === true ) block.TileEntityData.conditionMet = '1b';
-
-      this.blocks.push( block );
     }
 
   };
 
   return Compiler;
 
-})();
-
-function Scope( parent ) {
-  if( typeof parent === 'object' ) this.parent = parent;
-  else this.parent = null;
-  this.vars = {};
-  this.defs = {};
-  this.includes = {};
-}
-
-Scope.prototype = {
-
-  setVar : function( varName, varValue ) {
-    this.vars[ varName ] = varValue;
-  },
-
-  getVar : function( varName ) {
-    if( typeof this.vars[ varName ] !== 'undefined' ) return this.vars[varName];
-    else if( this.parent !== null ) return this.parent.getVar( varName );
-    else throw "Undefined variable : " + varName;
-  },
-
-  hasVar : function( varName ) {
-    return this.getVar( varName ) !== null;
-  },
-
-  setDef : function( defName, def ) {
-    this.defs[ defName ] = def;
-  },
-
-  getDef : function( defName ) {
-    if( typeof this.defs[ defName ] !== 'undefined' ) return this.defs[defName];
-    else if( this.parent !== null ) return this.parent.getDef( defName );
-    else return null;
-  },
-
-  addInclude : function( include ) {
-    this.includes[ include ] = true;
-  },
-
-  hasInclude : function( include ) {
-    if( typeof this.includes[ include ] !== 'undefined' ) return include;
-    else if( this.parent !== null ) return this.parent.getInclude( include );
-    else return false;
-  },
-
-  resetIncludes : function() {
-    this.includes = {};
-  },
-
-};
-
-function Def( args, code ) {
-  if( typeof args === 'string' ) this.args = this.parseArgs( args );
-  else this.args = args;
-  this.code = code;
-}
-
-Def.prototype = {
-
-  parseArgs : function( rawArgs ) {
-    var args = [];
-
-    var scanner = new Scanner( rawArgs );
-    while( !scanner.eos() ) {
-      var arg = scanner.scanUntil( /,/ ),
-          match = arg.match( /^\s*\$(\w+)\s*(?:=\s*(.+))?$/ );
-
-      if( match === null ) throw "Incorrect argument declaration " + arg;
-
-      var argName = match[1],
-          argDefault = match[2];
-
-      if( typeof argDefault === 'undefined' ) argDefault = null;
-      else argDefault = argDefault.trim();
-      args.push( { name : argName, defaultValue : argDefault } );
-
-      scanner.scan( /,/ );
-    }
-    return args;
-  },
-
-  execute : function( compiler, scope, rawArgs ) {
-    var def = this;
-
-    this.args.forEach( function(defArg, i) {
-      scope.setVar( defArg.name, defArg.defaultValue );
-    });
-
-    if( !rawArgs.match( /^\s*$/ ) ) {
-      var defArgs = rawArgs.split( ',' );
-      defArgs.forEach( function(argValue, i) {
-        argValue = argValue.trim();
-        if( typeof def.args[i] === 'undefined' ) throw "Too many arguments passed to def : " + defName + "(" + rawArgs + ")";
-        scope.setVar( def.args[i].name, argValue );
-      });
-    }
-
-    return compiler.parseSection( this.code, scope );
-  },
-
-};
+} );

@@ -169,21 +169,21 @@ b:hover:after {
   display:block;
 }
 
-.b-i { background-image:url(../img/blocks/impulse-up.png); }
+.b-i { background-image:url(../images/blocks/impulse-up.png); }
 .b-i:after { content:"Impulse Command Block"; }
-.b-ic { background-image:url(../img/blocks/impulse-conditional-up.png); }
+.b-ic { background-image:url(../images/blocks/impulse-conditional-up.png); }
 .b-ic:after { content:"Conditional Impulse Command Block"; }
-.b-c { background-image:url(../img/blocks/chain-up.png); }
+.b-c { background-image:url(../images/blocks/chain-up.png); }
 .b-c:after { content:"Chain Command Block"; }
-.b-cc { background-image:url(../img/blocks/chain-conditional-up.png); }
+.b-cc { background-image:url(../images/blocks/chain-conditional-up.png); }
 .b-cc:after { content:"Conditional Chain Command Block"; }
-.b-r { background-image:url(../img/blocks/repeating-up.png); }
+.b-r { background-image:url(../images/blocks/repeating-up.png); }
 .b-r:after { content:"Repeating Command Block"; }
-.b-rc { background-image:url(../img/blocks/repeating-conditional-up.png); }
+.b-rc { background-image:url(../images/blocks/repeating-conditional-up.png); }
 .b-rc:after { content:"Conditional Repeating Command Block"; }
-.b-0 { background-image:url(../img/blocks/redstone-torch-off.png); }
+.b-0 { background-image:url(../images/blocks/redstone-torch-off.png); }
 .b-0:after { content:"Needs redstone"; }
-.b-1 { background-image:url(../img/blocks/redstone-torch-on.png); }
+.b-1 { background-image:url(../images/blocks/redstone-torch-on.png); }
 .b-1:after { content:"Always active"; }
 
 /* Helpers */

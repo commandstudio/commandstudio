@@ -8,8 +8,8 @@
 
 <link rel="stylesheet" href="codemirror/lib/codemirror.css">
 <link rel="stylesheet" href="codemirror/theme/lesser-dark.css">
+<link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
 <link rel="stylesheet" href="css/manual.css">
 
 <script src="js/jquery-2.2.0.min.js"></script>
@@ -34,7 +34,7 @@
   It has a lot of convenient tools which will simplify your life.
 </p>
 
-<h2>How does it works?</h2>
+<h2>How does it work?</h2>
 
 <p>
   In CommandStudio you work with code instead of command blocks. In your code, each line represents a command block.
@@ -155,9 +155,8 @@ position 150 50 40
 i0:say I'm a command block and I live at 150 50 40
 say I'm a command block and I live at 150 51 40
 
-position 153 50 40
-i0:say I'm a command block and I live at 153 50 40
-say I'm a command block and I live at 153 51 40
+position ~5 ~ ~
+i0:say I'm 5 blocks beside my summoner
 
 // The command you will get by compiling this file summons 2 command block piles
 </div>
@@ -266,6 +265,48 @@ tp @p ^inline_def( 37 )
   <b class="b-c"></b><b class="b-1"></b> <span class="command">tp @p 50 37 70</span><br>
   <b class="b-c"></b><b class="b-1"></b> <span class="command">kill @e[type=Bat]</span><br>
   <b class="b-i"></b><b class="b-0"></b> <span class="command">execute @e[type=Bat] ~ ~ ~ setblock ~ ~ ~ tnt</span>
+</div>
+
+<h2>Escaping</h2>
+
+<p>
+  You can prevent characters from being interpreted. To do it, insert a <span class="char">\</span> before it.
+</p>
+
+<div class="code">
+$var = cool
+say the $var\est
+say \$var
+
+\def ok
+</div>
+
+<p>
+  Will compile to:
+</p>
+
+<div class="commandPile">
+  <b class="b-c"></b><b class="b-1"></b> <span class="command">def ok</span><br>
+  <b class="b-c"></b><b class="b-1"></b> <span class="command">say $var</span><br>
+  <b class="b-c"></b><b class="b-1"></b> <span class="command">say the coolest</span>
+</div>
+
+<h2>Commenting</h2>
+
+<p>
+  You can add comments to your file using the <span class="char">//</span> syntax.
+</p>
+
+<div class="code">
+say hello // very important command
+</div>
+
+<p>
+  Will compile to:
+</p>
+
+<div class="commandPile">
+  <b class="b-c"></b><b class="b-1"></b> <span class="command">say hello</span>
 </div>
 
 </div>
