@@ -8,7 +8,7 @@ define( [ "utils/scanner" ], function( Scanner ) {
 
   Def.prototype = {
 
-    parseArgs : function( rawArgs ) {
+    parseArgs: function( rawArgs ) {
       var args = [];
 
       var scanner = new Scanner( rawArgs );
@@ -23,17 +23,17 @@ define( [ "utils/scanner" ], function( Scanner ) {
 
         if( typeof argDefault === "undefined" ) argDefault = null;
         else argDefault = argDefault.trim();
-        args.push( { name : argName, defaultValue : argDefault } );
+        args.push( { name: argName, defaultValue: argDefault } );
 
         scanner.scan( /,/ );
       }
       return args;
     },
 
-    execute : function( compiler, scope, rawArgs ) {
+    execute: function( compiler, scope, rawArgs ) {
       var def = this;
 
-      this.args.forEach( function( defArg, i ) {
+      this.args.forEach( function( defArg ) {
         scope.setVar( defArg.name, defArg.defaultValue );
       } );
 
@@ -41,7 +41,7 @@ define( [ "utils/scanner" ], function( Scanner ) {
         var defArgs = rawArgs.split( "," );
         defArgs.forEach( function( argValue, i ) {
           argValue = argValue.trim();
-          if( typeof def.args[i] === "undefined" ) throw "Too many arguments passed to def : " + defName + "(" + rawArgs + ")";
+          if( typeof def.args[i] === "undefined" ) throw "Too many arguments passed to def : (" + rawArgs + ")";
           scope.setVar( def.args[i].name, argValue );
         } );
       }

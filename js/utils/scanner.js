@@ -1,6 +1,5 @@
 /* Mustache.js Scanner */
 
-
 define( function() {
 /**
  * A simple string scanner that is used by the template parser to find

@@ -3,8 +3,12 @@ require.config( {
   paths: {
     vendor: "../vendor",
     jquery: "../vendor/jquery/jquery-2.2.0.min"
-    // codemirror: "../vendor/codemirror/lib/codemirror"
-  }
+  },
+  packages: [ {
+    name: "codemirror",
+    location: "../vendor/codemirror",
+    main: "lib/codemirror"
+  } ]
 } );
 
 require( [

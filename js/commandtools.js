@@ -70,21 +70,21 @@ define( [ "utils/scanner" ], function( Scanner ) {
 
           var fillEnd = CT.addCoordinates( blockPilePosition, "0 " + ( pileLength + 2 ) + " 0" );
 
-          mainPile.blocks.push( { Block:"command_block", TileEntityData:{ Command:"fill " + blockPilePosition + " " + fillEnd + " air", auto:"1b" } } );
+          mainPile.blocks.push( { Block: "command_block", TileEntityData: { Command: "fill " + blockPilePosition + " " + fillEnd + " air", auto: "1b" } } );
           var firstBlock = blockPile.blocks[0],
             firstBlockType = firstBlock.Block,
             firstBlockData = firstBlock.TileEntityData;
 
           if( isHeightRelative ) blockPilePosition = CT.addCoordinates( blockPilePosition, "0 -1 0" );
-          mainPile.blocks.push( { Block:"command_block", TileEntityData:{ Command:"setblock " + blockPilePosition + " " + firstBlockType + " 1 keep " + CT.serialize( firstBlockData ), auto:"1b" } } );
+          mainPile.blocks.push( { Block: "command_block", TileEntityData: { Command: "setblock " + blockPilePosition + " " + firstBlockType + " 1 keep " + CT.serialize( firstBlockData ), auto: "1b" } } );
           eraseBlocks += 2;
         }
         if( pileLength > 1 ) {
           var summonPosition = CT.addCoordinates( blockPilePosition, "0 2 0" );
           if( isHeightRelative ) summonPosition = CT.addCoordinates( summonPosition, "0 -1 0" );
 
-          var summonPile = { position : summonPosition, blocks : blockPile.blocks.splice( 1 ) };
-          mainPile.blocks.push( { Block:"command_block", TileEntityData:{ Command: CT.summonPile( summonPile ), auto:"1b" } } );
+          var summonPile = { position: summonPosition, blocks: blockPile.blocks.splice( 1 ) };
+          mainPile.blocks.push( { Block: "command_block", TileEntityData: { Command: CT.summonPile( summonPile ), auto: "1b" } } );
           eraseBlocks += 1;
         }
       }
@@ -92,7 +92,7 @@ define( [ "utils/scanner" ], function( Scanner ) {
 
     if( eraseBlocks > 0 ) {
       var fillEnd = "~ ~-" + eraseBlocks + " ~";
-      mainPile.blocks.push( { Block:"command_block", TileEntityData:{ Command:"fill ~ ~ ~ " + fillEnd + " air", auto:"1b" } } );
+      mainPile.blocks.push( { Block: "command_block", TileEntityData: { Command: "fill ~ ~ ~ " + fillEnd + " air", auto: "1b" } } );
     }
 
     return CT.summonPile( mainPile );

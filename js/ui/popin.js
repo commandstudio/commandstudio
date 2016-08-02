@@ -12,7 +12,7 @@ define( [ "jquery" ], function( $ ) {
 
   Popin.prototype = {
 
-    initTemplates : function() {
+    initTemplates: function() {
       var popin = this;
       this.templates = {};
       $( ".popin-template" ).each( function() {
@@ -22,7 +22,7 @@ define( [ "jquery" ], function( $ ) {
       } );
     },
 
-    initEvents : function() {
+    initEvents: function() {
       var popin = this;
 
       this.$popin.on( "click", ".on-click", function() {
@@ -48,7 +48,7 @@ define( [ "jquery" ], function( $ ) {
 
     },
 
-    show : function( templateName, options ) {
+    show: function( templateName, options ) {
       var popin = this;
       window.setTimeout( function() {
         popin.$popin.find( ".popin-focus" ).eq( 0 ).focus();
@@ -61,12 +61,12 @@ define( [ "jquery" ], function( $ ) {
       this.$container.addClass( "popin-visible" );
     },
 
-    hide : function() {
+    hide: function() {
       this.callbacks = {};
       this.$container.removeClass( "popin-visible" );
     },
 
-    loadTemplate : function( templateName, options ) {
+    loadTemplate: function( templateName, options ) {
       this.$popin.html( this.templates[templateName].html() );
 
       if( typeof options !== "undefined" ) {
@@ -85,7 +85,7 @@ define( [ "jquery" ], function( $ ) {
       }
     },
 
-    prompt : function( options ) {
+    prompt: function( options ) {
       var popin = this;
       this.callbacks[ "confirm" ] = function() {
         var result = this.$popin.find( ".e-input" ).val();
@@ -97,7 +97,7 @@ define( [ "jquery" ], function( $ ) {
       this.show( "prompt", options );
     },
 
-    confirm : function( options ) {
+    confirm: function( options ) {
       var popin = this;
       this.callbacks[ "confirm" ] = function() {
         popin.hide();
@@ -106,7 +106,7 @@ define( [ "jquery" ], function( $ ) {
         }
       };
       this.show( "confirm", options );
-    },
+    }
 
   };
 

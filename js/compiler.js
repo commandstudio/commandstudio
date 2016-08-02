@@ -13,11 +13,11 @@ define( [
 ) {
 
   var expressionRes = {
-    "openingDef" : /\^\w+\s*\(/,
-    "closingDef" : /\)/,
-    "openingOperation" : /\{#/,
-    "closingOperation" : /#\}/,
-    "variable" : /\$\w+/
+    "openingDef": /\^\w+\s*\(/,
+    "closingDef": /\)/,
+    "openingOperation": /\{#/,
+    "closingOperation": /#\}/,
+    "variable": /\$\w+/
   };
 
   function extractRe( re ) {
@@ -48,16 +48,14 @@ define( [
 
   Compiler.prototype = {
 
-    setFiles : function( files ) {
+    setFiles: function( files ) {
       this.files = files;
     },
 
-    compile : function( fileName ) {
+    compile: function( fileName ) {
       var code = this.files[ fileName ],
         scope = new Scope(),
-        output = "",
-
-        match, replace;
+        output = "";
 
       scope.addInclude( fileName );
       this.prepareScope( code, scope );
@@ -69,16 +67,21 @@ define( [
       console.log( "blockPiles", blockPiles );
 
       var command = CT.summonPiles( blockPiles );
-      if( command.length > 32500 ) alert( "Warning: summon command is too long! (" + command.length + " characters)" );
+      if( command.length > 32500 ) {
+        this.ui.popin.show( "alert", {
+          "title": "Error",
+          "text": "Warning: summon command is too long! (" + command.length + " characters)"
+        } );
+      }
 
       return command;
     },
 
-    prepareScope : function( code, scope ) {
+    prepareScope: function( code, scope ) {
       code = this.cleanCode( code );
 
       var scanner = new Scanner( code ),
-        line;
+        line, match;
 
       // Includes
 
@@ -124,11 +127,10 @@ define( [
       }
     },
 
-    parseSection : function( code, scope ) {
-      var compiler = this,
-        output = "",
+    parseSection: function( code, scope ) {
+      var output = "",
 
-        match, replace;
+        match;
 
       code = this.cleanCode( code );
 
@@ -160,7 +162,7 @@ define( [
         if( block.match( /^def(?:\s|$)/ ) ) continue;
 
         // Variable
-        if( match = block.match( /^\$(\w+)\s*=\s*(.+)/ ) ) {
+        if( ( match = block.match( /^\$(\w+)\s*=\s*(.+)/ ) ) !== null ) {
           scope.setVar( match[1], this.parseExpressions( new Scanner( match[2] ), scope ) );
           continue;
         }
@@ -190,15 +192,15 @@ define( [
       return output;
     },
 
-    unescapeCharacters : function( str ) {
+    unescapeCharacters: function( str ) {
       return str.replace( /\\(.?)/g, "$1" );
     },
 
-    cleanCode : function( code ) {
+    cleanCode: function( code ) {
       return code.replace( /[\t ]*(?:\/\/.*)?$/mg, "" );
     },
 
-    parseExpressions : function( scanner, scope, context ) {
+    parseExpressions: function( scanner, scope, context ) {
       if( typeof context === "undefined" ) context = null;
 
       var output = "", escape, tag;
@@ -208,7 +210,7 @@ define( [
 
         tag = scanner.scan( expressionRe );
 
-        if( escape = output.match( /(\\)+$/ ) ) {
+        if( ( escape = output.match( /(\\)+$/ ) ) !== null ) {
           if( escape[0].length % 2 === 1 ) {
             output += tag;
             continue;
@@ -256,14 +258,14 @@ define( [
       return output;
     },
 
-    executeDef : function( scope, defName, defArgs ) {
+    executeDef: function( scope, defName, defArgs ) {
       var def = scope.getDef( defName );
       if( def === null ) throw "Call to undefined def : " + defName;
       var defScope = new Scope( scope );
       return def.execute( this, defScope, defArgs );
     },
 
-    calculateOperation : function( operation ) {
+    calculateOperation: function( operation ) {
       operation = operation.trim();
 
       while( operation.match( /(?:~?-?\d+|~)\s+(?:~?-?\d+|~)\s+(?:~?-?\d+|~)\s*\+\s*(?:~?-?\d+|~)\s+(?:~?-?\d+|~)\s+(?:~?-?\d+|~)/ ) ) {
@@ -277,9 +279,8 @@ define( [
       return operation;
     },
 
-    reduceBlock : function( block ) {
-      var reducedBlock = "",
-        lines = block.split( /$/m );
+    reduceBlock: function( block ) {
+      var lines = block.split( /$/m );
 
       lines = lines.map( function( line, i ) {
         line = line.trim();
@@ -293,7 +294,7 @@ define( [
       return lines.join( "" );
     },
 
-    generateBlocks : function( code ) {
+    generateBlocks: function( code ) {
       var compiler = this,
         currentPile = new BlockPile(),
         blockPiles = [ currentPile ],
@@ -330,7 +331,7 @@ define( [
       return blockPiles;
     },
 
-    reduceAttr : function( attr ) {
+    reduceAttr: function( attr ) {
       var type = "",
         active = "",
         conditional = "",

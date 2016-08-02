@@ -6,7 +6,7 @@ define( function() {
 
   BlockPile.prototype = {
 
-    pushCommandBlock : function( attr, command ) {
+    pushCommandBlock: function( attr, command ) {
       var type, auto, condition;
 
       if( attr.match( /i/ ) ) type = "command_block";
@@ -17,7 +17,7 @@ define( function() {
       if( attr.match( /\?/ ) ) condition = true;
       if( attr.match( /!/ ) ) condition = false;
 
-      var block = { Block:type, Data:1, TileEntityData:{ Command:command } };
+      var block = { Block: type, Data: 1, TileEntityData: { Command: command, TrackOutput: "0b" } };
       if( auto === true ) block.TileEntityData.auto = 1;
       if( condition === true ) block.Data += 8;
 

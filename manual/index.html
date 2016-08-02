@@ -6,17 +6,47 @@
 <title>Manual – CommandStudio</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="codemirror/lib/codemirror.css">
-<link rel="stylesheet" href="codemirror/theme/lesser-dark.css">
-<link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../vendor/codemirror/lib/codemirror.css">
+<link rel="stylesheet" href="../vendor/codemirror/theme/lesser-dark.css">
+<link rel="stylesheet" href="../vendor/font-awesome/css/font-awesome.min.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700">
 <link rel="stylesheet" href="css/manual.css">
 
-<script src="js/jquery-2.2.0.min.js"></script>
-<script src="codemirror/lib/codemirror.js"></script>
-<script src="codemirror/addon/mode/simple.js"></script>
-<script src="codemirror/addon/runmode/runmode.js"></script>
-<script src="js/commander.mode.js"></script>
+<script src="../vendor/requirejs/require.js"></script>
+<script>
+require.config( {
+  baseUrl: "../js",
+  paths: {
+    vendor: "../vendor",
+    jquery: "../vendor/jquery/jquery-2.2.0.min"
+  },
+  packages: [ {
+    name: "codemirror",
+    location: "../vendor/codemirror",
+    main: "lib/codemirror"
+  } ]
+} );
+
+require( [
+  "jquery",
+  "codemirror",
+  "commander.mode"
+], function ( $, CodeMirror ) {
+  $( function () {
+    var options = {
+      mode: "commander",
+      theme: 'lesser-dark',
+      readOnly: true
+    };
+
+    $( '.code' ).each( function() {
+      options.value = this.innerHTML.trim();
+      this.innerHTML = '';
+      CodeMirror(this, options);
+    });
+  } );
+} );
+</script>
 
 </head>
 <body>
@@ -30,8 +60,8 @@
 <h2>What is CommandStudio?</h2>
 
 <p>
-  CommandStudio is an editor that let you easily write complex sequences of command blocks and easily import them into Minecraft.
-  It has a lot of convenient tools which will simplify your life.
+  CommandStudio is an editor that let you write complex sequences of command blocks and easily import them into Minecraft.
+  It has a lot of convenient tools which will make your life easier.
 </p>
 
 <h2>How does it work?</h2>
@@ -56,9 +86,9 @@ summon Zombie ~ ~1 ~
 </p>
 
 <div class="commandPile">
-  <b class="b-c"></b><b class="b-1"></b> <span class="command">summon Zombie ~ ~1 ~</span><br>
+  <b class="b-c"></b><b class="b-1"></b> <span class="command">say hello</span><br>
   <b class="b-c"></b><b class="b-1"></b> <span class="command">say world</span><br>
-  <b class="b-c"></b><b class="b-1"></b> <span class="command">say hello</span>
+    <b class="b-c"></b><b class="b-1"></b> <span class="command">summon Zombie ~ ~1 ~</span>
 </div>
 
 <p class="note">
@@ -138,9 +168,9 @@ say I'm a repeating command block that doesn't need redstone to be active
 </p>
 
 <div class="commandPile">
-  <b class="b-r"></b><b class="b-1"></b> <span class="command">say I'm a repeating command block that doesn't need redstone to be active</span><br>
+  <b class="b-r"></b><b class="b-0"></b> <span class="command">say I'm a repeating command block that needs redstone to be active</span><br>
   <b class="b-r"></b><b class="b-0"></b> <span class="command">say Same as above</span><br>
-  <b class="b-r"></b><b class="b-0"></b> <span class="command">say I'm a repeating command block that needs redstone to be active</span>
+  <b class="b-r"></b><b class="b-1"></b> <span class="command">say I'm a repeating command block that doesn't need redstone to be active</span>
 </div>
 
 <h2>Command blocks pile position</h2>
@@ -262,9 +292,9 @@ tp @p ^inline_def( 37 )
 </p>
 
 <div class="commandPile">
-  <b class="b-c"></b><b class="b-1"></b> <span class="command">tp @p 50 37 70</span><br>
+  <b class="b-i"></b><b class="b-0"></b> <span class="command">execute @e[type=Bat] ~ ~ ~ setblock ~ ~ ~ tnt</span><br>
   <b class="b-c"></b><b class="b-1"></b> <span class="command">kill @e[type=Bat]</span><br>
-  <b class="b-i"></b><b class="b-0"></b> <span class="command">execute @e[type=Bat] ~ ~ ~ setblock ~ ~ ~ tnt</span>
+  <b class="b-c"></b><b class="b-1"></b> <span class="command">tp @p 50 37 70</span>
 </div>
 
 <h2>Escaping</h2>
@@ -286,9 +316,9 @@ say \$var
 </p>
 
 <div class="commandPile">
-  <b class="b-c"></b><b class="b-1"></b> <span class="command">def ok</span><br>
+  <b class="b-c"></b><b class="b-1"></b> <span class="command">say the coolest</span><br>
   <b class="b-c"></b><b class="b-1"></b> <span class="command">say $var</span><br>
-  <b class="b-c"></b><b class="b-1"></b> <span class="command">say the coolest</span>
+  <b class="b-c"></b><b class="b-1"></b> <span class="command">def ok</span>
 </div>
 
 <h2>Commenting</h2>
@@ -310,27 +340,6 @@ say hello // very important command
 </div>
 
 </div>
-
-<script>
-
-var options = {
-  // lineNumbers: true,
-  mode: "commander",
-  theme: 'lesser-dark',
-  readOnly: true
-};
-
-$( '.code' ).each( function() {
-  options.value = this.innerHTML.trim();
-  this.innerHTML = '';
-  CodeMirror(this, options);
-});
-
-$( '.command' ).each( function() {
-  CodeMirror.runMode( this.innerHTML, 'commander', this );
-});
-
-</script>
 
 </body>
 </html>

@@ -1,3 +1,3 @@
 # CommandStudio
 
-Coming soon?
+Coming soon!

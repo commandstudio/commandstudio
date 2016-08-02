@@ -1,10 +1,10 @@
-define( [ "vendor/codemirror/lib/codemirror", "vendor/codemirror/addon/mode/simple" ], function( CodeMirror ) {
+define( [ "codemirror", "codemirror/addon/mode/simple" ], function( CodeMirror ) {
 
   CodeMirror.defineSimpleMode( "commander", {
     start: [
       // Commander specific
       { regex: /([01irc\?!]+)(:)/, token: [ "quote", "operator" ] },
-      // Doesn't work properly: last character is note styled
+      // Doesn't work properly: last character is not styled
       // {regex: /(default)\s+([01irc\?!]+)/, token: ["header", "quote"]},
       { regex: /(?:include|default|def|position)/, token: "header" },
       { regex: /(?:\$\w+)/, token: "variable" },
@@ -35,4 +35,5 @@ define( [ "vendor/codemirror/lib/codemirror", "vendor/codemirror/addon/mode/simp
       lineComment: "//"
     }
   } );
+
 } );

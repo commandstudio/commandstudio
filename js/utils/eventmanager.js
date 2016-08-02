@@ -5,14 +5,14 @@ define( function() {
 
   EventManager.prototype = {
 
-    on : function( eventName, callback ) {
+    on: function( eventName, callback ) {
       if( typeof this.callbacks[ eventName ] === "undefined" ) {
         this.callbacks[ eventName ] = [];
       }
       this.callbacks[ eventName ].push( callback );
     },
 
-    fire : function( eventName, data ) {
+    fire: function( eventName, data ) {
       if( typeof this.callbacks[ eventName ] === "undefined" ) return;
       var i = this.callbacks[ eventName ].length;
       while( i-- ) {
@@ -20,9 +20,9 @@ define( function() {
       }
     },
 
-    reset : function( eventName ) {
+    reset: function( eventName ) {
       this.callbacks[ eventName ] = [];
-    },
+    }
 
   };
 

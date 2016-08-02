@@ -1,26 +1,27 @@
 {
-    "rules": {
-        "indent": [ "error", 2 ],
-        "quotes": [ "error", "double" ],
-        "linebreak-style": [ "error", "unix" ],
-        "semi": [ "error", "always" ],
-        "space-infix-ops": [ "error" ],
-        "no-console": [ "warn" ],
-				"object-curly-spacing": ["error", "always"],
-				"array-bracket-spacing": ["error", "always"],
-				"space-in-parens": ["error", "always"],
-				"comma-dangle": ["error", "never"],
-				"comma-style": ["error", "last"],
-				"no-cond-assign": ["error", "except-parens"],
-				"comma-spacing": ["error", { "before": false, "after": true }],
-        "key-spacing": ["error", { "beforeColon": false, "afterColon": true }]
-    },
-    "globals": {
-      "define": true,
-      "require": true
-    },
-    "env": {
-        "browser": true
-    },
-    "extends": "eslint:recommended"
+  "extends": "eslint:recommended",
+  "env": {
+    "browser": true,
+  },
+  "globals": {
+    "window": true,
+    "define": true,
+    "require": true
+  },
+  "rules": {
+    "indent": [ "error", 2 ],
+    "quotes": [ "error", "double" ],
+    "linebreak-style": [ "error", "unix" ],
+    "semi": [ "error", "always" ],
+    "space-infix-ops": [ "error" ],
+    "no-console": [ "warn" ],
+		"object-curly-spacing": ["error", "always"],
+		"array-bracket-spacing": ["error", "always"],
+		"space-in-parens": ["error", "always"],
+		"comma-dangle": ["error", "never"],
+		"comma-style": ["error", "last"],
+		"no-cond-assign": ["error", "except-parens"],
+		"comma-spacing": ["error", { "before": false, "after": true }],
+    "key-spacing": ["error", { "beforeColon": false, "afterColon": true }]
+  }
 }

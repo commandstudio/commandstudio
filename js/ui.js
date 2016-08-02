@@ -1,6 +1,6 @@
 define( [
   "jquery",
-  "vendor/codemirror/lib/codemirror",
+  "codemirror",
   "ui/popin",
   "utils/eventmanager"
 ], function(
@@ -231,11 +231,17 @@ define( [
     },
 
     promptFile: function( callback ) {
+      var ui = this;
       try {
         this.$fileInput.get( 0 ).value = null;
       }
-    catch( e ) {}
-    // TODO: prevent callback stacking if "cancel" is chosen
+      catch( e ) {
+        ui.popin.show( "alert", {
+          "title": "Error",
+          "text": e
+        } );
+      }
+      // TODO: prevent callback stacking if "cancel" is chosen
       this.$fileInput.one( "change", callback );
       this.$fileInput.click();
     }
