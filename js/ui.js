@@ -48,7 +48,7 @@ define( [
           "title": "New file",
           "label": "New file name :",
           "input:placeholder": "new_file",
-          "notice": "File name must contain only letters, numbers and underscores.",
+          "notice": "File name must contain only letters, numbers, hyphens, and underscores.",
           "action:confirm": function( fileName ) {
             try {
               ui.newFile( fileName );
@@ -67,7 +67,7 @@ define( [
           "title": "Rename file",
           "label": "New name for \"" + ui.selectedFile + "\" :",
           "input:placeholder": "new_file",
-          "notice": "File name must contain only letters, numbers and underscores.",
+          "notice": "File name must contain only letters, numbers, hyphens, and underscores.",
           "action:confirm": function( fileName ) {
             try {
               ui.renameFile( ui.selectedFile, fileName );
