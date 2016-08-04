@@ -65,6 +65,13 @@ define( [
       var blockPiles = this.generateBlocks( output );
 
       console.log( "blockPiles", blockPiles );
+      if( blockPiles[0].blocks.length === 0 ) {
+        app.ui.popin.show( "alert", {
+          "title": "Error",
+          "text": "Compilation resulted in no command blocks."
+        } );
+        return "";
+      }
 
       var command = CT.summonPiles( blockPiles );
       if( command.length > 32500 ) {
