@@ -68,7 +68,7 @@ define( [
 
       var command = CT.summonPiles( blockPiles );
       if( command.length > 32500 ) {
-        this.ui.popin.show( "alert", {
+        app.ui.popin.show( "alert", {
           "title": "Error",
           "text": "Warning: summon command is too long! (" + command.length + " characters)"
         } );
