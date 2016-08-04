@@ -65,13 +65,13 @@ define( [
       var blockPiles = this.generateBlocks( output );
 
       console.log( "blockPiles", blockPiles );
+      if( blockPiles.every( function( pile ){ return pile.blocks.length === 0; } ) ) {
+        throw "Compilation resulted in no command blocks.";
+      }
 
       var command = CT.summonPiles( blockPiles );
       if( command.length > 32500 ) {
-        this.ui.popin.show( "alert", {
-          "title": "Error",
-          "text": "Warning: summon command is too long! (" + command.length + " characters)"
-        } );
+        throw "Summon command is too long! (" + command.length + " characters)";
       }
 
       return command;
