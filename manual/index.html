@@ -339,6 +339,30 @@ say hello // very important command
   <b class="b-c"></b><b class="b-1"></b> <span class="command">say hello</span>
 </div>
 
+<h2>Including other files</h2>
+
+<p>
+  You can import other files into a compiling file using the <span class="cm-header">include</span> keyword.
+</p>
+
+<div class="code">
+// file_1
+def ^hello($what)
+  say Hello, $what!
+
+// file_2
+include file_1
+^hello(world)
+</div>
+
+<p>
+  Will compile to:
+</p>
+
+<div class="commandPile">
+  <b class="b-c"></b><b class="b-1"></b> <span class="command">say Hello, world!</span></b>
+</div>
+
 </div>
 
 </body>
