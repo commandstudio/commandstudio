@@ -4,3 +4,8 @@ CommandStudio is an editor that let you write complex sequences of command block
 
 You can use it at: http://commandstudio.github.io/commandstudio/<br>
 Further informations on how it works at: http://commandstudio.github.io/commandstudio/manual/
+
+
+## Discord
+
+Come and discuss about CommandStudio at the dedicated Discord server: https://discord.gg/Eg5r99u
