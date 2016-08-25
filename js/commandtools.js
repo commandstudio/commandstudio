@@ -110,7 +110,7 @@ define( [ "utils/scanner" ], function( Scanner ) {
     blockPile.blocks.forEach( function( block, i ) {
       block.Time = 1;
       if( i > 0 ) {
-        block.id = "FallingSand";
+        block.id = "falling_block";
         lastEntity.Passengers = [ block ];
       }
       else {
@@ -119,7 +119,7 @@ define( [ "utils/scanner" ], function( Scanner ) {
       lastEntity = block;
     } );
 
-    var command = "summon FallingSand " + pilePosition + " " + CT.serialize( rootEntity );
+    var command = "summon falling_block " + pilePosition + " " + CT.serialize( rootEntity );
 
     return command;
   };
