@@ -260,6 +260,54 @@ input, button {
   display: none;
 }
 
+.ui-notifications {
+  position: absolute;
+  top: 70px;
+  right: 30px;
+  z-index: 10;
+  /*pointer-events: none;*/
+  perspective: 300px;
+}
+
+.ui-notification {
+  padding: 15px;
+  background-color: #eee;
+  color: #fafafa;
+  font-weight: 600;
+  border-radius: 5px;
+  animation: 1s cubic-bezier(0.190, 1.000, 0.220, 1.000) slideIn;
+  /*box-shadow: inset 0 0 15px rgba(0,0,0,.2);*/
+  border: 2px rgba(255,255,255,.1) solid;
+  background-color: #72B248;
+  text-shadow: 0 2px 0 rgba(0,0,0,.1);
+}
+
+.ui-notification-confirm {
+  background-color: #72B248;
+}
+
+@keyframes slideIn {
+  from {
+    transform: rotateX(-90deg) translate3d(0,150px,50px);
+    opacity: 0;
+  }
+  to {
+    transform: rotateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: rotateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: rotateX(-90deg) translate3d(0,150px,50px);
+    opacity: 0;
+  }
+}
+
 .about {
   text-align: center;
   max-width: 500px;
