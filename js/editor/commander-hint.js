@@ -170,12 +170,11 @@ define( [
         "worldborder",
         [
           [ "add", "distance", "time" ],
-          [ "worldborder", "add", "distance", "time" ],
-          [ "worldborder", "center", "x", "z" ],
-          [ "worldborder", "damage", "*amount|buffer", "value" ],
-          [ "worldborder", "get" ],
-          [ "worldborder", "set", "distance", "time" ],
-          [ "worldborder", "warning", "*distance|time", "value" ]
+          [ "center", "x", "z" ],
+          [ "damage", "*amount|buffer", "value" ],
+          [ "get" ],
+          [ "set", "distance", "time" ],
+          [ "warning", "*distance|time", "value" ]
         ]
       ],
       [ "xp", "amount", "#player" ]
