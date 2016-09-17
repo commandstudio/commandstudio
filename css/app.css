@@ -363,6 +363,20 @@ input, button {
   border:none;
 }
 
+.CodeMirror-hints {
+  background-color: #212121;
+  border-color: #111;
+}
+
+.CodeMirror-hint {
+  color: #ebefe7;
+  padding: 5px 8px;
+}
+
+li.CodeMirror-hint-active {
+  background-color: #72b248;
+}
+
 /* Helpers */
 
 .mt20 { margin-top:20px; }
