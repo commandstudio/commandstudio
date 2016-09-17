@@ -18,13 +18,20 @@ define( [
     this.editor = CodeMirror( this.$editor[0], {
       lineWrapping: false,
       lineNumbers: true,
+      tabSize: 2,
       mode: "commander",
       theme: "lesser-dark",
       extraKeys: {
-        Tab: function( cm ) {
-          var spaces = Array( cm.getOption( "indentUnit" ) + 1 ).join( " " );
-          cm.replaceSelection( spaces );
-        }
+        "Tab": function( cm ) {
+          if ( cm.somethingSelected() ) {
+            cm.execCommand( "indentMore" );
+          }
+          else {
+            cm.execCommand( "insertSoftTab" );
+          }
+        },
+        "Shift-Tab": "indentLess",
+        "Ctrl-Space": "autocomplete"
       }
     } );
 

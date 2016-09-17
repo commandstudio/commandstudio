@@ -6,9 +6,9 @@ define( [ "codemirror", "codemirror/addon/mode/simple" ], function( CodeMirror )
       { regex: /([01irc\?!]+)(:)/, token: [ "quote", "operator" ] },
       // Doesn't work properly: last character is not styled
       // {regex: /(default)\s+([01irc\?!]+)/, token: ["header", "quote"]},
-      { regex: /(?:include|default|def|position)/, token: "header" },
-      { regex: /(?:\$\w+)/, token: "variable" },
-      { regex: /(?:\^\w+)/, token: "variable-2" },
+      { regex: /(?:include|default|def|position)\b/, token: "header" },
+      { regex: /\$\w+/, token: "variable" },
+      { regex: /\^\w+/, token: "variable-2" },
       { regex: /\/\/.*/, token: "comment" },
       { regex: /(?:\{#|#\})/, token: "variable-2" },
 

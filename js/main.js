@@ -14,7 +14,8 @@ require.config( {
 require( [
   "app",
   "vendor/requirejs/domReady",
-  "commander.mode"
+  "editor/commander-mode",
+  "editor/commander-hint"
 ], function ( App, domReady ) {
   domReady( function () {
     window.app = new App;
