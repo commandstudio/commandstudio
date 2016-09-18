@@ -15,7 +15,6 @@ define( [
     this.$fileInput = $( ".ui-fileInput" );
     this.$editor = $( ".ui-editor" );
     this.$output = $( ".ui-output" );
-    this.$notifications = $( ".ui-notifications" );
     this.editor = CodeMirror( this.$editor[0], {
       lineWrapping: false,
       lineNumbers: true,
@@ -49,17 +48,7 @@ define( [
   UI.prototype = {
 
     initEvents: function() {
-      var ui = this,
-        $window = $( window );
-
-      $window.on( "keydown", function( e ) {
-        if( e.ctrlKey ) {
-          if( e.key === "s" ) {
-            ui.events.fire( "toolbar.project-export" );
-            e.preventDefault();
-          }
-        }
-      } );
+      var ui = this;
 
       this.events.on( "toolbar.file-new", function() {
         ui.popin.prompt( {
@@ -262,13 +251,6 @@ define( [
       // TODO: prevent callback stacking if "cancel" is chosen
       this.$fileInput.one( "change", callback );
       this.$fileInput.click();
-    },
-
-    notify: function( type, message ) {
-      var $notification = $( "<div class=\"ui-notification\"></div>" );
-      $notification.addClass( "ui-notification-" + type );
-      $notification.html( message );
-      this.$notifications.append( $notification );
     }
   };
 
