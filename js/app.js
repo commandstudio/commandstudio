@@ -27,11 +27,15 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
           ui.setOutput( command );
           ui.selectOutput();
         } catch( exception ) {
+<<<<<<< HEAD
           ui.popin.show( "alert", {
             "title": "Error",
             "text": exception
           } );
           if( typeof exception === "object" ) console.error( exception );
+=======
+          ui.setOutput( command );
+>>>>>>> refs/remotes/origin/gh-pages
         }
       } );
 
