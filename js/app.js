@@ -27,7 +27,10 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
           ui.setOutput( command );
           ui.selectOutput();
         } catch( exception ) {
-          ui.setOutput( exception );
+          ui.popin.show( "alert", {
+            "title": "Error",
+            "text": exception
+          } );
         }
       } );
 
