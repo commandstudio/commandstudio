@@ -48,7 +48,17 @@ define( [
   UI.prototype = {
 
     initEvents: function() {
-      var ui = this;
+      var ui = this,
+        $window = $( window );
+
+      $window.on( "keydown", function( e ) {
+        if( e.ctrlKey ) {
+          if( e.key === "s" ) {
+            ui.events.fire( "toolbar.project-export" );
+            e.preventDefault();
+          }
+        }
+      } );
 
       this.events.on( "toolbar.file-new", function() {
         ui.popin.prompt( {
