@@ -31,6 +31,7 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
             "title": "Error",
             "text": exception
           } );
+          if( typeof exception === "object" ) console.error( exception );
         }
       } );
 
