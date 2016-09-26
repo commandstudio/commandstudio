@@ -16,11 +16,12 @@ define( [
     this.$editor = $( ".ui-editor" );
     this.$output = $( ".ui-output" );
     this.editor = CodeMirror( this.$editor[0], {
-      lineWrapping: false,
-      lineNumbers: true,
-      tabSize: 2,
       mode: "commander",
       theme: "lesser-dark",
+      lineWrapping: false,
+      lineNumbers: true,
+      matchBrackets: true,
+      tabSize: 2,
       extraKeys: {
         "Tab": function( cm ) {
           if ( cm.somethingSelected() ) {
