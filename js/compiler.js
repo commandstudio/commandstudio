@@ -22,12 +22,12 @@ define( [
       scope = new Scope(),
       output = "";
 
-    this.parser = new Parser( code );
+    var parser = new Parser( code );
       // scope.addInclude( fileName );
       // this.prepareScope( code, scope );
       // scope.resetIncludes();
       // scope.addInclude( fileName );
-    output = this.parseSection( code, scope );
+    output = this.parseSection( parser );
       // var blockPiles = this.generateBlocks( output );
 
       // console.log( "blockPiles", blockPiles );
@@ -43,7 +43,11 @@ define( [
     return output;
   };
 
-
+  Compiler.prototype.parseSection = function( parser ) {
+    while( ! parser.eos() ) {
+      console.log( parser.next() );
+    }
+  };
 
   return Compiler;
 

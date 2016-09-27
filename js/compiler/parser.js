@@ -25,7 +25,7 @@ define( function() {
     for( var i = 0, l = symbols.length ; i < l ; i++ ) {
       symbol = symbols[i];
       match = this.tail.match( symbol.pattern );
-      if( match !== null && nextToken === null || match.index < nextTokenPosition ) {
+      if( match !== null && ( nextToken === null || match.index < nextTokenPosition ) ) {
         nextToken = { type: symbol.name, value: match[0] };
       }
     }
@@ -34,9 +34,13 @@ define( function() {
       nextToken = { type: "text", value: this.tail.substr( 0, nextTokenPosition ) };
     }
 
+    return nextToken;
+  };
+
+  Parser.prototype.next = function() {
+    var nextToken = this.peek();
     this.pos += nextToken.value.length;
     this.tail = this.tail.substr( nextToken.value.length );
-
     return nextToken;
   };
 
