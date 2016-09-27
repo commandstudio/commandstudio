@@ -15,7 +15,8 @@ require( [
   "app",
   "vendor/requirejs/domReady",
   "editor/commander-mode",
-  "editor/commander-hint"
+  "editor/commander-hint",
+  "codemirror/addon/edit/matchbrackets"
 ], function ( App, domReady ) {
   domReady( function () {
     window.app = new App;
