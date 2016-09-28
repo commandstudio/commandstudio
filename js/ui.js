@@ -58,6 +58,10 @@ define( [
             ui.events.fire( "toolbar.project-export" );
             e.preventDefault();
           }
+          else if( e.key === "q" ) {
+            ui.events.fire( "toolbar.file-compile" );
+            e.preventDefault();
+          }
         }
       } );
 

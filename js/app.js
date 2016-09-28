@@ -22,7 +22,7 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
       ui = this.ui,
       compiler = this.compiler;
 
-    ui.events.on( "toolbar.compile-file", function() {
+    ui.events.on( "toolbar.file-compile", function() {
       compiler.setFiles( ui.getFiles() );
       try {
         var command = compiler.compile( ui.selectedFile, app.options );
