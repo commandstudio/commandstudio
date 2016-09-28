@@ -54,7 +54,7 @@ define( [ "utils/scanner" ], function( Scanner ) {
     return serialized;
   };
 
-  CT.summonPiles = function( blockPiles ) {
+  CT.summonPiles = function( blockPiles, options ) {
     var mainPile, eraseBlocks = 0;
 
     blockPiles.forEach( function( blockPile ) {
@@ -84,7 +84,7 @@ define( [ "utils/scanner" ], function( Scanner ) {
           if( isHeightRelative ) summonPosition = CT.addCoordinates( summonPosition, "0 -1 0" );
 
           var summonPile = { position: summonPosition, blocks: blockPile.blocks.splice( 1 ) };
-          mainPile.blocks.push( { Block: "command_block", TileEntityData: { Command: CT.summonPile( summonPile ), auto: "1b" } } );
+          mainPile.blocks.push( { Block: "command_block", TileEntityData: { Command: CT.summonPile( summonPile, options ), auto: "1b" } } );
           eraseBlocks += 1;
         }
       }
@@ -95,13 +95,26 @@ define( [ "utils/scanner" ], function( Scanner ) {
       mainPile.blocks.push( { Block: "command_block", TileEntityData: { Command: "fill ~ ~ ~ " + fillEnd + " air", auto: "1b" } } );
     }
 
-    return CT.summonPile( mainPile );
+    return CT.summonPile( mainPile, options );
   };
 
-  CT.summonPile = function( blockPile ) {
+  CT.summonPile = function( blockPile, options ) {
     var pilePosition = blockPile.position,
       rootEntity,
       lastEntity;
+
+    var entityNames;
+
+    if( options.useOldEntityNames === true ) {
+      entityNames = {
+        "falling_block": "FallingSand"
+      };
+    }
+    else {
+      entityNames = {
+        "falling_block": "falling_block"
+      };
+    }
 
     if( pilePosition === null ) {
       pilePosition = "~ ~2 ~";
@@ -110,7 +123,7 @@ define( [ "utils/scanner" ], function( Scanner ) {
     blockPile.blocks.forEach( function( block, i ) {
       block.Time = 1;
       if( i > 0 ) {
-        block.id = "FallingSand";
+        block.id = entityNames.falling_block;
         lastEntity.Passengers = [ block ];
       }
       else {
@@ -119,7 +132,7 @@ define( [ "utils/scanner" ], function( Scanner ) {
       lastEntity = block;
     } );
 
-    var command = "summon FallingSand " + pilePosition + " " + CT.serialize( rootEntity );
+    var command = "summon " + entityNames.falling_block + " " + pilePosition + " " + CT.serialize( rootEntity );
 
     return command;
   };

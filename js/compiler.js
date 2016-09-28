@@ -52,7 +52,7 @@ define( [
       this.files = files;
     },
 
-    compile: function( fileName ) {
+    compile: function( fileName, options ) {
       var code = this.files[ fileName ],
         scope = new Scope(),
         output = "";
@@ -69,7 +69,7 @@ define( [
         throw "Compilation resulted in no command blocks.";
       }
 
-      var command = CT.summonPiles( blockPiles );
+      var command = CT.summonPiles( blockPiles, options );
       if( command.length > 32500 ) {
         throw "Summon command is too long! (" + command.length + " characters)";
       }
