@@ -11,10 +11,15 @@ define( function() {
     this.code = code;
     this.tail = code;
     this.pos = 0;
+    this.next();
   }
 
   Parser.prototype.eos = function() {
-    return this.tail === "";
+    return this.currentToken.type === "eos";
+  };
+
+  Parser.prototype.eol = function() {
+    return this.currentToken.type === "eol" || this.eos();
   };
 
   Parser.prototype.peek = function() {
@@ -27,6 +32,7 @@ define( function() {
       match = this.tail.match( symbol.pattern );
       if( match !== null && ( nextToken === null || match.index < nextTokenPosition ) ) {
         nextToken = { type: symbol.name, value: match[0] };
+        nextTokenPosition = match.index;
       }
     }
 
@@ -38,13 +44,11 @@ define( function() {
   };
 
   Parser.prototype.next = function() {
-    var nextToken = this.peek();
-    this.pos += nextToken.value.length;
-    this.tail = this.tail.substr( nextToken.value.length );
-    return nextToken;
+    this.currentToken = this.peek();
+    this.pos += this.currentToken.value.length;
+    this.tail = this.tail.substr( this.currentToken.value.length );
   };
 
   return Parser;
 
 } );
-
