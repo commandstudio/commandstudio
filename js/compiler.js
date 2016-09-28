@@ -64,7 +64,6 @@ define( [
       output = this.parseSection( code, scope );
       var blockPiles = this.generateBlocks( output );
 
-      console.log( "blockPiles", blockPiles );
       if( blockPiles.every( function( pile ){ return pile.blocks.length === 0; } ) ) {
         throw "Compilation resulted in no command blocks.";
       }
@@ -188,7 +187,6 @@ define( [
 
       output = this.unescapeCharacters( output );
 
-      console.log( "output", output );
       return output;
     },
 
