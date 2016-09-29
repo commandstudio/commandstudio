@@ -29,7 +29,7 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
         ui.setOutput( command );
         ui.selectOutput();
       } catch( exception ) {
-        ui.setOutput( command );
+        ui.setOutput( exception );
       }
     } );
 
