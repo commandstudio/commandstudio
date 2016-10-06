@@ -14,6 +14,10 @@ define( function() {
     this.next();
   }
 
+  Parser.prototype.buildStream = function( code ) {
+    
+  };
+
   Parser.prototype.eos = function() {
     return this.currentToken.type === "eos";
   };
