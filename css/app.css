@@ -24,6 +24,7 @@ body {
   font:14px/1.2 'Open Sans',sans-serif;
   background-color:#212121;
   color:#cecece;
+  cursor: default;
 }
 
 strong { font-weight: bold; }
@@ -72,6 +73,30 @@ input, button {
   color:#808080;
 }
 
+.checkbox-input {
+  display: none;
+}
+
+.checkbox-box {
+  display: inline-block;
+  vertical-align: middle;
+  width: 16px;
+  height: 16px;
+  border: 1px #cecece solid;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+:checked + .checkbox-box {
+  box-shadow:inset 0 0 0 3px #212121;
+  background-color: #72b248;
+}
+
+.checkbox-label {
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .button {
   display:inline-block;
   vertical-align:middle;
@@ -97,6 +122,14 @@ input, button {
 
 .button-main i {
   color:#72B248;
+}
+
+.form-line {
+  margin-top: 15px;
+}
+
+.form-line:first-child {
+  margin-top: 0;
 }
 
 /* BLOCKS */

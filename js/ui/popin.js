@@ -77,7 +77,10 @@ define( [ "jquery" ], function( $ ) {
             this.$popin.find( ".e-" + match[1] ).html( value );
           }
           else {
-            if( match[1] !== "action" ) {
+            if( match[1] === "action" && typeof this.callbacks[ match[2] ] === "undefined" ) {
+              this.callbacks[ match[2] ] = value;
+            }
+            else {
               this.$popin.find( ".e-" + match[1] ).attr( match[2], value );
             }
           }
