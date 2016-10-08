@@ -1,12 +1,10 @@
 define( [
   "compiler/scope",
   "compiler/parser",
-  "compiler/chain",
   "commandtools"
 ], function(
   Scope,
   Parser,
-  Chain,
   CT
 ) {
 
@@ -18,20 +16,25 @@ define( [
     this.files = files;
   };
 
-  Compiler.prototype.compile = function( fileName ) {
+  Compiler.prototype.compile = function( fileName, options ) {
+    this.options = options;
+
     var code = this.files[ fileName ],
-      scope = new Scope(),
-      output = "";
+      scope = new Scope();
 
     var parser = new Parser( code );
       // scope.addInclude( fileName );
       // this.prepareScope( code, scope );
       // scope.resetIncludes();
       // scope.addInclude( fileName );
-    var state = { mainChain: new Chain( "main" ) };
-    this.parseSection( parser, state );
 
-    var compiledCommand = this.compileMainChain( state.mainChain );
+    console.log( parser );
+
+    this.commands = [];
+    // var state = { mainChain: new Chain( "main" ) };
+    this.parseFile( parser, scope );
+
+    var compiledCommand = this.compileCommands( this.commands );
       // var blockPiles = this.generateBlocks( output );
 
       // console.log( "blockPiles", blockPiles );
@@ -47,33 +50,40 @@ define( [
     return compiledCommand;
   };
 
-  Compiler.prototype.parseSection = function( parser, state ) {
+  Compiler.prototype.parseCommand = function( parser, scope ) {
+    var command = "";
+    while( ! parser.eol() ) {
+      command += parser.getCurrentToken().value;
+      parser.next();
+    }
+    parser.next();
+    return command;
+  };
+
+  Compiler.prototype.parseFile = function( parser, scope ) {
     var token;
     while( ! parser.eos() ) {
 
-      token = parser.currentToken;
-      if( parser.eol() ) {
-        state.mainChain.next();
+      token = parser.getCurrentToken();
+      if( token.type === "keyword" && token.value === "chain" ) {
+        console.log( "amdoula" );
+        parser.next();
       }
       else {
-        state.mainChain.pushWord( token.value );
+        var command = this.parseCommand( parser, scope );
+        this.commands.push( command );
       }
-
-      parser.next();
     }
 
-    console.log( state.mainChain );
+    this.commandSet.flush();
+
+    console.log( this.commandSet );
   };
 
-  Compiler.prototype.compileMainChain = function( mainChain ) {
-    var commands = [],
-      minecarts = [],
-
+  Compiler.prototype.compileCommands = function( commands ) {
+    var minecarts = [],
       i, l;
 
-    for( i = 0, l = mainChain.commandBlocks.length ; i < l ; i++ ) {
-      commands.push( mainChain.commandBlocks[i].command );
-    }
     commands.push( "setblock ~ ~-1 ~ command_block 0 replace {auto:1,Command:kill @e[type=MinecartCommandBlock,r=1]}" );
 
     for( i = 0, l = commands.length ; i < l ; i++ ) {
