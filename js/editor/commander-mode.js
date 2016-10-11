@@ -4,16 +4,14 @@ define( [ "codemirror", "codemirror/addon/mode/simple" ], function( CodeMirror )
     start: [
       // Commander specific
       { regex: /([01irc\?!]+)(:)/, token: [ "quote", "operator" ] },
-      // Doesn't work properly: last character is not styled
-      // {regex: /(default)\s+([01irc\?!]+)/, token: ["header", "quote"]},
-      { regex: /(?:include|default|def|position)\b/, token: "header" },
+      { regex: /(default)(\s+)([01irc\?!]+)/, token: [ "header", null, "quote" ] },
+      { regex: /(?:include|default|def|chain)\b/, token: "header" },
       { regex: /\$\w+/, token: "variable" },
       { regex: /\^\w+/, token: "variable-2" },
       { regex: /\/\/.*/, token: "comment" },
       { regex: /(?:\{#|#\})/, token: "variable-2" },
 
       // Minecraft Specific
-      // {regex: /(?:~?-?\d+|~)\s+(?:~?-?\d+|~)\s+(?:~?-?\d+|~)(?:$|\b|\s)/, token: "number"},
       { regex: /@[aepr]\b/, token: "string" },
       { regex: /(?:Item|XPOrb|LeashKnot|Painting|ItemFrame|ArmorStand|EnderCrystal|ThrownEgg|Arrow|Snowball|Fireball|SmallFireball|ThrownEnderpearl|EyeOfEnderSignal|ThrownPotion|ThrownExpBottle|WitherSkull|FireworksRocketEntity|PrimedTnt|FallingSand|MinecartCommandBlock|Boat|MinecartRideable|MinecartChest|MinecartFurnace|MinecartTNT|MinecartHopper|MinecartSpawner|Mob|Monster|Creeper|Skeleton|Spider|Giant|Zombie|Slime|Ghast|PigZombie|Enderman|CaveSpider|Silverfish|Blaze|LavaSlime|EnderDragon|WitherBoss|Witch|Endermite|Guardian|Shulker|Rabbit|Bat|Pig|Sheep|Cow|Chicken|Squid|Wolf|MushroomCow|SnowMan|Ozelot|VillagerGolem|EntityHorse|Rabbit|Villager)\b/,
         token: "property" },
@@ -24,7 +22,7 @@ define( [ "codemirror", "codemirror/addon/mode/simple" ], function( CodeMirror )
       { regex: /[=\[\]{},]/, token: "hr" },
 
       // Numbers
-      { regex: /-?~?(?:\.\d+|\d+\.?\d*)[bf]?/, token: "number" },
+      { regex: /~?-?(?:\.\d+|\d+\.?\d*)[bfs]?/, token: "number" },
       { regex: /~/, token: "number" },
 
       // Pass

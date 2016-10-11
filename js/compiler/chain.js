@@ -1,25 +1,22 @@
 define( function() {
 
-  function Chain( mode ) {
-    this.mode = mode;
+  function Chain( position ) {
+    this.x = position.x;
+    this.y = position.y;
+    this.z = position.z;
     this.commandBlocks = [];
-    this.currentCommandBlock = null;
+    this.index = 0;
   }
 
-  Chain.prototype.newCommandBlock = function() {
-    this.currentCommandBlock = { command: "" };
-    this.commandBlocks.push( this.currentCommandBlock );
-  };
-
-  Chain.prototype.pushWord = function( word ) {
-    if( this.currentCommandBlock === null ) {
-      this.newCommandBlock();
-    }
-    this.currentCommandBlock.command += word;
-  };
-
-  Chain.prototype.next = function() {
-    this.currentCommandBlock = null;
+  Chain.prototype.push = function( command ) {
+    var commandBlock = { command: command };
+    commandBlock.x = this.x;
+    commandBlock.y = this.y + this.index;
+    commandBlock.z = this.z;
+    commandBlock.type = "command_block";
+    commandBlock.dataValue = 0;
+    this.commandBlocks.push( commandBlock );
+    this.index++;
   };
 
   return Chain;

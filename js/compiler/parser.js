@@ -3,7 +3,14 @@ define( function() {
   var symbols = [
     { name: "eos", pattern: /$/ },
     { name: "eol", pattern: /\n/ },
+
+    { name: ":", pattern: /:/ },
+    { name: "~", pattern: /~/ },
+
+    { name: "-", pattern: /-/ },
+
     { name: "spaces", pattern: /[ \t]+/ },
+    { name: "number", pattern: /\d+/ },
     { name: "keyword", pattern: /(?:chain)\b/ },
     { name: "var", pattern: /\$\w+/ }
   ];
@@ -54,19 +61,32 @@ define( function() {
   };
 
   Parser.prototype.eos = function() {
-    return this.getCurrentToken().type === "eos";
+    return this.current().type === "eos";
   };
 
   Parser.prototype.eol = function() {
-    return this.getCurrentToken().type === "eol" || this.eos();
+    return this.current().type === "eol" || this.eos();
   };
 
-  Parser.prototype.getCurrentToken = function() {
+  Parser.prototype.current = function() {
     return this.tokens[ this.pos ];
   };
 
   Parser.prototype.next = function() {
     this.pos++;
+  };
+
+  Parser.prototype.eat = function( tokenType, tokenValue ) {
+    var currentToken = this.current();
+    if( currentToken.type !== tokenType || tokenValue != null && currentToken.value !== tokenValue ) {
+      throw "Unexpected token: " + currentToken.type;
+    }
+    this.next();
+    return currentToken;
+  };
+
+  Parser.prototype.skip = function( tokenType ) {
+    while( this.current().type === tokenType ) this.next();
   };
 
   return Parser;
