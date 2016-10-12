@@ -38,7 +38,24 @@ define( [ "utils/scanner" ], function( Scanner ) {
       } );
 
       if( !rawArgs.match( /^\s*$/ ) ) {
-        var defArgs = rawArgs.split( "," );
+        var defArgs = [],
+          scanner = new Scanner( rawArgs ),
+          arg, match, buffer = "";
+
+        while( !scanner.eos() ) {
+          arg = scanner.scanUntil( /,/ );
+          match = arg.match( /(\\+)$/ );
+          if( match !== null && match[1].length % 2 === 1 ) {
+            buffer = arg + ",";
+          }
+          else {
+            arg = buffer + arg;
+            defArgs.push( arg );
+            buffer = "";
+          }
+          scanner.scan( /,/ );
+        }
+
         defArgs.forEach( function( argValue, i ) {
           argValue = argValue.trim();
           if( typeof def.args[i] === "undefined" ) throw "Too many arguments passed to def : (" + rawArgs + ")";
