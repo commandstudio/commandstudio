@@ -46,7 +46,7 @@ define( [ "utils/scanner" ], function( Scanner ) {
           arg = scanner.scanUntil( /,/ );
           match = arg.match( /(\\+)$/ );
           if( match !== null && match[1].length % 2 === 1 ) {
-            buffer = arg + ",";
+            buffer += arg + ",";
           }
           else {
             arg = buffer + arg;
