@@ -74,11 +74,11 @@ require( [
   If you compile the following code:
 </p>
 
-<div class="code">
+<pre class="code">
 say hello
 say world
 summon Zombie ~ ~1 ~
-</div>
+</pre>
 
 <p>
   CommandStudio will give you a single command that you have to paste into Minecraft. Once activated this command will
@@ -112,7 +112,7 @@ summon Zombie ~ ~1 ~
   You can change a block attributes by beginning a line with a mask like this one:
 </p>
 
-<div class="code">r0:say ok</div>
+<pre class="code">r0:say ok</pre>
 
 <p>
   This command block will be a repeating command block that needs redstone to be active.
@@ -154,14 +154,14 @@ summon Zombie ~ ~1 ~
   By default a block is: <span class="cm-quote">c1!</span>. But you can change it using the keyword <span class="cm-header">default</span>:
 </p>
 
-<div class="code">
+<pre class="code">
 default r0
 say I'm a repeating command block that needs redstone to be active
 say Same as above
 
 default 1
 say I'm a repeating command block that doesn't need redstone to be active
-</div>
+</pre>
 
 <p>
   Will compile to :
@@ -180,7 +180,7 @@ say I'm a repeating command block that doesn't need redstone to be active
   certain place using the keyword <span class="cm-header">position</span>:
 </p>
 
-<div class="code">
+<pre class="code">
 position 150 50 40
 i0:say I'm a command block and I live at 150 50 40
 say I'm a command block and I live at 150 51 40
@@ -189,7 +189,7 @@ position ~5 ~ ~
 i0:say I'm 5 blocks beside my summoner
 
 // The command you will get by compiling this file summons 2 command block piles
-</div>
+</pre>
 
 <h2>Commands on multiple lines</h2>
 
@@ -198,11 +198,11 @@ i0:say I'm 5 blocks beside my summoner
   to join. For example:
 </p>
 
-<div class="code">
+<pre class="code">
 execute @r ~ ~ ~
   setblock minecraft:chest 0 replace
   {Items:[{id:"minecraft:potato",Count:2}]}
-</div>
+</pre>
 
 <p>
   Will compile to a single command block containing:
@@ -216,10 +216,10 @@ execute @r ~ ~ ~
   By default, a space is inserted between joined lines. To avoid this behavior, insert a <span class="char">+</span> before your line.
 </p>
 
-<div class="code">
+<pre class="code">
 say joined
   +lines
-</div>
+</pre>
 
 <p>
   Will compile to a single command block containing:
@@ -235,9 +235,9 @@ say joined
   You can perform addition on coordinates using this syntax:
 </p>
 
-<div class="code">
+<pre class="code">
 setblock {# 1345 ~56 -257 + -10 5 20 #} stone
-</div>
+</pre>
 
 <p>
   Will compile to:
@@ -254,10 +254,10 @@ setblock {# 1345 ~56 -257 + -10 5 20 #} stone
   All variable names must be preceded by a <span class="char">$</span>.
 </p>
 
-<div class="code">
+<pre class="code">
 $position = 1345 56 -257
 setblock $position stone
-</div>
+</pre>
 
 <p>
   Will compile to:
@@ -275,7 +275,7 @@ setblock $position stone
   All procedures name must be preceded by a <span class="char">^</span>.
 </p>
 
-<div class="code">
+<pre class="code">
 def ^inline_def( $y = ~ )
   50 $y 70
 
@@ -285,7 +285,7 @@ def ^multiple_lines( $e, $block )
 
 i0:^multiple_lines( @e[type=Bat], tnt )
 tp @p ^inline_def( 37 )
-</div>
+</pre>
 
 <p>
   Will compile to:
@@ -303,13 +303,13 @@ tp @p ^inline_def( 37 )
   You can prevent characters from being interpreted. To do it, insert a <span class="char">\</span> before it.
 </p>
 
-<div class="code">
+<pre class="code">
 $var = cool
 say the $var\est
 say \$var
 
 \def ok
-</div>
+</pre>
 
 <p>
   Will compile to:
@@ -327,9 +327,9 @@ say \$var
   You can add comments to your file using the <span class="char">//</span> syntax.
 </p>
 
-<div class="code">
+<pre class="code">
 say hello // very important command
-</div>
+</pre>
 
 <p>
   Will compile to:
@@ -345,7 +345,7 @@ say hello // very important command
   You can import other files into a compiling file using the <span class="cm-header">include</span> keyword.
 </p>
 
-<div class="code">
+<pre class="code">
 // file_1
 def ^hello($what)
   say Hello, $what!
@@ -353,7 +353,7 @@ def ^hello($what)
 // file_2
 include file_1
 ^hello(world)
-</div>
+</pre>
 
 <p>
   Will compile to:
