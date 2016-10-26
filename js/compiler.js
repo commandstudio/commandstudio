@@ -1,14 +1,14 @@
 define( [
   "compiler/parser",
+  "compiler/context",
   "compiler/scope",
-  "compiler/num",
   "compiler/commandset",
   "compiler/chain",
   "commandtools"
 ], function(
   Parser,
+  Context,
   Scope,
-  Num,
   CommandSet,
   Chain,
   CT
@@ -17,6 +17,8 @@ define( [
   function compareStrLength( a, b ) {
     return a.length - b.length;
   }
+
+  var numRe = /^(?:~?-?(?:\.\d+|\d+\.?\d*)|~)$/;
 
   function Compiler() {
     this.files = {};
@@ -39,10 +41,14 @@ define( [
       // scope.addInclude( fileName );
 
     console.log( parser );
-
     var commands = [];
+
+    var context = new Context();
+    context.set( "scope", scope );
+    context.set( "output", commands );
+
     // var state = { mainChain: new Chain( "main" ) };
-    this.parseSection( parser, scope, commands );
+    this.parseSection( parser, context );
 
     var compiledCommand = this.compileCommands( commands );
       // var blockPiles = this.generateBlocks( output );
@@ -60,7 +66,7 @@ define( [
     return compiledCommand;
   };
 
-  Compiler.prototype.parseCommand = function( parser, scope ) {
+  Compiler.prototype.parseCommand = function( parser, context ) {
     var command = "";
     while( ! parser.eol() ) {
       command += parser.current().value;
@@ -71,23 +77,39 @@ define( [
   };
 
   Compiler.prototype.parseNumber = function( parser ) {
-    var number = new Num(),
-      buffer = "";
+    var number = "",
+      firstToken = parser.current();
+
     if( parser.current().type === "~" ) {
-      number.relative = true;
+      number += "~";
       parser.next();
-      if( parser.current().type !== "-" && parser.current().type !== "number" ) return number;
+      // if( parser.current().type !== "-" && parser.current().type !== "number" ) return number;
     }
     if( parser.current().type === "-" ) {
-      buffer += "-";
+      number += "-";
       parser.next();
     }
-    buffer += parser.eat( "number" ).value;
-    number.value = +buffer;
+    if( parser.current().type === "number" ) {
+      number += parser.current().value;
+      parser.next();
+    }
+    if( parser.current().type === "." ) {
+      number += ".";
+      parser.next();
+    }
+    if( parser.current().type === "number" ) {
+      number += parser.current().value;
+      parser.next();
+    }
+
+    if( numRe.test( number ) === false ) {
+      throw "Incorrect number " + firstToken.value;
+    }
+
     return number;
   };
 
-  Compiler.prototype.parseCoordinates = function( parser, scope ) {
+  Compiler.prototype.parseCoordinates = function( parser, context ) {
     var coordinates = {};
     coordinates.x = this.parseNumber( parser );
     parser.eat( "spaces" );
@@ -97,21 +119,27 @@ define( [
     return coordinates;
   };
 
-  Compiler.prototype.parseChain = function( parser, scope ) {
+  Compiler.prototype.parseChain = function( parser, context ) {
     parser.eat( "keyword", "chain" );
     parser.eat( "spaces" );
-    var coordinates = this.parseCoordinates( parser, scope );
+    var coordinates = this.parseCoordinates( parser, context );
     parser.skip( "spaces" );
     parser.eat( ":" );
     parser.eat( "eol" );
-    var chain = new Chain( coordinates );
-    this.parseSection( parser, scope, chain );
+    var chain = new Chain( coordinates ),
+      chainContext = new Context( context );
+    chainContext.set( "output", chain );
+    this.parseSection( parser, chainContext );
     return chain;
   };
 
-  Compiler.prototype.parseSection = function( parser, scope, output, parentIndentation ) {
-    var token = parser.current(),
+  Compiler.prototype.parseSection = function( parser, context ) {
+    var output = context.get( "output" ),
+      scope = context.get( "scope" ),
+      token = parser.current(),
       currentIndentation = "";
+
+    console.log( context );
 
     if( token.type === "spaces" ) currentIndentation = token.value;
 
@@ -131,11 +159,11 @@ define( [
       }
 
       if( token.type === "keyword" && token.value === "chain" ) {
-        var chain = this.parseChain( parser, scope );
+        var chain = this.parseChain( parser, context );
         output.push( chain );
       }
       else {
-        var command = this.parseCommand( parser, scope );
+        var command = this.parseCommand( parser, context );
         output.push( command );
       }
     }

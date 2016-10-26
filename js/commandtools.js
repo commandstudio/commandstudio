@@ -54,6 +54,32 @@ define( [ "utils/scanner" ], function( Scanner ) {
     return serialized;
   };
 
+  CT.op = function( operator, n1, n2 ) {
+    var n1Relative = n1[0] === "~",
+      n2Relative = n2[0] === "~",
+      n1Value = +( n1Relative ? n1.substr( 1 ) : n1 ),
+      n2Value = +( n2Relative ? n2.substr( 1 ) : n2 ),
+      result = n1Relative ? "~" : "";
+
+    if( operator === "+" ) {
+      result += n1Value + n2Value;
+    }
+    else if( operator === "-" ) {
+      result += n1Value - n2Value;
+    }
+    else if( operator === "*" ) {
+      result += n1Value * n2Value;
+    }
+    else if( operator === "/" ) {
+      result += n1Value / n2Value;
+    }
+    else if( operator === "%" ) {
+      result += n1Value % n2Value;
+    }
+
+    return result;
+  };
+
   CT.summonPiles = function( blockPiles, options ) {
     var mainPile, eraseBlocks = 0;
 

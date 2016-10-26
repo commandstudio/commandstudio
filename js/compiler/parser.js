@@ -6,6 +6,7 @@ define( function() {
 
     { name: ":", pattern: /:/ },
     { name: "~", pattern: /~/ },
+    { name: ".", pattern: /\./ },
 
     { name: "-", pattern: /-/ },
 
@@ -57,7 +58,17 @@ define( function() {
 
     tokens.push( { type: "eos", value: null } );
 
-    return tokens;
+    return this.cleanTokens( tokens );
+  };
+
+  Parser.prototype.cleanTokens = function( rawTokens ) {
+    var tokens = [];
+
+    for( var i = 0, l = tokens.length ; i < l ; i++ ) {
+      // TODO
+    }
+
+    return rawTokens;
   };
 
   Parser.prototype.eos = function() {
