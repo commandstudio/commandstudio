@@ -96,6 +96,7 @@ p {
 .code {
   border-left: 2px #333 solid;
   padding: 10px;
+  font-family: monospace;
 }
 
 .code .CodeMirror {
