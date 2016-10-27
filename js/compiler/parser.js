@@ -62,13 +62,34 @@ define( function() {
   };
 
   Parser.prototype.cleanTokens = function( rawTokens ) {
-    var tokens = [];
+    var tokens = [],
+      buffer = [];
 
-    for( var i = 0, l = tokens.length ; i < l ; i++ ) {
-      // TODO
+    for( var i = 0, l = rawTokens.length ; i < l ; i++ ) {
+      var rawToken = rawTokens[i];
+
+      if( buffer.length > 0 ) {
+        if( rawToken.type === "eol" ) {
+          buffer = [ buffer[0] ];
+        }
+        else if( rawToken.type === "spaces" ) {
+          buffer.push( rawToken );
+        }
+        else {
+          tokens = tokens.concat( buffer );
+          tokens.push( rawToken );
+          buffer = [];
+        }
+      }
+      else if( rawToken.type === "eol" ) {
+        buffer.push( rawToken );
+      }
+      else {
+        tokens.push( rawToken );
+      }
     }
 
-    return rawTokens;
+    return tokens;
   };
 
   Parser.prototype.eos = function() {

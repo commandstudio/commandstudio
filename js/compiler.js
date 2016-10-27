@@ -146,10 +146,14 @@ define( [
     while( ! parser.eos() ) {
       token = parser.current();
 
+      // Indetation checking
       if( currentIndentation !== "" ) {
         if( token.type !== "spaces" ) {
           break;
         }
+      }
+
+      if( token.type === "spaces" ) {
         var comp = compareStrLength( token.value, currentIndentation );
         if( comp < 0 ) break;
         else if( comp > 0 ) {
@@ -158,10 +162,13 @@ define( [
         parser.next();
       }
 
+      // Special instructions
       if( token.type === "keyword" && token.value === "chain" ) {
         var chain = this.parseChain( parser, context );
         output.push( chain );
       }
+
+      // Default command/command block
       else {
         var command = this.parseCommand( parser, context );
         output.push( command );
