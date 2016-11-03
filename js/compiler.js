@@ -44,6 +44,7 @@ define( [
     var commands = [];
 
     var context = new Context();
+    context.set( "indentation", "" );
     context.set( "scope", scope );
     context.set( "output", commands );
 
@@ -66,39 +67,50 @@ define( [
     return compiledCommand;
   };
 
-  Compiler.prototype.parseCommand = function( parser, context ) {
-    var command = "";
-    while( ! parser.eol() ) {
-      command += parser.current().value;
-      parser.next();
+  Compiler.prototype.requireIndentation = function( parser, context ) {
+    var currentIndentation = context.get( "indentation" ),
+      token = parser.current;
+
+    parser.require( "spaces" );
+
+    var comp = compareStrLength( token.value, currentIndentation );
+    if( comp > 0 ) {
+      return token.value;
     }
+    else {
+      throw "Incorrect indentation";
+    }
+  };
+
+  Compiler.prototype.parseCommand = function( parser, context ) {
+    var command = this.parseUntil( parser, context, "eol" );
     parser.next();
     return command;
   };
 
   Compiler.prototype.parseNumber = function( parser ) {
     var number = "",
-      firstToken = parser.current();
+      firstToken = parser.current;
 
-    if( parser.current().type === "~" ) {
+    if( parser.current.type === "~" ) {
       number += "~";
       parser.next();
-      // if( parser.current().type !== "-" && parser.current().type !== "number" ) return number;
+      // if( parser.current.type !== "-" && parser.current.type !== "number" ) return number;
     }
-    if( parser.current().type === "-" ) {
+    if( parser.current.type === "-" ) {
       number += "-";
       parser.next();
     }
-    if( parser.current().type === "number" ) {
-      number += parser.current().value;
+    if( parser.current.type === "number" ) {
+      number += parser.current.value;
       parser.next();
     }
-    if( parser.current().type === "." ) {
+    if( parser.current.type === "." ) {
       number += ".";
       parser.next();
     }
-    if( parser.current().type === "number" ) {
-      number += parser.current().value;
+    if( parser.current.type === "number" ) {
+      number += parser.current.value;
       parser.next();
     }
 
@@ -119,6 +131,77 @@ define( [
     return coordinates;
   };
 
+  Compiler.prototype.parseUntil = function( parser, context, untilTypes ) {
+    var output = "";
+
+    if( typeof untilTypes === "string" ) untilTypes = [ untilTypes ];
+
+    while( untilTypes.indexOf( parser.current.type ) === -1 ) {
+      if( parser.current.type === "var" ) {
+        output += this.parseVarCall( parser, context );
+      }
+      else {
+        output += parser.current.value;
+        parser.next();
+      }
+    }
+
+    return output;
+  };
+
+  Compiler.prototype.parseVarDeclaration = function( parser, context ) {
+    var scope = context.get( "scope" ),
+      varName, varValue = null;
+
+    parser.eat( "keyword", "var" );
+    parser.eat( "spaces" );
+    varName = parser.eat( "var" ).value;
+
+    scope.declareVar( varName );
+
+    parser.skip( "spaces" );
+    if( parser.current.type === "=" ) {
+      parser.eat( "=" );
+      parser.skip( "spaces" );
+      varValue = this.parseUntil( parser, context, "eol" );
+    }
+    parser.eat( "eol" );
+
+    scope.setVar( varName, varValue );
+  };
+
+  Compiler.prototype.parseVarAssignation = function( parser, context ) {
+    var scope = context.get( "scope" ),
+      varName, varValue, result;
+
+    varName = parser.eat( "var" ).value;
+    parser.skip( "spaces" );
+    parser.eat( "=" );
+    parser.skip( "spaces" );
+    varValue = this.parseUntil( parser, context, "eol" );
+    parser.eat( "eol" );
+
+    result = scope.setVar( varName, varValue );
+    if( result === false ) {
+      throw "Undeclared variable: " + varName;
+    }
+  };
+
+  Compiler.prototype.parseVarCall = function( parser, context ) {
+    var scope = context.get( "scope" ),
+      varToken = parser.eat( "var" ),
+      varValue = scope.getVar( varToken.value );
+
+    if( varValue === null ) {
+      throw "Variable is defined but has no value: " + varToken.value;
+    }
+    else if( varValue === false ) {
+      throw "Undefined variable: " + varToken.value;
+    }
+
+    return varValue;
+  };
+
   Compiler.prototype.parseChain = function( parser, context ) {
     parser.eat( "keyword", "chain" );
     parser.eat( "spaces" );
@@ -126,33 +209,31 @@ define( [
     parser.skip( "spaces" );
     parser.eat( ":" );
     parser.eat( "eol" );
+
     var chain = new Chain( coordinates ),
-      chainContext = new Context( context );
+      chainContext = new Context( context ),
+      chainScope = context.get( "scope" ).push();
+
+    chainContext.set( "indentation", this.requireIndentation( parser, context ) );
+    chainContext.set( "scope", chainScope );
     chainContext.set( "output", chain );
     this.parseSection( parser, chainContext );
+
     return chain;
   };
 
   Compiler.prototype.parseSection = function( parser, context ) {
     var output = context.get( "output" ),
       scope = context.get( "scope" ),
-      token = parser.current(),
-      currentIndentation = "";
+      token = parser.current,
+      currentIndentation = context.get( "indentation" );
 
     console.log( context );
 
-    if( token.type === "spaces" ) currentIndentation = token.value;
-
     while( ! parser.eos() ) {
-      token = parser.current();
+      token = parser.current;
 
       // Indetation checking
-      if( currentIndentation !== "" ) {
-        if( token.type !== "spaces" ) {
-          break;
-        }
-      }
-
       if( token.type === "spaces" ) {
         var comp = compareStrLength( token.value, currentIndentation );
         if( comp < 0 ) break;
@@ -160,19 +241,39 @@ define( [
           throw "Incorrect indentation";
         }
         parser.next();
+        token = parser.current;
+      }
+      else if( currentIndentation !== "" ) {
+        break;
       }
 
       // Special instructions
+      if( token.type === "keyword" && token.value === "var" ) {
+        this.parseVarDeclaration( parser, context );
+        continue;
+      }
+
       if( token.type === "keyword" && token.value === "chain" ) {
         var chain = this.parseChain( parser, context );
         output.push( chain );
+        continue;
+      }
+
+      if( token.type === "var" ) {
+        try {
+          parser.save();
+          this.parseVarAssignation( parser, context );
+          parser.popSave();
+          continue;
+        }
+        catch( e ) {
+          parser.restore();
+        }
       }
 
       // Default command/command block
-      else {
-        var command = this.parseCommand( parser, context );
-        output.push( command );
-      }
+      var command = this.parseCommand( parser, context );
+      output.push( command );
     }
 
     console.log( output );

@@ -1,24 +1,26 @@
 define( function() {
 
   var symbols = [
-    { name: "eos", pattern: /$/ },
     { name: "eol", pattern: /\n/ },
 
     { name: ":", pattern: /:/ },
     { name: "~", pattern: /~/ },
     { name: ".", pattern: /\./ },
 
+    { name: "=", pattern: /=/ },
     { name: "-", pattern: /-/ },
 
     { name: "spaces", pattern: /[ \t]+/ },
     { name: "number", pattern: /\d+/ },
-    { name: "keyword", pattern: /(?:chain)\b/ },
+    { name: "keyword", pattern: /(?:chain|var)\b/ },
     { name: "var", pattern: /\$\w+/ }
   ];
 
   function Parser( input ) {
     if( typeof input === "string" ) this.tokens = this.parseTokens( input );
     this.pos = 0;
+    this.saves = [];
+    this.setPos( 0 );
   }
 
   Parser.prototype.parseTokens = function( code ) {
@@ -56,12 +58,14 @@ define( function() {
       code = code.substr( nextTokenPosition + nextToken.value.length );
     }
 
+    tokens.push( { type: "eol", value: null } );
     tokens.push( { type: "eos", value: null } );
 
     return this.cleanTokens( tokens );
   };
 
   Parser.prototype.cleanTokens = function( rawTokens ) {
+    // TODO: remove trailing spaces
     var tokens = [],
       buffer = [];
 
@@ -92,33 +96,51 @@ define( function() {
     return tokens;
   };
 
+  Parser.prototype.setPos = function( pos ) {
+    this.pos = pos;
+    this.current = this.tokens[ this.pos ];
+  };
+
+  Parser.prototype.save = function() {
+    this.saves.push( this.pos );
+  };
+
+  Parser.prototype.popSave = function() {
+    return this.saves.pop();
+  };
+
+  Parser.prototype.restore = function() {
+    this.setPos( this.popSave() );
+  };
+
   Parser.prototype.eos = function() {
-    return this.current().type === "eos";
+    return this.current.type === "eos";
   };
 
   Parser.prototype.eol = function() {
-    return this.current().type === "eol" || this.eos();
-  };
-
-  Parser.prototype.current = function() {
-    return this.tokens[ this.pos ];
+    return this.current.type === "eol" || this.eos();
   };
 
   Parser.prototype.next = function() {
-    this.pos++;
+    this.setPos( this.pos + 1 );
   };
 
-  Parser.prototype.eat = function( tokenType, tokenValue ) {
-    var currentToken = this.current();
+  Parser.prototype.require = function( tokenType, tokenValue ) {
+    var currentToken = this.current;
     if( currentToken.type !== tokenType || tokenValue != null && currentToken.value !== tokenValue ) {
       throw "Unexpected token: " + currentToken.type;
     }
+  };
+
+  Parser.prototype.eat = function( tokenType, tokenValue ) {
+    var currentToken = this.current;
+    this.require( tokenType, tokenValue );
     this.next();
     return currentToken;
   };
 
   Parser.prototype.skip = function( tokenType ) {
-    while( this.current().type === tokenType ) this.next();
+    while( this.current.type === tokenType ) this.next();
   };
 
   return Parser;
