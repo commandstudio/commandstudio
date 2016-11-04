@@ -6,6 +6,7 @@ define( function() {
     this.vars = {};
     this.defs = {};
     this.includes = {};
+    this.attr = "";
   }
 
   Scope.prototype = {

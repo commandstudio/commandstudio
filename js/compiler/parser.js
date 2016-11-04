@@ -8,6 +8,7 @@ define( function() {
     { name: ".", pattern: /\./ },
 
     { name: "=", pattern: /=/ },
+    { name: "+", pattern: /\+/ },
     { name: "-", pattern: /-/ },
 
     { name: "spaces", pattern: /[ \t]+/ },

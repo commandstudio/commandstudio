@@ -2,14 +2,12 @@ define( [
   "compiler/parser",
   "compiler/context",
   "compiler/scope",
-  "compiler/commandset",
   "compiler/chain",
   "commandtools"
 ], function(
   Parser,
   Context,
   Scope,
-  CommandSet,
   Chain,
   CT
 ) {
@@ -18,7 +16,8 @@ define( [
     return a.length - b.length;
   }
 
-  var numRe = /^(?:~?-?(?:\.\d+|\d+\.?\d*)|~)$/;
+  var numRe = /^(?:~?-?(?:\.\d+|\d+\.?\d*)|~)$/,
+    attrRe = /^[cir01!\?]+$/;
 
   function Compiler() {
     this.files = {};
@@ -44,9 +43,11 @@ define( [
     var commands = [];
 
     var context = new Context();
-    context.set( "indentation", "" );
     context.set( "scope", scope );
+    context.set( "mode", "commands" );
     context.set( "output", commands );
+    context.set( "indentation", "" );
+    context.set( "attr", "" );
 
     // var state = { mainChain: new Chain( "main" ) };
     this.parseSection( parser, context );
@@ -80,12 +81,6 @@ define( [
     else {
       throw "Incorrect indentation";
     }
-  };
-
-  Compiler.prototype.parseCommand = function( parser, context ) {
-    var command = this.parseUntil( parser, context, "eol" );
-    parser.next();
-    return command;
   };
 
   Compiler.prototype.parseNumber = function( parser ) {
@@ -214,26 +209,73 @@ define( [
       chainContext = new Context( context ),
       chainScope = context.get( "scope" ).push();
 
+    chainContext.set( "mode", "chain" );
     chainContext.set( "indentation", this.requireIndentation( parser, context ) );
     chainContext.set( "scope", chainScope );
     chainContext.set( "output", chain );
+
     this.parseSection( parser, chainContext );
 
     return chain;
   };
 
+  Compiler.prototype.parseCommand = function( parser, context ) {
+    var command = this.parseUntil( parser, context, "eol" ),
+      indentation = context.get( "indentation" );
+    parser.next();
+
+    if( parser.current.type === "spaces" && compareStrLength( parser.current.value, indentation ) > 0 ) {
+      indentation = parser.current.value;
+      while( parser.current.type === "spaces" && parser.current.value === indentation ) {
+        parser.next();
+        if( parser.current.type === "+" ) {
+          parser.next();
+          command += this.parseUntil( parser, context, "eol" );
+        }
+        else {
+          command += " " + this.parseUntil( parser, context, "eol" );
+        }
+        parser.next();
+      }
+    }
+
+    return command;
+  };
+
+  Compiler.prototype.parseCommandBlock = function( parser, context ) {
+    var commandBlock = context.get( "output" ).currentBlock,
+      part;
+
+    commandBlock.applyAttr( context.get( "attr" ) );
+
+    parser.save();
+    part = this.parseUntil( parser, context, [ "eol", ":" ] );
+    if( parser.current.type === ":" && attrRe.test( part ) ) {
+      commandBlock.applyAttr( part );
+      parser.next();
+      parser.popSave();
+    }
+    else {
+      parser.restore();
+    }
+
+    commandBlock.command = this.parseCommand( parser, context );
+
+    return commandBlock;
+  };
+
   Compiler.prototype.parseSection = function( parser, context ) {
-    var output = context.get( "output" ),
-      scope = context.get( "scope" ),
-      token = parser.current,
-      currentIndentation = context.get( "indentation" );
+    var mode = context.get( "mode" ),
+      output = context.get( "output" ),
+      currentIndentation = context.get( "indentation" ),
+      token = parser.current;
 
     console.log( context );
 
     while( ! parser.eos() ) {
       token = parser.current;
 
-      // Indetation checking
+      // Indentation checking
       if( token.type === "spaces" ) {
         var comp = compareStrLength( token.value, currentIndentation );
         if( comp < 0 ) break;
@@ -271,9 +313,16 @@ define( [
         }
       }
 
-      // Default command/command block
-      var command = this.parseCommand( parser, context );
-      output.push( command );
+      // Command
+      if( mode === "commands" ) {
+        var command = this.parseCommand( parser, context );
+        output.push( command );
+      }
+      // CommandBlock
+      else if( mode === "chain" ) {
+        var commandBlock = this.parseCommandBlock( parser, context );
+        output.push( commandBlock );
+      }
     }
 
     console.log( output );
@@ -281,14 +330,12 @@ define( [
 
   Compiler.prototype.compileChain = function( chain ) {
     var output = [],
-      command, commandBlock, dataTag;
+      command, commandBlock;
 
     for( var i = 0, l = chain.commandBlocks.length ; i < l ; i++ ) {
       commandBlock = chain.commandBlocks[i];
       command = "setblock " + commandBlock.x + " " + commandBlock.y + " " + commandBlock.z + " ";
-      command += commandBlock.type + " " + commandBlock.dataValue + " replace ";
-      dataTag = { Command: commandBlock.command };
-      command += CT.serialize( dataTag );
+      command += commandBlock.type + " " + commandBlock.getDataValue() + " replace " + commandBlock.getDataTag();
       output.push( command );
     }
 
