@@ -1,4 +1,8 @@
-define( function() {
+define( [
+  "compiler/cserror"
+], function(
+  CSError
+) {
 
   var symbols = [
     { name: "eol", pattern: /\n/ },
@@ -129,7 +133,7 @@ define( function() {
   Parser.prototype.require = function( tokenType, tokenValue ) {
     var currentToken = this.current;
     if( currentToken.type !== tokenType || tokenValue != null && currentToken.value !== tokenValue ) {
-      throw "Unexpected token: " + currentToken.type;
+      throw new CSError( "UNEXPECTED_TOKEN", currentToken.type );
     }
   };
 

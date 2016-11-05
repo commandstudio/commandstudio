@@ -3,12 +3,14 @@ define( [
   "compiler/context",
   "compiler/scope",
   "compiler/chain",
+  "compiler/cserror",
   "commandtools"
 ], function(
   Parser,
   Context,
   Scope,
   Chain,
+  CSError,
   CT
 ) {
 
@@ -17,7 +19,7 @@ define( [
   }
 
   var numRe = /^(?:~?-?(?:\.\d+|\d+\.?\d*)|~)$/,
-    attrRe = /^[cir01!\?]+$/;
+    attrRe = /^[irc01!\?]+$/;
 
   function Compiler() {
     this.files = {};
@@ -74,12 +76,11 @@ define( [
 
     parser.require( "spaces" );
 
-    var comp = compareStrLength( token.value, currentIndentation );
-    if( comp > 0 ) {
+    if( compareStrLength( token.value, currentIndentation ) > 0 ) {
       return token.value;
     }
     else {
-      throw "Incorrect indentation";
+      throw new CSError( "INCORRECT_INDENTATION", token );
     }
   };
 
@@ -110,7 +111,7 @@ define( [
     }
 
     if( numRe.test( number ) === false ) {
-      throw "Incorrect number " + firstToken.value;
+      throw new CSError( "NOT_A_NUMBER", firstToken );
     }
 
     return number;
@@ -167,19 +168,23 @@ define( [
 
   Compiler.prototype.parseVarAssignation = function( parser, context ) {
     var scope = context.get( "scope" ),
-      varName, varValue, result;
+      varToken, varValue;
 
-    varName = parser.eat( "var" ).value;
+    varToken = parser.eat( "var" );
     parser.skip( "spaces" );
+
+    if( parser.current.type !== "=" ) return false;
+
     parser.eat( "=" );
     parser.skip( "spaces" );
     varValue = this.parseUntil( parser, context, "eol" );
     parser.eat( "eol" );
 
-    result = scope.setVar( varName, varValue );
-    if( result === false ) {
-      throw "Undeclared variable: " + varName;
+    if( scope.setVar( varToken.value, varValue ) === false ) {
+      throw new CSError( "UNDECLARED_VAR", varToken );
     }
+
+    return true;
   };
 
   Compiler.prototype.parseVarCall = function( parser, context ) {
@@ -188,10 +193,10 @@ define( [
       varValue = scope.getVar( varToken.value );
 
     if( varValue === null ) {
-      throw "Variable is defined but has no value: " + varToken.value;
+      throw new CSError( "UNDEFINED_VAR", varToken );
     }
     else if( varValue === false ) {
-      throw "Undefined variable: " + varToken.value;
+      throw new CSError( "UNDECLARED_VAR", varToken );
     }
 
     return varValue;
@@ -280,7 +285,7 @@ define( [
         var comp = compareStrLength( token.value, currentIndentation );
         if( comp < 0 ) break;
         else if( comp > 0 ) {
-          throw "Incorrect indentation";
+          throw new CSError( "INCORRECT_INDENTATION", token );
         }
         parser.next();
         token = parser.current;
@@ -302,13 +307,12 @@ define( [
       }
 
       if( token.type === "var" ) {
-        try {
-          parser.save();
-          this.parseVarAssignation( parser, context );
+        parser.save();
+        if( this.parseVarAssignation( parser, context ) ) {
           parser.popSave();
           continue;
         }
-        catch( e ) {
+        else {
           parser.restore();
         }
       }

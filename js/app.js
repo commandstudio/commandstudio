@@ -29,8 +29,8 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
         ui.setOutput( command );
         ui.selectOutput();
       } catch( exception ) {
-        if( typeof exception === "string" ) {
-          ui.setOutput( exception );
+        if( exception.name === "CSError" ) {
+          ui.setOutput( exception.toString() );
         }
         else {
           throw exception;
