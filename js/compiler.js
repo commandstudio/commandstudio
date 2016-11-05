@@ -299,6 +299,9 @@ define( [
       }
 
       if( token.type === "keyword" && token.value === "chain" ) {
+        if( mode !== "commands" ) {
+          throw new CSError( "UNEXPECTED_TOKEN", token );
+        }
         var chain = this.parseChain( parser, context );
         output.push( chain );
         continue;
@@ -356,6 +359,10 @@ define( [
       else {
         commands = commands.concat( this.compileChain( input[i] ) );
       }
+    }
+
+    if( commands.length === 0 ) {
+      throw new CSError( "NO_COMMAND" );
     }
 
     commands.push( "setblock ~ ~-1 ~ command_block 0 replace {auto:1,Command:kill @e[type=MinecartCommandBlock,r=1]}" );

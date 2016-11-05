@@ -6,6 +6,9 @@ define( [
 
   var symbols = [
     { name: "eol", pattern: /\n/ },
+    { name: "escaped", pattern: /`.?/ },
+
+    { name: "comment", pattern: /\/\// },
 
     { name: ":", pattern: /:/ },
     { name: "~", pattern: /~/ },
@@ -54,49 +57,50 @@ define( [
         if( nextToken.type === "eol" ) {
           currentLine++;
         }
-        if( nextToken.type === "escaped" ) {
+        else if( nextToken.type === "escaped" ) {
           nextToken.type = "text";
           nextToken.value = nextToken.value.substr( 1 );
           nextTokenPosition += 1;
         }
-        tokens.push( nextToken );
+
+        if( nextToken.type === "comment" ) {
+          nextTokenPosition = code.match( /(?:\n|$)/ ).index;
+        }
+        else {
+          tokens.push( nextToken );
+          nextTokenPosition += nextToken.value.length;
+        }
       }
 
-      code = code.substr( nextTokenPosition + nextToken.value.length );
+      code = code.substr( nextTokenPosition );
     }
 
-    tokens.push( { type: "eol", value: null } );
-    tokens.push( { type: "eos", value: null } );
+    if( tokens.length > 0 ) tokens.push( { type: "eol", value: null, line: currentLine } );
+    tokens.push( { type: "eos", value: null, line: currentLine } );
 
     return this.cleanTokens( tokens );
   };
 
   Parser.prototype.cleanTokens = function( rawTokens ) {
-    // TODO: remove trailing spaces
     var tokens = [],
       buffer = [];
+
+    console.log( "raw", rawTokens );
 
     for( var i = 0, l = rawTokens.length ; i < l ; i++ ) {
       var rawToken = rawTokens[i];
 
-      if( buffer.length > 0 ) {
-        if( rawToken.type === "eol" ) {
-          buffer = [ buffer[0] ];
-        }
-        else if( rawToken.type === "spaces" ) {
-          buffer.push( rawToken );
-        }
-        else {
-          tokens = tokens.concat( buffer );
-          tokens.push( rawToken );
-          buffer = [];
-        }
+      if( rawToken.type === "eol" ) {
+        if( buffer.length > 0 && buffer[0].type === "eol" ) buffer = [ buffer[0] ];
+        else buffer = [ rawToken ];
       }
-      else if( rawToken.type === "eol" ) {
+      else if( rawToken.type === "spaces" ) {
         buffer.push( rawToken );
       }
       else {
+        tokens = tokens.concat( buffer );
         tokens.push( rawToken );
+        buffer = [];
       }
     }
 

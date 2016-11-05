@@ -5,7 +5,8 @@ define( function() {
     "NOT_A_NUMBER": "Not a number \"%value\"",
     "UNDECLARED_VAR": "Undeclared variable \"%value\"",
     "UNDEFINED_VAR": "Undefined variable \"%value\"",
-    "UNEXPECTED_TOKEN": "Unexpected token \"%type\""
+    "UNEXPECTED_TOKEN": "Unexpected token \"%type\"",
+    "NO_COMMAND": "Compilation resulted in no commands"
   };
 
   function CSError( code, token ) {
@@ -23,7 +24,6 @@ define( function() {
       return error.token[attr];
     } );
 
-    console.log( this.token );
     if( this.line !== null ) {
       message = message + " on line " + this.line;
     }
