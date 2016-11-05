@@ -303,21 +303,17 @@ define( [
       }
 
       // Special instructions
-      if( token.type === "keyword" && token.value === "chain" ) {
-        if( mode !== "commands" ) {
-          throw new CSError( "UNEXPECTED_TOKEN", token );
+      if( mode === "commands" ) {
+        if( token.type === "keyword" && token.value === "chain" ) {
+          var chain = this.parseChain( parser, context );
+          output.push( chain );
+          continue;
         }
-        var chain = this.parseChain( parser, context );
-        output.push( chain );
-        continue;
-      }
 
-      if( token.type === "keyword" && token.value === "include" ) {
-        if( mode !== "commands" ) {
-          throw new CSError( "UNEXPECTED_TOKEN", token );
+        if( token.type === "keyword" && token.value === "include" ) {
+          this.parseInclude( parser, context );
+          continue;
         }
-        this.parseInclude( parser, context );
-        continue;
       }
 
       if( token.type === "keyword" && token.value === "var" ) {

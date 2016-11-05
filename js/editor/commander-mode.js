@@ -2,10 +2,16 @@ define( [ "codemirror", "codemirror/addon/mode/simple" ], function( CodeMirror )
 
   CodeMirror.defineSimpleMode( "commander", {
     start: [
+      // Escaped characters
+      { regex: /`.?/, token: "hr" },
+
       // Commander specific
-      { regex: /([01irc\?!]+)(:)/, token: [ "quote", "operator" ] },
       { regex: /(default)(\s+)([01irc\?!]+)/, token: [ "header", null, "quote" ] },
-      { regex: /(?:include|default|def|chain|var)\b/, token: "header" },
+      { regex: /(?:include|default)\b/, token: "header", sol: true },
+      { regex: /\s*(?:def|chain|var)\b/, token: "header", sol: true },
+      { regex: /\s*([01irc\?!]+)(:)/, token: [ "quote", "operator" ], sol: true },
+
+      // Commander specific
       { regex: /\$\w+/, token: "variable" },
       { regex: /\^\w+/, token: "variable-2" },
       { regex: /\/\/.*/, token: "comment" },
@@ -18,12 +24,13 @@ define( [ "codemirror", "codemirror/addon/mode/simple" ], function( CodeMirror )
       { regex: /\/?(?:achievement|ban|ban-ip|banlist|blockdata|clear|clone|debug|defaultgamemode|deop|difficulty|effect|enchant|entitydata|execute|fill|gamemode|gamerule|give|help|kick|kill|list|me|op|pardon|particle|playsound|publish|replaceitem|save-all|save-off|save-on|say|scoreboard|seed|setblock|setidletimeout|setworldspawn|spawnpoint|spreadplayers|stats|stop|summon|tell|tellraw|testfor|testforblock|testforblocks|time|title|toggledownfall|tp|trigger|weather|whitelist|worldborder|xp)\b/i,
         token: "keyword" },
 
-      // Ponctuation
-      { regex: /[=\[\]{},]/, token: "hr" },
-
       // Numbers
-      { regex: /~?-?(?:\.\d+|\d+\.?\d*)[bfs]?/, token: "number" },
-      { regex: /~/, token: "number" },
+      { regex: /(?:~?-?(?:\.\d+|\d+\.?\d*)[bfs]?|~)/, token: "number" },
+
+      // Ponctuation
+      { regex: /[\[\]{}\(\)]/, token: "bracket" },
+      { regex: /[\+-/*=%]/, token: "operator" },
+      { regex: /:$/, token: "operator", indent: true },
 
       // Pass
       { regex: /(?:\w+)/ }
