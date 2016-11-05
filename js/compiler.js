@@ -275,8 +275,6 @@ define( [
       currentIndentation = context.get( "indentation" ),
       token = parser.current;
 
-    console.log( context );
-
     while( ! parser.eos() ) {
       token = parser.current;
 

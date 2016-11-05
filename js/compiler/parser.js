@@ -30,6 +30,7 @@ define( [
 
   Parser.prototype.parseTokens = function( code ) {
     var tokens = [],
+      currentLine = 1,
       nextToken, nextTokenPosition, match;
 
     while( code !== "" ) {
@@ -38,23 +39,24 @@ define( [
       symbols.forEach( function( symbol ) {
         match = code.match( symbol.pattern );
         if( match !== null && ( nextToken === null || nextTokenPosition > match.index ) ) {
-          nextToken = { type: symbol.name, value: match[0] };
+          nextToken = { type: symbol.name, value: match[0], line: currentLine };
           nextTokenPosition = match.index;
         }
       } );
 
-      if( nextToken === null ) {
-        tokens.push( { type: "text", value: code } );
-        break;
-      }
+      if( nextToken === null ) nextTokenPosition = code.length;
 
       if( nextTokenPosition > 0 ) {
-        tokens.push( { type: "text", value: code.substr( 0, nextTokenPosition ) } );
+        tokens.push( { type: "text", value: code.substr( 0, nextTokenPosition ), line: currentLine } );
       }
 
       if( nextToken !== null ) {
+        if( nextToken.type === "eol" ) {
+          currentLine++;
+        }
         if( nextToken.type === "escaped" ) {
-          nextToken = { type: "text", value: nextToken.value.substr( 1 ) };
+          nextToken.type = "text";
+          nextToken.value = nextToken.value.substr( 1 );
           nextTokenPosition += 1;
         }
         tokens.push( nextToken );
