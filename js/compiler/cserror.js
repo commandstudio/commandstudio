@@ -6,14 +6,17 @@ define( function() {
     "UNDECLARED_VAR": "Undeclared variable \"%value\"",
     "UNDEFINED_VAR": "Undefined variable \"%value\"",
     "UNEXPECTED_TOKEN": "Unexpected token \"%type\"",
-    "NO_COMMAND": "Compilation resulted in no commands"
+    "INCORRECT_NAME": "Incorrect name \"%data\"",
+    "NO_COMMAND": "Compilation resulted in no commands",
+    "TOO_LONG": "Summon command is too long! (%data characters)"
   };
 
-  function CSError( code, token ) {
+  function CSError( code, token, data ) {
     this.name = "CSError";
     this.token = token != null ? token : null;
     this.code = code;
     this.line = token != null && token.line != null ? token.line : null;
+    this.data = data != null ? data : null;
   }
 
   CSError.prototype.toString = function() {
@@ -21,6 +24,7 @@ define( function() {
       message = errorMessages[ this.code ];
 
     message = message.replace( /%(\w+)/, function( match, attr ) {
+      if( attr === "data" ) return error.data;
       return error.token[attr];
     } );
 

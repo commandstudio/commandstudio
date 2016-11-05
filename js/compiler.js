@@ -19,6 +19,7 @@ define( [
   }
 
   var numRe = /^(?:~?-?(?:\.\d+|\d+\.?\d*)|~)$/,
+    nameRe = /^\w+$/,
     attrRe = /^[irc01!\?]+$/;
 
   function Compiler() {
@@ -32,40 +33,28 @@ define( [
   Compiler.prototype.compile = function( fileName, options ) {
     this.options = options;
 
-    var code = this.files[ fileName ],
-      scope = new Scope();
+    var context = new Context(),
+      scope = new Scope(),
+      commands = [];
 
-    var parser = new Parser( code );
-      // scope.addInclude( fileName );
-      // this.prepareScope( code, scope );
-      // scope.resetIncludes();
-      // scope.addInclude( fileName );
+    // scope.addInclude( fileName );
+    // this.prepareScope( code, scope );
+    // scope.resetIncludes();
+    // scope.addInclude( fileName );
 
-    console.log( parser );
-    var commands = [];
-
-    var context = new Context();
     context.set( "scope", scope );
     context.set( "mode", "commands" );
     context.set( "output", commands );
     context.set( "indentation", "" );
     context.set( "attr", "" );
 
-    // var state = { mainChain: new Chain( "main" ) };
-    this.parseSection( parser, context );
+    this.parseFile( fileName, context );
 
     var compiledCommand = this.compileCommands( commands );
-      // var blockPiles = this.generateBlocks( output );
 
-      // console.log( "blockPiles", blockPiles );
-      // if( blockPiles.every( function( pile ){ return pile.blocks.length === 0; } ) ) {
-      //   throw "Compilation resulted in no command blocks.";
-      // }
-
-      // var command = CT.summonPiles( blockPiles );
-      // if( command.length > 32500 ) {
-      //   throw "Summon command is too long! (" + command.length + " characters)";
-      // }
+    if( compiledCommand > 32500 ) {
+      throw new CSError( "TOO_LONG", null, compiledCommand.length );
+    }
 
     return compiledCommand;
   };
@@ -91,7 +80,6 @@ define( [
     if( parser.current.type === "~" ) {
       number += "~";
       parser.next();
-      // if( parser.current.type !== "-" && parser.current.type !== "number" ) return number;
     }
     if( parser.current.type === "-" ) {
       number += "-";
@@ -117,7 +105,7 @@ define( [
     return number;
   };
 
-  Compiler.prototype.parseCoordinates = function( parser, context ) {
+  Compiler.prototype.parseCoordinates = function( parser ) {
     var coordinates = {};
     coordinates.x = this.parseNumber( parser );
     parser.eat( "spaces" );
@@ -143,6 +131,44 @@ define( [
     }
 
     return output;
+  };
+
+  Compiler.prototype.parseChain = function( parser, context ) {
+    parser.eat( "keyword", "chain" );
+    parser.eat( "spaces" );
+    var coordinates = this.parseCoordinates( parser, context );
+    parser.skip( "spaces" );
+    parser.eat( ":" );
+    parser.eat( "eol" );
+
+    var chain = new Chain( coordinates ),
+      chainContext = new Context( context ),
+      chainScope = context.get( "scope" ).push();
+
+    chainContext.set( "mode", "chain" );
+    chainContext.set( "indentation", this.requireIndentation( parser, context ) );
+    chainContext.set( "scope", chainScope );
+    chainContext.set( "output", chain );
+
+    this.parseSection( parser, chainContext );
+
+    return chain;
+  };
+
+  Compiler.prototype.parseInclude = function( parser, context ) {
+    var includeToken = parser.current,
+      fileName;
+
+    parser.eat( "keyword", "include" );
+    parser.eat( "spaces" );
+
+    fileName = this.parseUntil( parser, context, "eol" );
+    if( nameRe.test( fileName ) === false ) {
+      throw new CSError( "INCORRECT_NAME", includeToken, fileName );
+    }
+    this.parseFile( fileName, context );
+
+    parser.eat( "eol" );
   };
 
   Compiler.prototype.parseVarDeclaration = function( parser, context ) {
@@ -202,28 +228,6 @@ define( [
     return varValue;
   };
 
-  Compiler.prototype.parseChain = function( parser, context ) {
-    parser.eat( "keyword", "chain" );
-    parser.eat( "spaces" );
-    var coordinates = this.parseCoordinates( parser, context );
-    parser.skip( "spaces" );
-    parser.eat( ":" );
-    parser.eat( "eol" );
-
-    var chain = new Chain( coordinates ),
-      chainContext = new Context( context ),
-      chainScope = context.get( "scope" ).push();
-
-    chainContext.set( "mode", "chain" );
-    chainContext.set( "indentation", this.requireIndentation( parser, context ) );
-    chainContext.set( "scope", chainScope );
-    chainContext.set( "output", chain );
-
-    this.parseSection( parser, chainContext );
-
-    return chain;
-  };
-
   Compiler.prototype.parseCommand = function( parser, context ) {
     var command = this.parseUntil( parser, context, "eol" ),
       indentation = context.get( "indentation" );
@@ -269,6 +273,12 @@ define( [
     return commandBlock;
   };
 
+  Compiler.prototype.parseFile = function( fileName, context ) {
+    var code = this.files[ fileName ],
+      parser = new Parser( code );
+    this.parseSection( parser, context );
+  };
+
   Compiler.prototype.parseSection = function( parser, context ) {
     var mode = context.get( "mode" ),
       output = context.get( "output" ),
@@ -293,17 +303,25 @@ define( [
       }
 
       // Special instructions
-      if( token.type === "keyword" && token.value === "var" ) {
-        this.parseVarDeclaration( parser, context );
-        continue;
-      }
-
       if( token.type === "keyword" && token.value === "chain" ) {
         if( mode !== "commands" ) {
           throw new CSError( "UNEXPECTED_TOKEN", token );
         }
         var chain = this.parseChain( parser, context );
         output.push( chain );
+        continue;
+      }
+
+      if( token.type === "keyword" && token.value === "include" ) {
+        if( mode !== "commands" ) {
+          throw new CSError( "UNEXPECTED_TOKEN", token );
+        }
+        this.parseInclude( parser, context );
+        continue;
+      }
+
+      if( token.type === "keyword" && token.value === "var" ) {
+        this.parseVarDeclaration( parser, context );
         continue;
       }
 

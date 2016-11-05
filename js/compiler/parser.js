@@ -20,7 +20,7 @@ define( [
 
     { name: "spaces", pattern: /[ \t]+/ },
     { name: "number", pattern: /\d+/ },
-    { name: "keyword", pattern: /(?:chain|var)\b/ },
+    { name: "keyword", pattern: /(?:chain|include|var)\b/ },
     { name: "var", pattern: /\$\w+/ }
   ];
 
@@ -85,8 +85,6 @@ define( [
     var tokens = [],
       buffer = [];
 
-    console.log( "raw", rawTokens );
-
     for( var i = 0, l = rawTokens.length ; i < l ; i++ ) {
       var rawToken = rawTokens[i];
 
@@ -139,7 +137,7 @@ define( [
   Parser.prototype.require = function( tokenType, tokenValue ) {
     var currentToken = this.current;
     if( currentToken.type !== tokenType || tokenValue != null && currentToken.value !== tokenValue ) {
-      throw new CSError( "UNEXPECTED_TOKEN", currentToken.type );
+      throw new CSError( "UNEXPECTED_TOKEN", currentToken );
     }
   };
 
