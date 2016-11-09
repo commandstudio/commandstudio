@@ -2,6 +2,7 @@ define( [
   "compiler/parser",
   "compiler/context",
   "compiler/scope",
+  "compiler/output",
   "compiler/chain",
   "compiler/cserror",
   "commandtools"
@@ -9,14 +10,11 @@ define( [
   Parser,
   Context,
   Scope,
+  Output,
   Chain,
   CSError,
   CT
 ) {
-
-  function compareStrLength( a, b ) {
-    return a.length - b.length;
-  }
 
   var numRe = /^(?:~?-?(?:\.\d+|\d+\.?\d*)|~)$/,
     nameRe = /^\w+$/,
@@ -35,22 +33,17 @@ define( [
 
     var context = new Context(),
       scope = new Scope(),
-      commands = [];
-
-    // scope.addInclude( fileName );
-    // this.prepareScope( code, scope );
-    // scope.resetIncludes();
-    // scope.addInclude( fileName );
+      commandSet = new Output();
 
     context.set( "scope", scope );
     context.set( "mode", "commands" );
-    context.set( "output", commands );
+    context.set( "output", commandSet );
     context.set( "indentation", "" );
     context.set( "attr", "" );
 
     this.parseFile( fileName, context );
 
-    var compiledCommand = this.compileCommands( commands );
+    var compiledCommand = this.compileCommands( commandSet.values );
 
     if( compiledCommand > 32500 ) {
       throw new CSError( "TOO_LONG", null, compiledCommand.length );
@@ -59,13 +52,30 @@ define( [
     return compiledCommand;
   };
 
-  Compiler.prototype.requireIndentation = function( parser, context ) {
+  Compiler.prototype.compareIndentation = function( parser, context ) {
     var currentIndentation = context.get( "indentation" ),
-      token = parser.current;
+      token = parser.current,
+      minLength;
 
-    parser.require( "spaces" );
+    if( token.type !== "spaces" ) {
+      if( currentIndentation === "" ) return 0;
+      else return -1;
+    }
+    else {
+      minLength = Math.min( currentIndentation.length, token.value.length );
+      if( currentIndentation.substr( 0, minLength ) !== token.value.substr( 0, minLength ) ) {
+        throw new CSError( "INCORRECT_INDENTATION", token );
+      }
+      else {
+        return token.value.length - currentIndentation.length;
+      }
+    }
+  };
 
-    if( compareStrLength( token.value, currentIndentation ) > 0 ) {
+  Compiler.prototype.requireIndentation = function( parser, context ) {
+    var token = parser.current;
+
+    if( this.compareIndentation( parser, context ) > 0 ) {
       return token.value;
     }
     else {
@@ -115,14 +125,22 @@ define( [
     return coordinates;
   };
 
-  Compiler.prototype.parseUntil = function( parser, context, untilTypes ) {
+  Compiler.prototype.parseUntil = function( parser, context, untilTypes, trim ) {
     var output = "";
+    trim = trim != null ? trim : false;
 
     if( typeof untilTypes === "string" ) untilTypes = [ untilTypes ];
+    untilTypes.push( "eos" );
 
     while( untilTypes.indexOf( parser.current.type ) === -1 ) {
-      if( parser.current.type === "var" ) {
+      if( parser.current.type === "def" ) {
+        output += this.parseDefCall( parser, context, true );
+      }
+      else if( parser.current.type === "var" ) {
         output += this.parseVarCall( parser, context );
+      }
+      else if( trim === true && parser.current.type === "spaces" && untilTypes.indexOf( parser.peek().type ) === -1 ) {
+        parser.next();
       }
       else {
         output += parser.current.value;
@@ -142,7 +160,7 @@ define( [
     parser.eat( "eol" );
 
     var chain = new Chain( coordinates ),
-      chainContext = new Context( context ),
+      chainContext = context.push(),
       chainScope = context.get( "scope" ).push();
 
     chainContext.set( "mode", "chain" );
@@ -187,7 +205,7 @@ define( [
       parser.skip( "spaces" );
       varValue = this.parseUntil( parser, context, "eol" );
     }
-    parser.eat( "eol" );
+    parser.skip( "eol" );
 
     scope.setVar( varName, varValue );
   };
@@ -204,7 +222,7 @@ define( [
     parser.eat( "=" );
     parser.skip( "spaces" );
     varValue = this.parseUntil( parser, context, "eol" );
-    parser.eat( "eol" );
+    parser.skip( "eol" );
 
     if( scope.setVar( varToken.value, varValue ) === false ) {
       throw new CSError( "UNDECLARED_VAR", varToken );
@@ -228,27 +246,157 @@ define( [
     return varValue;
   };
 
-  Compiler.prototype.parseCommand = function( parser, context ) {
-    var command = this.parseUntil( parser, context, "eol" ),
-      indentation = context.get( "indentation" );
-    parser.next();
+  Compiler.prototype.parseDefDeclaration = function( parser, context ) {
+    var def = {},
+      defToken,
+      argument;
 
-    if( parser.current.type === "spaces" && compareStrLength( parser.current.value, indentation ) > 0 ) {
-      indentation = parser.current.value;
-      while( parser.current.type === "spaces" && parser.current.value === indentation ) {
-        parser.next();
-        if( parser.current.type === "+" ) {
-          parser.next();
-          command += this.parseUntil( parser, context, "eol" );
-        }
-        else {
-          command += " " + this.parseUntil( parser, context, "eol" );
-        }
-        parser.next();
+    parser.eat( "keyword", "def" );
+    parser.eat( "spaces" );
+    defToken = parser.eat( "def" );
+    def.name = defToken.value;
+
+    parser.skip( "spaces" );
+    parser.eat( "(" );
+    parser.skip( "spaces" );
+
+    def.arguments = [];
+    while( parser.current.type !== ")" ) {
+      argument = {};
+      argument.name = parser.eat( "var" ).value;
+      parser.skip( "spaces" );
+
+      argument.defaultValue = null;
+      if( parser.current.type === "=" ) {
+        parser.eat( "=" );
+        parser.skip( "spaces" );
+        argument.defaultValue = this.parseUntil( parser, context, [ ")", ";" ], true );
+      }
+
+      def.arguments.push( argument );
+      if( parser.current.type !== ")" ) {
+        parser.eat( ";" );
+        parser.skip( "spaces" );
       }
     }
 
-    return command;
+    parser.eat( ")" );
+    parser.skip( "spaces" );
+    parser.eat( ":" );
+    parser.eat( "eol" );
+
+    var bodyContext = context.push(), comp;
+    bodyContext.set( "indentation", this.requireIndentation( parser, context ) );
+    def.body = [];
+
+    while( ! parser.eos() ) {
+      comp = this.compareIndentation( parser, bodyContext );
+      if( comp === 0 && parser.current.type === "spaces" ) parser.next();
+      else if( comp < 0 ) break;
+
+      while( parser.current.type !== "eol" ) {
+        def.body.push( parser.current );
+        parser.next();
+      }
+      def.body.push( parser.current );
+      parser.next();
+    }
+
+    def.body[ def.body.length - 1 ].type = "eos";
+
+    return def;
+  };
+
+  Compiler.prototype.parseDefCall = function( parser, context, read ) {
+    read = read != null ? read : false;
+
+    var scope = context.get( "scope" ),
+      defToken = parser.eat( "def" ),
+      def = scope.getDef( defToken.value );
+
+    if( def === null ) throw new CSError( "UNDEFINED_DEF", defToken );
+
+    var defContext = context.push(),
+      defScope = scope.push(),
+      defParser = new Parser( def.body ),
+      defOutput;
+
+    defContext.set( "scope", defScope );
+    defContext.set( "indentation", "" );
+    if( read === true ) {
+      defOutput = new Output();
+      defContext.set( "output", defOutput );
+    }
+
+    parser.skip( "spaces" );
+    parser.eat( "(" );
+    parser.skip( "spaces" );
+
+    var part, i = def.arguments.length;
+    while( i-- ) {
+      defScope.declareVar( def.arguments[i].name );
+      defScope.setVar( def.arguments[i].name, def.arguments[i].defaultValue );
+    }
+
+    i = 0;
+    while( parser.current.type !== ")" ) {
+      part = this.parseUntil( parser, context, [ ";", ")", "eol" ], true );
+      if( parser.current.type !== ")" ) {
+        parser.eat( ";" );
+        parser.skip( "spaces" );
+      }
+      if( i >= def.arguments.length ) {
+        throw new CSError( "TOO_MANY_ARGUMENTS", defToken );
+      }
+      defScope.setVar( def.arguments[i].name, part );
+      i++;
+    }
+
+    parser.eat( ")" );
+
+    this.parseSection( defParser, defContext );
+
+    if( read === true ) {
+      defOutput.flush();
+      return defOutput.values.join( " " );
+    }
+  };
+
+  Compiler.prototype.parseLine = function( parser, context ) {
+    var output = context.get( "output" ),
+      content;
+
+    while( ! parser.eol() ) {
+      content = this.parseUntil( parser, context, [ "eol", "def" ] );
+      output.feed( content );
+
+      if( parser.current.type === "def" ) {
+        this.parseDefCall( parser, context );
+      }
+    }
+  };
+
+  Compiler.prototype.parseCommand = function( parser, context ) {
+    var output = context.get( "output" ),
+      lastToken;
+
+    this.parseLine( parser, context );
+    lastToken = parser.current;
+    parser.skip( "eol" );
+
+    if( this.compareIndentation( parser, context ) > 0 ) {
+      var indentation = parser.current.value;
+      while( parser.current.type === "spaces" && parser.current.value === indentation ) {
+        parser.next();
+        if( parser.current.type === "+" ) parser.next();
+        else output.feed( " " );
+        this.parseLine( parser, context );
+        lastToken = parser.current;
+        parser.skip( "eol" );
+      }
+    }
+
+    if( lastToken.type === "eol" ) output.flush();
   };
 
   Compiler.prototype.parseCommandBlock = function( parser, context ) {
@@ -268,7 +416,7 @@ define( [
       parser.restore();
     }
 
-    commandBlock.command = this.parseCommand( parser, context );
+    this.parseCommand( parser, context );
 
     return commandBlock;
   };
@@ -279,28 +427,46 @@ define( [
     this.parseSection( parser, context );
   };
 
-  Compiler.prototype.parseSection = function( parser, context ) {
-    var mode = context.get( "mode" ),
-      output = context.get( "output" ),
-      currentIndentation = context.get( "indentation" ),
-      token = parser.current;
+  Compiler.prototype.prepareScope = function( parser, context ) {
+    var scope = context.get( "scope" ),
+      comp;
+    parser.save();
 
     while( ! parser.eos() ) {
-      token = parser.current;
+      comp = this.compareIndentation( parser, context );
+      if( comp === 0 && parser.current.type === "spaces" ) parser.next();
+      else if( comp < 0 ) break;
 
+      if( parser.current.type === "keyword" && parser.current.value === "def" ) {
+        var def = this.parseDefDeclaration( parser, context );
+        scope.setDef( def.name, def );
+        continue;
+      }
+
+      parser.skipUntil( "eol" );
+      parser.skip( "eol" );
+    }
+
+    parser.restore();
+  };
+
+  Compiler.prototype.parseSection = function( parser, context ) {
+    var mode = context.get( "mode" ),
+      output = context.get( "output" );
+
+    this.prepareScope( parser, context );
+
+    var token, comp;
+    while( ! parser.eos() ) {
       // Indentation checking
-      if( token.type === "spaces" ) {
-        var comp = compareStrLength( token.value, currentIndentation );
-        if( comp < 0 ) break;
-        else if( comp > 0 ) {
-          throw new CSError( "INCORRECT_INDENTATION", token );
-        }
-        parser.next();
-        token = parser.current;
+      comp = this.compareIndentation( parser, context );
+      if( comp === 0 && parser.current.type === "spaces" ) parser.next();
+      else if( comp < 0 ) break;
+      else if( comp > 0 ) {
+        throw new CSError( "INCORRECT_INDENTATION", parser.current );
       }
-      else if( currentIndentation !== "" ) {
-        break;
-      }
+
+      token = parser.current;
 
       // Special instructions
       if( mode === "commands" ) {
@@ -314,6 +480,16 @@ define( [
           this.parseInclude( parser, context );
           continue;
         }
+      }
+
+      if( token.type === "keyword" && token.value === "def" ) {
+        parser.skipUntil( "eol" );
+        parser.next();
+        while( this.compareIndentation( parser, context ) > 0 ) {
+          parser.skipUntil( "eol" );
+          parser.next();
+        }
+        continue;
       }
 
       if( token.type === "keyword" && token.value === "var" ) {
@@ -334,17 +510,13 @@ define( [
 
       // Command
       if( mode === "commands" ) {
-        var command = this.parseCommand( parser, context );
-        output.push( command );
+        this.parseCommand( parser, context );
       }
       // CommandBlock
       else if( mode === "chain" ) {
-        var commandBlock = this.parseCommandBlock( parser, context );
-        output.push( commandBlock );
+        this.parseCommandBlock( parser, context );
       }
     }
-
-    console.log( output );
   };
 
   Compiler.prototype.compileChain = function( chain ) {
@@ -379,7 +551,7 @@ define( [
       throw new CSError( "NO_COMMAND" );
     }
 
-    commands.push( "setblock ~ ~-1 ~ command_block 0 replace {auto:1,Command:kill @e[type=MinecartCommandBlock,r=1]}" );
+    commands.push( "setblock ~ ~-1 ~ command_block 0 1 {auto:1,Command:kill @e[type=MinecartCommandBlock,r=1]}" );
 
     for( i = 0, l = commands.length ; i < l ; i++ ) {
       minecarts.push( { id: "MinecartCommandBlock", Command: commands[i] } );

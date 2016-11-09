@@ -28,8 +28,22 @@ define( [
     this.currentBlock.z = this.z;
   };
 
+  Chain.prototype.feed = function( str ) {
+    this.currentBlock.command += str;
+  };
+
+  Chain.prototype.flush = function() {
+    if( this.currentBlock.command !== "" ) {
+      this.push( this.currentBlock );
+    }
+  };
+
   Chain.prototype.push = function( commandBlock ) {
     this.commandBlocks.push( commandBlock );
+    this.next();
+  };
+
+  Chain.prototype.next = function() {
     this.index++;
     this.resetBlock();
   };

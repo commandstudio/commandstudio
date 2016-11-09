@@ -1,12 +1,14 @@
 define( function() {
 
   var errorMessages = {
+    "UNEXPECTED_TOKEN": "Unexpected token \"%type\"",
     "INCORRECT_INDENTATION": "Incorrect indentation",
     "NOT_A_NUMBER": "Not a number \"%value\"",
+    "INCORRECT_NAME": "Incorrect name \"%data\"",
     "UNDECLARED_VAR": "Undeclared variable \"%value\"",
     "UNDEFINED_VAR": "Undefined variable \"%value\"",
-    "UNEXPECTED_TOKEN": "Unexpected token \"%type\"",
-    "INCORRECT_NAME": "Incorrect name \"%data\"",
+    "UNDEFINED_DEF": "Call to undefined def \"%value\"",
+    "TOO_MANY_ARGUMENTS": "Too many arguments on def \"%value\"",
     "NO_COMMAND": "Compilation resulted in no commands",
     "TOO_LONG": "Summon command is too long! (%data characters)"
   };

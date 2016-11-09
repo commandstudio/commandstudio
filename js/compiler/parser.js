@@ -11,22 +11,25 @@ define( [
     { name: "comment", pattern: /\/\// },
 
     { name: ":", pattern: /:/ },
+    { name: ";", pattern: /;/ },
+    { name: "(", pattern: /\(/ },
+    { name: ")", pattern: /\)/ },
+
     { name: "~", pattern: /~/ },
     { name: ".", pattern: /\./ },
-
     { name: "=", pattern: /=/ },
     { name: "+", pattern: /\+/ },
     { name: "-", pattern: /-/ },
 
     { name: "spaces", pattern: /[ \t]+/ },
     { name: "number", pattern: /\d+/ },
-    { name: "keyword", pattern: /(?:chain|include|var)\b/ },
+    { name: "keyword", pattern: /(?:chain|def|include|var)\b/ },
+    { name: "def", pattern: /\^\w+/ },
     { name: "var", pattern: /\$\w+/ }
   ];
 
   function Parser( input ) {
-    if( typeof input === "string" ) this.tokens = this.parseTokens( input );
-    this.pos = 0;
+    this.tokens = typeof input === "string" ? this.parseTokens( input ) : input;
     this.saves = [];
     this.setPos( 0 );
   }
@@ -134,6 +137,10 @@ define( [
     this.setPos( this.pos + 1 );
   };
 
+  Parser.prototype.peek = function() {
+    return this.tokens[ this.pos + 1 ];
+  };
+
   Parser.prototype.require = function( tokenType, tokenValue ) {
     var currentToken = this.current;
     if( currentToken.type !== tokenType || tokenValue != null && currentToken.value !== tokenValue ) {
@@ -150,6 +157,22 @@ define( [
 
   Parser.prototype.skip = function( tokenType ) {
     while( this.current.type === tokenType ) this.next();
+  };
+
+  Parser.prototype.skipUntil = function( tokenType ) {
+    while( this.current.type !== tokenType && this.eos() === false ) this.next();
+  };
+
+  Parser.prototype.readUntil = function( tokenTypes ) {
+    var tokens = [];
+    if( typeof tokenTypes === "string" ) tokenTypes = [ tokenTypes ];
+
+    while( this.eos() === false && tokenTypes.indexOf( this.current.type ) === -1 ) {
+      tokens.push( this.current );
+      this.next();
+    }
+
+    return tokens;
   };
 
   return Parser;

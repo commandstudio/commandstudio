@@ -6,10 +6,9 @@ define( [ "codemirror", "codemirror/addon/mode/simple" ], function( CodeMirror )
       { regex: /`.?/, token: "hr" },
 
       // Commander specific
-      { regex: /(default)(\s+)([01irc\?!]+)/, token: [ "header", null, "quote" ] },
-      { regex: /(?:include|default)\b/, token: "header", sol: true },
-      { regex: /\s*(?:def|chain|var)\b/, token: "header", sol: true },
-      { regex: /\s*([01irc\?!]+)(:)/, token: [ "quote", "operator" ], sol: true },
+      { regex: /(?:chain|default|include)\b/, token: "header", sol: true },
+      { regex: /(\s*)(def|var)\b/, token: [ "quote", "header" ], sol: true },
+      { regex: /(\s+)([01irc\?!]+)(:)/, token: [ null, "quote", "operator" ], sol: true },
 
       // Commander specific
       { regex: /\$\w+/, token: "variable" },
@@ -29,7 +28,7 @@ define( [ "codemirror", "codemirror/addon/mode/simple" ], function( CodeMirror )
 
       // Ponctuation
       { regex: /[\[\]{}\(\)]/, token: "bracket" },
-      { regex: /[\+-/*=%]/, token: "operator" },
+      { regex: /[\+-/*=%;]/, token: "operator" },
       { regex: /:$/, token: "operator", indent: true },
 
       // Pass

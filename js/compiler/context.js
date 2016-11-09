@@ -5,6 +5,10 @@ define( function() {
     this.data = {};
   }
 
+  Context.prototype.push = function() {
+    return new Context( this );
+  };
+
   Context.prototype.set = function( key, value ) {
     this.data[ key ] = value;
   };
