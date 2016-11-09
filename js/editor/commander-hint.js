@@ -28,7 +28,7 @@ define( [
       [ "entitydata", "@e", "dataTag" ],
       [
         "execute", "#selector", "x", "y", "z", [
-          [ "detect", "#block", "dataValue", "#command" ],
+          [ "detect", "x", "y", "z", "#block", "dataValue", "#command" ],
           [ "#command" ]
         ]
       ],
@@ -55,7 +55,7 @@ define( [
       [
         "replaceitem", [
           [ "block", "x", "y", "z", "#slot", "#item", "amount", "dataValue", "dataTag" ],
-          [ "entity", "x", "y", "z", "#slot", "#item", "amount", "dataValue", "dataTag" ]
+          [ "entity", "#selector", "#slot", "#item", "amount", "dataValue", "dataTag" ]
         ]
       ],
       [ "save" ],
