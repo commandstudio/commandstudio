@@ -199,8 +199,6 @@ define( [
     "stat": "*AffectedBlocks|AffectedEntities|AffectedItems|QueryResult|SuccessCount"
   };
 
-  // SCOREBOARD
-
   function textMatch( str1, str2 ) {
     return str2.indexOf( str1 ) === 0;
   }
