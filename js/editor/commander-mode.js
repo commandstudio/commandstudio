@@ -28,8 +28,8 @@ define( [ "codemirror", "codemirror/addon/mode/simple" ], function( CodeMirror )
 
       // Ponctuation
       { regex: /[\[\]{}\(\)]/, token: "bracket" },
-      { regex: /[\+-/*=%;]/, token: "operator" },
-      { regex: /:$/, token: "operator", indent: true },
+      { regex: /[\+-/*=%;:]/, token: "operator" },
+      // { regex: /:$/, token: "operator", indent: true },
 
       // Pass
       { regex: /(?:\w+)/ }

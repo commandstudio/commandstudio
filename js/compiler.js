@@ -139,7 +139,7 @@ define( [
       else if( parser.current.type === "var" ) {
         output += this.parseVarCall( parser, context );
       }
-      else if( trim === true && parser.current.type === "spaces" && untilTypes.indexOf( parser.peek().type ) === -1 ) {
+      else if( parser.current.type === "spaces" && trim === true && untilTypes.indexOf( parser.peek().type ) !== -1 ) {
         parser.next();
       }
       else {
@@ -325,6 +325,7 @@ define( [
     defContext.set( "indentation", "" );
     if( read === true ) {
       defOutput = new Output();
+      defContext.set( "mode", "output" );
       defContext.set( "output", defOutput );
     }
 
@@ -515,6 +516,10 @@ define( [
       // CommandBlock
       else if( mode === "chain" ) {
         this.parseCommandBlock( parser, context );
+      }
+      // Simple output
+      else if( mode === "output" ) {
+        this.parseCommand( parser, context );
       }
     }
   };
