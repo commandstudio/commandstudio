@@ -39,7 +39,7 @@ define( [
     context.set( "mode", "commands" );
     context.set( "output", commandSet );
     context.set( "indentation", "" );
-    context.set( "attr", "" );
+    context.set( "block_attr", "" );
 
     this.parseFile( fileName, context );
 
@@ -184,7 +184,29 @@ define( [
     if( nameRe.test( fileName ) === false ) {
       throw new CSError( "INCORRECT_NAME", includeToken, fileName );
     }
+    else if( typeof this.files[fileName] === "undefined" ) {
+      throw new CSError( "INCLUDE_FAIL", includeToken, fileName );
+    }
     this.parseFile( fileName, context );
+
+    parser.eat( "eol" );
+  };
+
+  Compiler.prototype.parseDefault = function( parser, context ) {
+    var defaultToken, param, value;
+
+    defaultToken = parser.eat( "keyword", "default" );
+    parser.eat( "spaces" );
+    param = this.parseUntil( parser, context, [ "spaces", "eol" ] );
+    parser.eat( "spaces" );
+    value = this.parseUntil( parser, context, [ "spaces", "eol" ] );
+
+    if( param === "block_attr" && attrRe.test( value ) ) {
+      context.set( "block_attr", value );
+    }
+    else {
+      throw new CSError( "INCORRECT_DEFAULT", defaultToken );
+    }
 
     parser.eat( "eol" );
   };
@@ -404,7 +426,7 @@ define( [
     var commandBlock = context.get( "output" ).currentBlock,
       part;
 
-    commandBlock.applyAttr( context.get( "attr" ) );
+    commandBlock.applyAttr( context.get( "block_attr" ) );
 
     parser.save();
     part = this.parseUntil( parser, context, [ "eol", ":" ] );
@@ -490,6 +512,11 @@ define( [
           parser.skipUntil( "eol" );
           parser.next();
         }
+        continue;
+      }
+
+      if( token.type === "keyword" && token.value === "default" ) {
+        this.parseDefault( parser, context );
         continue;
       }
 

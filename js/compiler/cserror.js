@@ -8,6 +8,8 @@ define( function() {
     "UNDECLARED_VAR": "Undeclared variable \"%value\"",
     "UNDEFINED_VAR": "Undefined variable \"%value\"",
     "UNDEFINED_DEF": "Call to undefined def \"%value\"",
+    "INCORRECT_DEFAULT": "Incorrect use of default",
+    "INCLUDE_FAIL": "Failed to include file \"%data\", file not found",
     "TOO_MANY_ARGUMENTS": "Too many arguments on def \"%value\"",
     "NO_COMMAND": "Compilation resulted in no commands",
     "TOO_LONG": "Summon command is too long! (%data characters)"
