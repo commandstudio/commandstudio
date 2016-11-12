@@ -202,7 +202,7 @@ define( [
       operator = parser.current.type;
       parser.next();
       parser.skip( "spaces" );
-      result = CT.numsOp( operator, result, this.parseTerm( parser, context ) );
+      result = CT.numsOp( operator, result, this.parseExpr( parser, context ) );
     }
 
     return result;
