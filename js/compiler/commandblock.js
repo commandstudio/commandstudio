@@ -1,5 +1,5 @@
 define( [
-  "commandtools"
+  "utils/commandtools"
 ], function(
   CT
 ) {

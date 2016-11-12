@@ -1,6 +1,6 @@
 define( [
   "compiler/commandblock",
-  "commandtools"
+  "utils/commandtools"
 ], function(
   CommandBlock,
   CT

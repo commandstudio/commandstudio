@@ -5,7 +5,7 @@ define( [
   "compiler/output",
   "compiler/chain",
   "compiler/cserror",
-  "commandtools"
+  "utils/commandtools"
 ], function(
   Parser,
   Context,
