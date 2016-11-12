@@ -3,6 +3,14 @@ define( [
 ], function(
   CT
 ) {
+  var directionValues = {
+    "-x": 4,
+    "+x": 5,
+    "-y": 0,
+    "+y": 1,
+    "-z": 2,
+    "+z": 3
+  };
 
   function CommandBlock() {
     this.type = "chain_command_block";
@@ -22,7 +30,7 @@ define( [
   };
 
   CommandBlock.prototype.getDataValue = function() {
-    var dataValue = 1;
+    var dataValue = directionValues[ this.direction ];
     if( this.conditional === true ) dataValue += 8;
     return dataValue;
   };

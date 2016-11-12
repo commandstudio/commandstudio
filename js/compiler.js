@@ -17,8 +17,10 @@ define( [
 ) {
 
   var numRe = /^(?:~?-?(?:\.\d+|\d+\.?\d*)|~)$/,
+    numsRe = /^(?:~?-?(?:\.\d+|\d+\.?\d*)|~)(?:[ \t]+(?:~?-?(?:\.\d+|\d+\.?\d*)|~))*$/,
     nameRe = /^\w+$/,
-    attrRe = /^[irc01!\?]+$/;
+    attrRe = /^[irc01!\?]+$/,
+    directionRe = /^[\+-][xyz]$/;
 
   function Compiler() {
     this.files = {};
@@ -40,6 +42,7 @@ define( [
     context.set( "output", commandSet );
     context.set( "indentation", "" );
     context.set( "block_attr", "" );
+    context.set( "chain_direction", "+y" );
 
     this.parseFile( fileName, context );
 
@@ -115,13 +118,49 @@ define( [
     return number;
   };
 
-  Compiler.prototype.parseCoordinates = function( parser ) {
-    var coordinates = {};
-    coordinates.x = this.parseNumber( parser );
-    parser.eat( "spaces" );
-    coordinates.y = this.parseNumber( parser );
-    parser.eat( "spaces" );
-    coordinates.z = this.parseNumber( parser );
+  Compiler.prototype.parseNumbers = function( parser, context, untilTypes ) {
+    var firstToken = parser.current,
+      numbers = [],
+      rawNumbers,
+      buffer = "";
+
+    untilTypes.push( "spaces" );
+
+    buffer = this.parseUntil( parser, context, untilTypes );
+    if( numsRe.test( buffer ) ) {
+      rawNumbers = buffer;
+    }
+    else {
+      throw new CSError( "NOT_A_NUMBER", firstToken );
+    }
+
+    while( parser.current.type === "spaces" ) {
+      parser.save();
+      parser.next();
+      buffer = this.parseUntil( parser, context, untilTypes );
+      if( numsRe.test( buffer ) ) {
+        rawNumbers += " " + buffer;
+        parser.popSave();
+      }
+      else {
+        parser.restore();
+        break;
+      }
+    }
+
+    numbers = rawNumbers.split( /[ \t]+/ );
+
+    return numbers;
+  };
+
+  Compiler.prototype.parseCoordinates = function( parser, context, untilTypes ) {
+    var firstToken = parser.current,
+      coordinates = this.parseNumbers( parser, context, untilTypes );
+
+    if( coordinates.length !== 3 ) {
+      throw new CSError( "INVALID_COORDINATES", firstToken );
+    }
+
     return coordinates;
   };
 
@@ -135,31 +174,47 @@ define( [
     while( untilTypes.indexOf( parser.current.type ) === -1 ) {
       if( parser.current.type === "def" ) {
         output += this.parseDefCall( parser, context, true );
+        continue;
       }
-      else if( parser.current.type === "var" ) {
+      if( parser.current.type === "var" ) {
         output += this.parseVarCall( parser, context );
+        continue;
       }
-      else if( parser.current.type === "spaces" && trim === true && untilTypes.indexOf( parser.peek().type ) !== -1 ) {
+      if( parser.current.type === "spaces" && trim === true && untilTypes.indexOf( parser.peek().type ) !== -1 ) {
         parser.next();
+        continue;
       }
-      else {
-        output += parser.current.value;
-        parser.next();
-      }
+
+      output += parser.current.value;
+      parser.next();
     }
 
     return output;
   };
 
   Compiler.prototype.parseChain = function( parser, context ) {
-    parser.eat( "keyword", "chain" );
+    var coordinates,
+      direction = context.get( "chain_direction" ),
+      chainToken = parser.eat( "keyword", "chain" );
     parser.eat( "spaces" );
-    var coordinates = this.parseCoordinates( parser, context );
+
+    coordinates = this.parseCoordinates( parser, context, [ ":", ",", "eol" ] );
+
     parser.skip( "spaces" );
+    if( parser.current.type === "," ) {
+      parser.next();
+      parser.skip( "spaces" );
+
+      direction = this.parseUntil( parser, context, [ ":", ",", "eol" ] );
+      if( directionRe.test( direction ) === false ) {
+        throw new CSError( "INVALID_DIRECTION", chainToken );
+      }
+    }
+
     parser.eat( ":" );
     parser.eat( "eol" );
 
-    var chain = new Chain( coordinates ),
+    var chain = new Chain( coordinates, direction ),
       chainContext = context.push(),
       chainScope = context.get( "scope" ).push();
 
@@ -203,6 +258,9 @@ define( [
 
     if( param === "block_attr" && attrRe.test( value ) ) {
       context.set( "block_attr", value );
+    }
+    else if( param === "chain_direction" && directionRe.test( value ) ) {
+      context.set( "chain_direction", value );
     }
     else {
       throw new CSError( "INCORRECT_DEFAULT", defaultToken );
@@ -557,7 +615,7 @@ define( [
 
     for( var i = 0, l = chain.commandBlocks.length ; i < l ; i++ ) {
       commandBlock = chain.commandBlocks[i];
-      command = "setblock " + commandBlock.x + " " + commandBlock.y + " " + commandBlock.z + " ";
+      command = "setblock " + commandBlock.position.join( " " ) + " ";
       command += commandBlock.type + " " + commandBlock.getDataValue() + " replace " + commandBlock.getDataTag();
       output.push( command );
     }

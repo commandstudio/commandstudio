@@ -10,16 +10,19 @@ define( [
 
     { name: "comment", pattern: /\/\// },
 
+    { name: ".", pattern: /\./ },
+    { name: ",", pattern: /,/ },
     { name: ":", pattern: /:/ },
     { name: ";", pattern: /;/ },
     { name: "(", pattern: /\(/ },
     { name: ")", pattern: /\)/ },
 
     { name: "~", pattern: /~/ },
-    { name: ".", pattern: /\./ },
     { name: "=", pattern: /=/ },
     { name: "+", pattern: /\+/ },
     { name: "-", pattern: /-/ },
+    { name: "*", pattern: /\*/ },
+    { name: "/", pattern: /\// },
 
     { name: "spaces", pattern: /[ \t]+/ },
     { name: "number", pattern: /\d+/ },

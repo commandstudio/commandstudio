@@ -6,26 +6,32 @@ define( [
   CT
 ) {
 
-  function Chain( position ) {
+  function Chain( position, direction ) {
     this.commandBlocks = [];
     this.index = 0;
 
-    this.x = position.x;
-    this.y = position.y;
-    this.z = position.z;
+    this.position = position;
+    this.direction = direction;
 
-    if( this.y[0] === "~" ) {
-      this.y = CT.op( "-", this.y, "3" );
+    if( this.position[1][0] === "~" ) {
+      this.position[1] = CT.numOp( "-", this.position[1], "3" );
     }
 
     this.resetBlock();
   }
 
+  Chain.prototype.currentRelative = function() {
+    return CT.numsOp( "*", [ this.index, this.index, this.index ], CT.relativeDirections[ this.direction ] );
+  };
+
+  Chain.prototype.currentPosition = function() {
+    return CT.numsOp( "+", this.position, this.currentRelative() );
+  };
+
   Chain.prototype.resetBlock = function() {
     this.currentBlock = new CommandBlock();
-    this.currentBlock.x = this.x;
-    this.currentBlock.y = CT.op( "+", this.y, this.index );
-    this.currentBlock.z = this.z;
+    this.currentBlock.position = this.currentPosition();
+    this.currentBlock.direction = this.direction;
   };
 
   Chain.prototype.feed = function( str ) {

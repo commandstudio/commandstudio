@@ -1,6 +1,15 @@
 define( [ "utils/scanner" ], function( Scanner ) {
   var CT = {};
 
+  CT.relativeDirections = {
+    "-x": [ -1, 0, 0 ],
+    "+x": [ 1, 0, 0 ],
+    "-y": [ 0, -1, 0 ],
+    "+y": [ 0, 1, 0 ],
+    "-z": [ 0, 0, -1 ],
+    "+z": [ 0, 0, 1 ]
+  };
+
   CT.serialize = function( data ) {
     var serialized = "",
       elements = [];
@@ -54,7 +63,7 @@ define( [ "utils/scanner" ], function( Scanner ) {
     return serialized;
   };
 
-  CT.op = function( operator, n1, n2 ) {
+  CT.numOp = function( operator, n1, n2 ) {
     var n1Relative = n1[0] === "~",
       n2Relative = n2[0] === "~",
       n1Value = +( n1Relative ? n1.substr( 1 ) : n1 ),
@@ -80,105 +89,15 @@ define( [ "utils/scanner" ], function( Scanner ) {
     return result;
   };
 
-  CT.summonPiles = function( blockPiles, options ) {
-    var mainPile, eraseBlocks = 0;
-
-    blockPiles.forEach( function( blockPile ) {
-      var pileLength = blockPile.blocks.length;
-      if( blockPile.position === null ) {
-        mainPile = blockPile;
-      } else {
-        if( pileLength > 0 ) {
-          var blockPilePosition = blockPile.position,
-            isHeightRelative =  blockPilePosition.match( /(?:~?-?\d+|~)\s+(?:~-?\d+|~)\s+(?:~?-?\d+|~)/ );
-
-          if( isHeightRelative ) blockPilePosition = CT.addCoordinates( blockPilePosition, "0 " + ( -1 - mainPile.blocks.length ) + " 0" );
-
-          var fillEnd = CT.addCoordinates( blockPilePosition, "0 " + ( pileLength + 2 ) + " 0" );
-
-          mainPile.blocks.push( { Block: "command_block", TileEntityData: { Command: "fill " + blockPilePosition + " " + fillEnd + " air", auto: "1b" } } );
-          var firstBlock = blockPile.blocks[0],
-            firstBlockType = firstBlock.Block,
-            firstBlockData = firstBlock.TileEntityData;
-
-          if( isHeightRelative ) blockPilePosition = CT.addCoordinates( blockPilePosition, "0 -1 0" );
-          mainPile.blocks.push( { Block: "command_block", TileEntityData: { Command: "setblock " + blockPilePosition + " " + firstBlockType + " 1 keep " + CT.serialize( firstBlockData ), auto: "1b" } } );
-          eraseBlocks += 2;
-        }
-        if( pileLength > 1 ) {
-          var summonPosition = CT.addCoordinates( blockPilePosition, "0 2 0" );
-          if( isHeightRelative ) summonPosition = CT.addCoordinates( summonPosition, "0 -1 0" );
-
-          var summonPile = { position: summonPosition, blocks: blockPile.blocks.splice( 1 ) };
-          mainPile.blocks.push( { Block: "command_block", TileEntityData: { Command: CT.summonPile( summonPile, options ), auto: "1b" } } );
-          eraseBlocks += 1;
-        }
-      }
-    } );
-
-    if( eraseBlocks > 0 ) {
-      var fillEnd = "~ ~-" + eraseBlocks + " ~";
-      mainPile.blocks.push( { Block: "command_block", TileEntityData: { Command: "fill ~ ~ ~ " + fillEnd + " air", auto: "1b" } } );
-    }
-
-    return CT.summonPile( mainPile, options );
-  };
-
-  CT.summonPile = function( blockPile, options ) {
-    var pilePosition = blockPile.position,
-      rootEntity,
-      lastEntity;
-
-    var entityNames;
-
-    if( options.useOldEntityNames === true ) {
-      entityNames = {
-        "falling_block": "FallingSand"
-      };
-    }
-    else {
-      entityNames = {
-        "falling_block": "falling_block"
-      };
-    }
-
-    if( pilePosition === null ) {
-      pilePosition = "~ ~2 ~";
-    }
-
-    blockPile.blocks.forEach( function( block, i ) {
-      block.Time = 1;
-      if( i > 0 ) {
-        block.id = entityNames.falling_block;
-        lastEntity.Passengers = [ block ];
-      }
-      else {
-        rootEntity = block;
-      }
-      lastEntity = block;
-    } );
-
-    var command = "summon " + entityNames.falling_block + " " + pilePosition + " " + CT.serialize( rootEntity );
-
-    return command;
-  };
-
-  CT.addCoordinates = function( c1, c2 ) {
-    var match1 = c1.match( /(~?-?\d+|~)\s+(~?-?\d+|~)\s+(~?-?\d+|~)/ ),
-      match2 = c2.match( /(~?-?\d+|~)\s+(~?-?\d+|~)\s+(~?-?\d+|~)/ ),
-      finalCoords = [],
-      i = 3,
-      s1, i1, i2;
+  CT.numsOp = function( operator, n1, n2 ) {
+    var result = [],
+      i = n1.length;
 
     while( i-- ) {
-      s1 = match1[i + 1];
-      i1 = +s1.replace( /~/, "" );
-      i2 = +match2[i + 1].replace( /~/, "" );
-      finalCoords[ i ] = i1 + i2;
-      if( s1.match( /~/ ) ) finalCoords[i] = "~" + finalCoords[i];
+      result[i] = CT.numOp( operator, n1[i], n2[i] );
     }
 
-    return finalCoords.join( " " );
+    return result;
   };
 
   return CT;

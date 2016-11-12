@@ -10,6 +10,8 @@ define( function() {
     "UNDEFINED_DEF": "Call to undefined def \"%value\"",
     "INCORRECT_DEFAULT": "Incorrect use of default",
     "INCLUDE_FAIL": "Failed to include file \"%data\", file not found",
+    "INVALID_COORDINATES": "Invalid coordinates",
+    "INVALID_DIRECTION": "Invalid direction",
     "TOO_MANY_ARGUMENTS": "Too many arguments on def \"%value\"",
     "NO_COMMAND": "Compilation resulted in no commands",
     "TOO_LONG": "Summon command is too long! (%data characters)"
