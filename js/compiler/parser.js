@@ -16,6 +16,7 @@ define( [
     { name: ";", pattern: /;/ },
     { name: "(", pattern: /\(/ },
     { name: ")", pattern: /\)/ },
+    { name: "|", pattern: /\|/ },
 
     { name: "~", pattern: /~/ },
     { name: "=", pattern: /=/ },
@@ -23,6 +24,7 @@ define( [
     { name: "-", pattern: /-/ },
     { name: "*", pattern: /\*/ },
     { name: "/", pattern: /\// },
+    { name: "%", pattern: /%/ },
 
     { name: "spaces", pattern: /[ \t]+/ },
     { name: "number", pattern: /\d+/ },

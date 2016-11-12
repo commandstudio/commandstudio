@@ -20,7 +20,10 @@ define( [
     numsRe = /^(?:~?-?(?:\.\d+|\d+\.?\d*)|~)(?:[ \t]+(?:~?-?(?:\.\d+|\d+\.?\d*)|~))*$/,
     nameRe = /^\w+$/,
     attrRe = /^[irc01!\?]+$/,
-    directionRe = /^[\+-][xyz]$/;
+    directionRe = /^[\+-][xyz]$/,
+
+    termOperators = [ "*", "/", "%" ],
+    exprOperators = [ "+", "-" ];
 
   function Compiler() {
     this.files = {};
@@ -122,9 +125,15 @@ define( [
     var firstToken = parser.current,
       numbers = [],
       rawNumbers,
-      buffer = "";
+      buffer = "",
+      untilSpaces = false;
 
-    untilTypes.push( "spaces" );
+    if( untilTypes.indexOf( "spaces" ) === -1 ) {
+      untilTypes.push( "spaces" );
+    }
+    else {
+      untilSpaces = true;
+    }
 
     buffer = this.parseUntil( parser, context, untilTypes );
     if( numsRe.test( buffer ) ) {
@@ -134,7 +143,7 @@ define( [
       throw new CSError( "NOT_A_NUMBER", firstToken );
     }
 
-    while( parser.current.type === "spaces" ) {
+    while( untilSpaces === false && parser.current.type === "spaces" ) {
       parser.save();
       parser.next();
       buffer = this.parseUntil( parser, context, untilTypes );
@@ -164,14 +173,86 @@ define( [
     return coordinates;
   };
 
+  Compiler.prototype.parseFactor = function( parser, context ) {
+    var result;
+
+    if( parser.current.type === "(" ) {
+      result = this.parseOperation( parser, context );
+    }
+    else if( parser.current.type === "|" ) {
+      parser.next();
+      parser.skip( "spaces" );
+      result = this.parseNumbers( parser, context, [ "|", "eol" ] );
+      parser.skip( "spaces" );
+      parser.eat( "|" );
+    }
+    else {
+      result = this.parseNumbers( parser, context, [ "spaces", "eol", "+", "-", "*", "/", "%", ")" ] );
+    }
+
+    return result;
+  };
+
+  Compiler.prototype.parseExpr = function( parser, context ) {
+    var result = this.parseTerm( parser, context ),
+      operator;
+    parser.skip( "spaces" );
+
+    if( exprOperators.indexOf( parser.current.type ) !== -1 ) {
+      operator = parser.current.type;
+      parser.next();
+      parser.skip( "spaces" );
+      result = CT.numsOp( operator, result, this.parseTerm( parser, context ) );
+    }
+
+    return result;
+  };
+
+  Compiler.prototype.parseTerm = function( parser, context ) {
+    var result = this.parseFactor( parser, context ),
+      operator;
+    parser.skip( "spaces" );
+
+    if( termOperators.indexOf( parser.current.type ) !== -1 ) {
+      operator = parser.current.type;
+      parser.next();
+      parser.skip( "spaces" );
+      result = CT.numsOp( operator, result, this.parseTerm( parser, context ) );
+    }
+
+    return result;
+  };
+
+  Compiler.prototype.parseOperation = function( parser, context ) {
+    var result;
+    parser.eat( "(" );
+    parser.skip( "spaces" );
+    result = this.parseExpr( parser, context );
+    parser.skip( "spaces" );
+    parser.eat( ")" );
+    return result;
+  };
+
   Compiler.prototype.parseUntil = function( parser, context, untilTypes, trim ) {
-    var output = "";
+    var output = "",
+      token;
     trim = trim != null ? trim : false;
 
     if( typeof untilTypes === "string" ) untilTypes = [ untilTypes ];
     untilTypes.push( "eos" );
 
     while( untilTypes.indexOf( parser.current.type ) === -1 ) {
+      if( parser.current.type === "(" ) {
+        token = parser.current;
+        try {
+          output += this.parseOperation( parser, context ).join( " " );
+        }
+        catch( exception ) {
+          if( typeof exception === "string" ) throw new CSError( exception, token );
+          throw exception;
+        }
+        continue;
+      }
       if( parser.current.type === "def" ) {
         output += this.parseDefCall( parser, context, true );
         continue;

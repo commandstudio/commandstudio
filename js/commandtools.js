@@ -80,6 +80,7 @@ define( [ "utils/scanner" ], function( Scanner ) {
       result += n1Value * n2Value;
     }
     else if( operator === "/" ) {
+      if( n2Value === 0 ) throw "DIVISION_BY_ZERO";
       result += n1Value / n2Value;
     }
     else if( operator === "%" ) {
@@ -93,8 +94,18 @@ define( [ "utils/scanner" ], function( Scanner ) {
     var result = [],
       i = n1.length;
 
-    while( i-- ) {
-      result[i] = CT.numOp( operator, n1[i], n2[i] );
+    if( n1.length === n2.length ) {
+      while( i-- ) {
+        result[i] = CT.numOp( operator, n1[i], n2[i] );
+      }
+    }
+    else if( n2.length === 1 ) {
+      while( i-- ) {
+        result[i] = CT.numOp( operator, n1[i], n2[0] );
+      }
+    }
+    else {
+      throw "INVALID_OPERATION";
     }
 
     return result;
