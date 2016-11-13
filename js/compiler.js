@@ -16,8 +16,8 @@ define( [
   CT
 ) {
 
-  var numRe = /^(?:~?-?(?:\.\d+|\d+\.?\d*)|~)$/,
-    numsRe = /^(?:~?-?(?:\.\d+|\d+\.?\d*)|~)(?:[ \t]+(?:~?-?(?:\.\d+|\d+\.?\d*)|~))*$/,
+  var numRe = /^(?:~?[\+-]?(?:\.\d+|\d+\.?\d*)|~)$/,
+    numsRe = /^(?:~?[\+-]?(?:\.\d+|\d+\.?\d*)|~)(?:[ \t]+(?:~?[\+-]?(?:\.\d+|\d+\.?\d*)|~))*$/,
     nameRe = /^\w+$/,
     attrRe = /^[irc01!\?]+$/,
     directionRe = /^[\+-][xyz]$/,
@@ -233,41 +233,48 @@ define( [
     return result;
   };
 
+  Compiler.prototype.parseValue = function( parser, context ) {
+    var output, token;
+
+    if( parser.current.type === "(" ) {
+      token = parser.current;
+      try {
+        output = this.parseOperation( parser, context ).join( " " );
+      }
+      catch( exception ) {
+        if( typeof exception === "string" ) throw new CSError( exception, token );
+        throw exception;
+      }
+    }
+    else if( parser.current.type === "def" ) {
+      output = this.parseDefCall( parser, context, true );
+    }
+    else if( parser.current.type === "var" ) {
+      output = this.parseVarCall( parser, context );
+    }
+    else {
+      output =  parser.current.value;
+      parser.next();
+    }
+
+    return output;
+  };
+
   Compiler.prototype.parseUntil = function( parser, context, untilTypes, trim ) {
-    var output = "",
-      token;
+    var output = "";
     trim = trim != null ? trim : false;
 
     if( typeof untilTypes === "string" ) untilTypes = [ untilTypes ];
     untilTypes.push( "eos" );
 
     while( untilTypes.indexOf( parser.current.type ) === -1 ) {
-      if( parser.current.type === "(" ) {
-        token = parser.current;
-        try {
-          output += this.parseOperation( parser, context ).join( " " );
-        }
-        catch( exception ) {
-          if( typeof exception === "string" ) throw new CSError( exception, token );
-          throw exception;
-        }
-        continue;
-      }
-      if( parser.current.type === "def" ) {
-        output += this.parseDefCall( parser, context, true );
-        continue;
-      }
-      if( parser.current.type === "var" ) {
-        output += this.parseVarCall( parser, context );
-        continue;
-      }
+
       if( parser.current.type === "spaces" && trim === true && untilTypes.indexOf( parser.peek().type ) !== -1 ) {
         parser.next();
         continue;
       }
 
-      output += parser.current.value;
-      parser.next();
+      output += this.parseValue( parser, context );
     }
 
     return output;

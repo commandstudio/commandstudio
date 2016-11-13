@@ -15,7 +15,7 @@ define( [
     this.$fileInput = $( ".ui-fileInput" );
     this.$editor = $( ".ui-editor" );
     this.$output = $( ".ui-output" );
-    this.editor = CodeMirror( this.$editor[0], {
+    this.editor = CodeMirror( this.$editor.get( 0 ), {
       mode: "commander",
       theme: "lesser-dark",
       lineWrapping: false,
@@ -23,6 +23,15 @@ define( [
       matchBrackets: true,
       tabSize: 2,
       extraKeys: {
+        "Enter": function( cm ) {
+          if( cm.somethingSelected() === false && cm.listSelections().length === 1 && cm.getTokenAt( cm.getCursor() ).string === ":" ) {
+            cm.execCommand( "newlineAndIndent" );
+            cm.execCommand( "indentMore" );
+          }
+          else {
+            cm.execCommand( "newlineAndIndent" );
+          }
+        },
         "Tab": function( cm ) {
           if ( cm.somethingSelected() ) {
             cm.execCommand( "indentMore" );
@@ -32,6 +41,8 @@ define( [
           }
         },
         "Shift-Tab": "indentLess",
+        "Ctrl-D": "selectNextOccurrence",
+        "Shift-Ctrl-D": "duplicateLine",
         "Ctrl-Space": "autocomplete"
       }
     } );
