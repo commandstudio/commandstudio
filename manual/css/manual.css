@@ -18,7 +18,8 @@ body {
 
 h1 {
   font-size:36px;
-  margin:50px 0;
+  line-height: 1.2;
+  margin:80px 0 40px;
   color:#dadada;
   padding-bottom:20px;
   font-weight: 600;
@@ -29,11 +30,20 @@ h1 {
 
 h2 {
   font-size:24px;
+  line-height: 1.2;
   letter-spacing: -1px;
-  margin:50px 0 20px;
+  margin:40px 0 30px;
   color:#dadada;
   font-weight: 600;
   text-shadow:0 2px 0 #000;
+}
+
+h3 {
+  font-size:18px;
+  line-height: 1.2;
+  margin:30px 0 20px;
+  color:#dadada;
+  font-weight: 600;
 }
 
 p {
@@ -41,24 +51,70 @@ p {
   line-height:1.5;
 }
 
-/* Blocks */
-
-.header-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 500px;
-  background-color: #3D6C20;
-  border-bottom: 10px #4e7d30 solid;
-  box-shadow:inset 0 -150px 150px -150px rgba(0,0,0,.4);
+a, a:hover, a:visited {
+  color: #fff;
+  text-decoration: underline;
 }
 
-.wrapper {
-  margin-left: auto;
-  margin-right: auto;
-  padding:50px;
-  max-width:1040px;
+a:hover {
+  text-decoration: none;
+}
+
+/* Layout */
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 250px;
+  background-color: #1d1d1d;
+  border-right: 1px #565656 solid;
+}
+
+.logo {
+  padding: 50px 0;
+  text-align: center;
+  background-color: #222;
+  border-bottom: 1px #565656 solid;
+}
+
+.logo-img img {
+  height: 100px;
+}
+
+.logo-text {
+  margin-top: 10px;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: -.05em;
+  font-size: 18px;
+  text-shadow: 0 1px 0 #696969;
+}
+
+.menu a {
+  display: block;
+  padding: 20px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.menu a:hover {
+  background-color: #222;
+}
+
+.content {
+  margin-left: 250px;
+  padding: 50px;
+}
+
+.content :first-child {
+  margin-top: 0;
+}
+
+.content p {
+  max-width: 800px;
+  text-align: justify;
 }
 
 .manual {
@@ -70,6 +126,8 @@ p {
   background-color: #262626;
   box-shadow: 0 0 50px rgba(0,0,0,.2);
 }
+
+/* Blocks */
 
 .table {
   border-collapse:collapse;
@@ -93,13 +151,73 @@ p {
   border-bottom: none;
 }
 
-.code {
-  border-left: 2px #333 solid;
+.example {
+  margin: 20px 0 30px;
+  border: 1px #444 solid;
+}
+
+.example-title {
   padding: 10px;
+  font-weight: bold;
+  background-color: #262626;
+  color: #eee;
+  border: 0 #444 solid;
+  border-width: 1px 0;
+}
+
+.example-title:first-child {
+  border-top: 0;
+}
+
+.example-content {
+  padding: 20px;
+  background-color: #1f1f1f;
 }
 
 .code .CodeMirror {
   height:auto;
+  background-color: #1f1f1f;
+}
+
+.code .CodeMirror-lines, .code .CodeMirror-line {
+  padding: 0;
+}
+
+.output {
+  line-height: 1.3;
+}
+
+.clip {
+  position: relative;
+  display: inline-block;
+}
+
+.clip::before {
+  content: "GIF";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  background-color: #1f1f1f;
+  text-align: center;
+  color: #eee;
+  border: 3px #999 dashed;
+  font-weight: 600;
+  font-size: 20px;
+  box-shadow: 0 0 30px rgba(165, 165, 165, 0.18);
+}
+
+.clip:hover::before {
+  display: none;
+}
+
+.command {
+  font-family: monospace;
+  color: #EBEFE7;
 }
 
 .manual p [class^="cm-"] {
@@ -124,22 +242,12 @@ p {
   color: #72B248;
 }
 
-.modifiers td:first-child {
-  text-align:center;
-  font-family:monospace;
-}
-
-.commandPile {
-  border-left: 2px #333 solid;
-  padding: 15px;
-  font-family:monospace;
-}
-
 .char {
-  padding: 5px;
-  background-color: #101010;
-  color: #e4e4e4;
+  padding: 3px 4px;
   font-family:monospace;
+  background-color: #171717;
+  color: #eee;
+  border: 1px #444 solid;
 }
 
 b {
@@ -169,22 +277,29 @@ b:hover:after {
   display:block;
 }
 
-.b-i { background-image:url(../images/blocks/impulse-down.png); }
+.b-i { background-image:url(../img/blocks/impulse-down.png); }
 .b-i:after { content:"Impulse Command Block"; }
-.b-ic { background-image:url(../images/blocks/impulse-conditional-down.png); }
+.b-ic { background-image:url(../img/blocks/impulse-conditional-down.png); }
 .b-ic:after { content:"Conditional Impulse Command Block"; }
-.b-c { background-image:url(../images/blocks/chain-down.png); }
+.b-c { background-image:url(../img/blocks/chain-down.png); }
 .b-c:after { content:"Chain Command Block"; }
-.b-cc { background-image:url(../images/blocks/chain-conditional-down.png); }
+.b-cc { background-image:url(../img/blocks/chain-conditional-down.png); }
 .b-cc:after { content:"Conditional Chain Command Block"; }
-.b-r { background-image:url(../images/blocks/repeating-down.png); }
+.b-r { background-image:url(../img/blocks/repeating-down.png); }
 .b-r:after { content:"Repeating Command Block"; }
-.b-rc { background-image:url(../images/blocks/repeating-conditional-down.png); }
+.b-rc { background-image:url(../img/blocks/repeating-conditional-down.png); }
 .b-rc:after { content:"Conditional Repeating Command Block"; }
-.b-0 { background-image:url(../images/blocks/redstone-torch-off.png); }
+.b-0 { background-image:url(../img/blocks/redstone-lamp-off.png); }
 .b-0:after { content:"Needs redstone"; }
-.b-1 { background-image:url(../images/blocks/redstone-torch-on.png); }
+.b-1 { background-image:url(../img/blocks/redstone-lamp-on.png); }
 .b-1:after { content:"Always active"; }
+
+/* Specific */
+
+.attributes td:first-child {
+  text-align:center;
+  font-family:monospace;
+}
 
 /* Helpers */
 

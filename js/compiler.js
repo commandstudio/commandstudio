@@ -712,9 +712,12 @@ define( [
   };
 
   Compiler.prototype.compileCommands = function( input ) {
-    var commands = [],
+    var entityNames = CT.entityNames[ this.options.useOldEntityNames === false ? "current" : "old" ],
+      commands = [],
       minecarts = [],
       i, l;
+
+    console.log( this.options );
 
     for( i = 0, l = input.length ; i < l ; i++ ) {
       if( typeof input[i] === "string" ) {
@@ -729,10 +732,14 @@ define( [
       throw new CSError( "NO_COMMAND" );
     }
 
-    commands.push( "setblock ~ ~-1 ~ command_block 0 1 {auto:1,Command:kill @e[type=MinecartCommandBlock,r=1]}" );
+    if( this.options.resetCommandBlock === true ) {
+      commands.push( "blockdata ~ ~-3 ~ {Command:,auto:0}" );
+    }
+
+    commands.push( "setblock ~ ~-1 ~ command_block 0 1 {auto:1,Command:kill @e[type=" + entityNames["commandblock_minecart"] + ",r=1]}" );
 
     for( i = 0, l = commands.length ; i < l ; i++ ) {
-      minecarts.push( { id: "MinecartCommandBlock", Command: commands[i] } );
+      minecarts.push( { id: entityNames["commandblock_minecart"], Command: commands[i] } );
     }
 
     var root = {
@@ -740,11 +747,11 @@ define( [
       TileEntityData: { Command: "fill ~ ~ ~ ~ ~2 ~ air" },
       Time: 1,
       Passengers: [ {
-        id: "FallingSand",
+        id: entityNames["falling_block"],
         Block: "redstone_block",
         Time: 1,
         Passengers: [ {
-          id: "FallingSand",
+          id: entityNames["falling_block"],
           Block: "activator_rail",
           Time: 1,
           Passengers: minecarts
@@ -752,7 +759,7 @@ define( [
       } ]
     };
 
-    var summonCommand = "summon FallingSand ~ ~.6 ~ " + CT.serialize( root );
+    var summonCommand = "summon " + entityNames["falling_block"] + " ~ ~.6 ~ " + CT.serialize( root );
 
     return summonCommand;
   };

@@ -4,7 +4,10 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
     this.ui = new UI();
     this.compiler = new Compiler();
 
-    this.options = { useOldEntityNames: true };
+    this.options = {
+      useOldEntityNames: true,
+      resetCommandBlock: true
+    };
     this.loadOptions();
 
     var projectSave = this.load( "commandstudio-project" );
@@ -103,6 +106,7 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
       ui.popin.show( "options", {
         "action:save": function() {
           app.options.useOldEntityNames = this.$popin.find( "#option-useOldEntityNames" ).prop( "checked" );
+          app.options.resetCommandBlock = this.$popin.find( "#option-resetCommandBlock" ).prop( "checked" );
           app.saveOptions();
           this.hide();
         }

@@ -10,6 +10,17 @@ define( [ "utils/scanner" ], function( Scanner ) {
     "+z": [ 0, 0, 1 ]
   };
 
+  CT.entityNames = {
+    "current": {
+      "falling_block": "falling_block",
+      "commandblock_minecart": "commandblock_minecart"
+    },
+    "old": {
+      "falling_block": "FallingSand",
+      "commandblock_minecart": "MinecartCommandBlock"
+    }
+  };
+
   CT.serialize = function( data ) {
     var serialized = "",
       elements = [];
