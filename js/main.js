@@ -16,6 +16,7 @@ require( [
   "vendor/requirejs/domReady",
   "editor/commander-mode",
   "editor/commander-hint",
+  "codemirror/keymap/sublime",
   "codemirror/addon/edit/matchbrackets"
 ], function ( App, domReady ) {
   domReady( function () {

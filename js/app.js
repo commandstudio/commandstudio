@@ -1,10 +1,30 @@
 define( [ "ui", "compiler" ], function( UI, Compiler ) {
 
+  function compareVersions( v1, v2 ) {
+    var v1parts = v1.split( "." ),
+      v2parts = v2.split( "." );
+
+    if( v1 === v2 ) return 0;
+    else {
+      for( var i = 0, l = Math.min( v1parts.length, v2parts.length ) ; i < l ; i++ ) {
+        if( +v1parts[i] > +v2parts[i] ) return 1;
+        else if( +v1parts[i] > +v2parts[i] ) return -1;
+      }
+      if( v1parts.length > v2parts.length ) return 1;
+      else return -1;
+    }
+  }
+
   function App() {
+    this.version = "0.2";
+
     this.ui = new UI();
     this.compiler = new Compiler();
 
-    this.options = { useOldEntityNames: true };
+    this.options = {
+      useOldEntityNames: false,
+      resetCommandBlock: true
+    };
     this.loadOptions();
 
     var projectSave = this.load( "commandstudio-project" );
@@ -14,6 +34,7 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
       this.ui.newFile( "new_file" );
     }
 
+    this.checkVersion();
     this.initEvents();
   }
 
@@ -29,7 +50,12 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
         ui.setOutput( command );
         ui.selectOutput();
       } catch( exception ) {
-        ui.setOutput( exception );
+        if( exception.name === "CSError" ) {
+          ui.setOutput( exception.toString() );
+        }
+        else {
+          throw exception;
+        }
       }
     } );
 
@@ -93,11 +119,16 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
       ui.popin.show( "about" );
     } );
 
+    ui.events.on( "toolbar.app-changelog", function() {
+      ui.popin.show( "changelog" );
+    } );
+
     ui.events.on( "toolbar.app-options", function() {
 
       ui.popin.show( "options", {
         "action:save": function() {
           app.options.useOldEntityNames = this.$popin.find( "#option-useOldEntityNames" ).prop( "checked" );
+          app.options.resetCommandBlock = this.$popin.find( "#option-resetCommandBlock" ).prop( "checked" );
           app.saveOptions();
           this.hide();
         }
@@ -150,6 +181,16 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
 
   App.prototype.saveOptions = function() {
     this.save( "options", this.options );
+  };
+
+  App.prototype.checkVersion = function() {
+    var lastLoadedVersion = this.load( "last-loaded-version" );
+    if( lastLoadedVersion === null ) lastLoadedVersion = "0.1.2";
+
+    if( compareVersions( this.version, lastLoadedVersion ) === 1 ) {
+      this.ui.popin.show( "changelog" );
+      this.save( "last-loaded-version", this.version );
+    }
   };
 
   return App;

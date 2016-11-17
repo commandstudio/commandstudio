@@ -24,13 +24,13 @@
   <div class="ui-dropdown ui-toolbar-item">
     <span class="ui-dropdown-label"><i class="fa fa-file"></i> Project</span>
     <div class="ui-dropdown-hover">
-      <div class="ui-dropdown-item ui-action" data-command="project-new">New Project</div>
-      <div class="ui-dropdown-item ui-action" data-command="project-import">Import Project</div>
-      <div class="ui-dropdown-item ui-action" data-command="project-export">Export Project</div>
-      <div class="ui-dropdown-separator"></div>
       <div class="ui-dropdown-item ui-action" data-command="file-new">New File</div>
       <div class="ui-dropdown-item ui-action" data-command="file-rename">Rename File</div>
       <div class="ui-dropdown-item ui-action" data-command="file-delete">Delete File</div>
+      <div class="ui-dropdown-separator"></div>
+      <div class="ui-dropdown-item ui-action" data-command="project-new">New Project</div>
+      <div class="ui-dropdown-item ui-action" data-command="project-import">Import Project</div>
+      <div class="ui-dropdown-item ui-action" data-command="project-export">Export Project</div>
     </div>
   </div>
   <div class="ui-toolbar-separator"></div>
@@ -39,11 +39,19 @@
   <div class="ui-toolbar-separator"></div>
   <span class="ui-toolbar-item ui-action" data-command="file-compile"><i class="fa fa-first-order"></i> Compile</span>
   <div class="ui-toolbar-right">
-    <span class="ui-toolbar-version">CommandStudio v0.1.2-beta</span>
+    <span class="ui-toolbar-version">CommandStudio v0.2-beta</span>
     <span class="ui-toolbar-item ui-action" data-command="app-options"><i class="fa fa-cog"></i> Options</span>
-    <a class="ui-toolbar-item" href="manual/" target="_blank"><i class="fa fa-book"></i> Manual</a>
-    <a class="ui-toolbar-item" href="https://discord.gg/Eg5r99u" target="_blank"><i class="fa fa-comments"></i> Discord</a>
-    <span class="ui-toolbar-item ui-action" data-command="app-about"><i class="fa fa-info-circle"></i> About</span>
+    <div class="ui-dropdown ui-toolbar-item">
+      <span class="ui-dropdown-label"><i class="fa fa-question-circle"></i> Help</span>
+      <div class="ui-dropdown-hover">
+        <a class="ui-dropdown-item" href="manual/" target="_blank"><i class="fa fa-book"></i> Manual</a>
+        <span class="ui-dropdown-item ui-action" data-command="app-changelog"><i class="fa fa-list-ol"></i> Changelog</span>
+        <span class="ui-dropdown-item ui-action" data-command="app-about"><i class="fa fa-info-circle"></i> About</span>
+        <div class="ui-dropdown-separator"></div>
+        <a class="ui-dropdown-item" href="https://discord.gg/Eg5r99u" target="_blank"><i class="fa fa-comments"></i> Discord</a>
+        <a class="ui-dropdown-item" href="https://github.com/commandstudio/commandstudio" target="_blank"><i class="fa fa-github"></i> Github</a>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -126,6 +134,11 @@
       <label for="option-useOldEntityNames" class="checkbox-box"></label>
       <label for="option-useOldEntityNames" class="checkbox-label">Use old entity names (1.10 and lower)</label>
     </div>
+    <div class="form-line">
+      <input type="checkbox" id="option-resetCommandBlock" class="checkbox-input">
+      <label for="option-resetCommandBlock" class="checkbox-box"></label>
+      <label for="option-resetCommandBlock" class="checkbox-label">Auto reset the command block which executes the import</label>
+    </div>
     <div class="popin-buttons">
       <button class="button button-main on-click" data-action="save"><i class="fa fa-check"></i> Save</button>
       <button class="button on-click" data-action="close"><i class="fa fa-times"></i> Cancel</button>
@@ -141,12 +154,60 @@
   <div class="popin-content">
     <div class="about">
       <div class="about-name">CommandStudio</div>
-      <div class="about-version">v0.1.2-beta</div>
+      <div class="about-version">v0.2-beta</div>
       <div class="about-by">Made with <i class="fa fa-heart"></i> by <a href="http://monsieurtouf.fr/youtube" target="_blank">Marcantouf</a></div>
       <p class="about-credits">
         <strong>Credits</strong><br>
-        Initial idea strongly inspired by <em>tossha</em> and his <a href="https://youtu.be/q-l0Q5lhm6Q" target="_blank">Redstone Programming Language</a>
+        Initial idea strongly inspired by <em>tossha</em> and his<br> <a href="https://youtu.be/q-l0Q5lhm6Q" target="_blank">Redstone Programming Language</a>
       </p>
+    </div>
+    <div class="popin-buttons">
+      <button class="button button-main on-click" data-action="close"><i class="fa fa-check"></i> Ok</button>
+    </div>
+  </div>
+</div>
+
+<div class="popin-template" data-template="changelog">
+  <div class="popin-header">
+    <div class="popin-exit on-click" data-action="close">&times;</div>
+    Changelog
+  </div>
+  <div class="popin-content">
+    <div class="changelog">
+
+      <div class="changelog-version">v0.2</div>
+      <ul>
+        <li><i class="fa fa-warning"></i> <strong><u>Syntax changed a bit, please refer to the manual to update your code</u></strong></li>
+        <li>Brand new compiler!</li>
+        <li>Instant importation</li>
+        <li>Command block chains are now orientable</li>
+        <li>New math system that supports both single numbers and coordinates</li>
+        <li>Non-positioned command blocks are replaced by commands</li>
+        <li><span class="char">position</span> keyword changed to <span class="char">chain</span></li>
+        <li>Variables must be declared using the <span class="char">var</span> keyword</li>
+        <li>Line number is now indicated when an error occurs</li>
+        <li>Command blocks must be indented</li>
+        <li>Escape character changed from <span class="char">\</span> to <span class="char">`</span> to avoid confusion</li>
+        <li>New keyboard shortcuts! (see manual)</li>
+        <li>Added an option to automatically remove command from the summoner command block</li>
+        <li>Updated manual</li>
+      </ul>
+
+      <div class="changelog-version">v0.1.2</div>
+      <ul>
+        <li>Added Minecraft 1.11 support</li>
+      </ul>
+
+      <div class="changelog-version">v0.1.1</div>
+      <ul>
+        <li>Added autocompletion (press Ctrl+Space)</li>
+      </ul>
+
+      <div class="changelog-version">v0.1</div>
+      <ul>
+        <li>Initial version</li>
+      </ul>
+
     </div>
     <div class="popin-buttons">
       <button class="button button-main on-click" data-action="close"><i class="fa fa-check"></i> Ok</button>
