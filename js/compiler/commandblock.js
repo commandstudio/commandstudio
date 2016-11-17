@@ -29,6 +29,10 @@ define( [
     if( attr.match( /!/ ) ) this.conditional = false;
   };
 
+  CommandBlock.prototype.getPosition = function() {
+    return this.position.join( " " );
+  };
+
   CommandBlock.prototype.getDataValue = function() {
     var dataValue = directionValues[ this.direction ];
     if( this.conditional === true ) dataValue += 8;

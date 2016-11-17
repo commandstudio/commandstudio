@@ -703,10 +703,11 @@ define( [
 
     for( var i = 0, l = chain.commandBlocks.length ; i < l ; i++ ) {
       commandBlock = chain.commandBlocks[i];
-      command = "setblock " + commandBlock.position.join( " " ) + " ";
+      command = "setblock " + commandBlock.getPosition() + " ";
       command += commandBlock.type + " " + commandBlock.getDataValue() + " replace " + commandBlock.getDataTag();
       output.push( command );
     }
+    output.push( "setblock " + chain.currentBlock.getPosition() + " air" );
 
     return output;
   };
