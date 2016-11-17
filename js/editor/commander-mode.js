@@ -14,7 +14,6 @@ define( [ "codemirror", "codemirror/addon/mode/simple" ], function( CodeMirror )
       { regex: /\$\w+/, token: "variable" },
       { regex: /\^\w+/, token: "variable-2" },
       { regex: /\/\/.*/, token: "comment" },
-      { regex: /(?:\{#|#\})/, token: "variable-2" },
 
       // Minecraft Specific
       { regex: /@[aepr]\b/, token: "string" },
