@@ -73,22 +73,31 @@ a:hover {
 }
 
 .logo {
-  padding: 50px 0;
+  padding: 20px 0;
   text-align: center;
   background-color: #222;
   border-bottom: 1px #565656 solid;
 }
 
+.logo-img {
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .logo-img img {
-  height: 100px;
+  height: 80px;
 }
 
 .logo-text {
-  margin-top: 10px;
+  display: inline-block;
+  vertical-align: middle;
+  text-align: left;
+  margin-left: 10px;
   color: #fff;
   font-weight: 600;
   letter-spacing: -.05em;
   font-size: 18px;
+  line-height: 1.2;
   text-shadow: 0 1px 0 #696969;
 }
 

@@ -717,8 +717,6 @@ define( [
       minecarts = [],
       i, l;
 
-    console.log( this.options );
-
     for( i = 0, l = input.length ; i < l ; i++ ) {
       if( typeof input[i] === "string" ) {
         commands.push( input[i] );

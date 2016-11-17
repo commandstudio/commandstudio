@@ -180,7 +180,7 @@ input, button {
   position:absolute;
   top:100%;
   left:0;
-  z-index:1;
+  z-index:50;
   margin-top:3px;
   background-color:#272727;
   color:#cecece;
@@ -193,6 +193,11 @@ input, button {
 .ui-dropdown:hover .ui-dropdown-hover {
   visibility:visible;
   opacity:1;
+}
+
+.ui-toolbar-right .ui-dropdown-hover {
+  left: auto;
+  right: 0;
 }
 
 .ui-dropdown-item {
@@ -315,6 +320,42 @@ input, button {
 
 .about-credits {
   margin-top: 30px;
+}
+
+.changelog {
+  max-height: 50vh;
+  width: 60vw;
+  overflow-y: auto;
+}
+
+.changelog-version {
+  margin-top: 20px;
+  font-weight: 600;
+}
+
+.changelog-version:first-child {
+  margin-top: 0;
+}
+
+.changelog ul {
+  margin-top: 10px;
+  padding-left: 30px;
+}
+
+.changelog li {
+  margin-top: 5px;
+}
+
+.changelog li:first-child {
+  margin-top: 0;
+}
+
+.char {
+  padding: 3px 4px;
+  font-family:monospace;
+  background-color: #171717;
+  color: #eee;
+  border: 1px #444 solid;
 }
 
 /* Popin */

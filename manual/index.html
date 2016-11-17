@@ -72,12 +72,13 @@ require( [
 
   <div class="logo">
     <div class="logo-img"><img src="img/logo.png" alt="CommandStudio"></div>
-    <div class="logo-text">CommandStudio Manual</div>
+    <div class="logo-text">CommandStudio<br> Manual v0.2-beta</div>
   </div>
 
   <div class="menu">
     <a href="#getting-started">Getting Started</a>
     <a href="#reference">Reference</a>
+    <a href="#interface">Interface</a>
   </div>
 
 </div>
@@ -163,31 +164,31 @@ require( [
 </p>
 
 <table class="table attributes">
-<tr>
-  <th>Attribute</th>
-  <th>Effect</th>
-</tr>
-<tr>
-  <td><span class="cm-quote">i</span></td> <td><b class="b-i"></b> Impulse command block</td>
-</tr>
-<tr>
-  <td><span class="cm-quote">r</span></td> <td><b class="b-r"></b> Repeating command block</td>
-</tr>
-<tr>
-  <td><span class="cm-quote">c</span></td> <td><b class="b-c"></b> Chain command block</td>
-</tr>
-<tr>
-  <td><span class="cm-quote">0</span></td> <td><b class="b-0"></b> Needs redstone</td>
-</tr>
-<tr>
-  <td><span class="cm-quote">1</span></td> <td><b class="b-1"></b> Always active</td>
-</tr>
-<tr>
-  <td><span class="cm-quote">?</span></td> <td><b class="b-ic"></b> Conditionnal</td>
-</tr>
-<tr>
-  <td><span class="cm-quote">!</span></td> <td><b class="b-i"></b> Not unconditionnal</td>
-</tr>
+  <tr>
+    <th>Attribute</th>
+    <th>Effect</th>
+  </tr>
+  <tr>
+    <td><span class="char cm-quote">i</span></td> <td><b class="b-i"></b> Impulse command block</td>
+  </tr>
+  <tr>
+    <td><span class="char cm-quote">r</span></td> <td><b class="b-r"></b> Repeating command block</td>
+  </tr>
+  <tr>
+    <td><span class="char cm-quote">c</span></td> <td><b class="b-c"></b> Chain command block</td>
+  </tr>
+  <tr>
+    <td><span class="char cm-quote">0</span></td> <td><b class="b-0"></b> Needs redstone</td>
+  </tr>
+  <tr>
+    <td><span class="char cm-quote">1</span></td> <td><b class="b-1"></b> Always active</td>
+  </tr>
+  <tr>
+    <td><span class="char cm-quote">?</span></td> <td><b class="b-ic"></b> Conditionnal</td>
+  </tr>
+  <tr>
+    <td><span class="char cm-quote">!</span></td> <td><b class="b-i"></b> Not unconditionnal</td>
+  </tr>
 </table>
 
 <h3>Example</h3>
@@ -450,6 +451,67 @@ require( [
     </div>
   </div>
 </div>
+
+<h3>Example</h3>
+
+<div class="example">
+  <div class="example-code">
+    <div class="example-title">Code</div>
+    <div class="example-content code">
+      chain ~2 ~ ~:
+        say hello
+        say world
+        summon Zombie ~2 ~-3 ~
+    </div>
+    <div class="example-title">Demo</div>
+    <div class="example-content">
+      <div class="clip"><video src="clips/chain.webm" loop></video></div>
+    </div>
+  </div>
+</div>
+
+<h1 id="interface">Interface</h1>
+
+<h2>Keyboard shortcuts</h2>
+
+<p>
+  Available keyboard shortcuts:
+</p>
+
+<table class="table attributes">
+  <tr>
+    <th>Shortcut</th>
+    <th>Effect</th>
+  </tr>
+  <tr>
+    <td><span class="char">Ctrl+Space</span></td>
+    <td>Trigger auto-completion</td>
+  </tr>
+  <tr>
+    <td><span class="char">Ctrl+Q</span></td>
+    <td>Compile</td>
+  </tr>
+  <tr>
+    <td><span class="char">Ctrl+S</span></td>
+    <td>Export project</td>
+  </tr>
+  <tr>
+    <td><span class="char">Ctrl+D</span></td>
+    <td>Select next occurence</td>
+  </tr>
+</table>
+
+<h2>CommandStudio as a desktop application</h2>
+
+<p>
+  If you are using Chrome you can create an app-like shortcut to open CommandStudio in its own window, just like a regular application. To do this, first go on CommandStudio. Click the menu button at the top-right corner of the Chrome window, then click "More tools", and select "Add to taskbar". Tick "Open as window" and then click "Add".
+</p>
+
+<h2>Using older versions</h2>
+
+<p>
+  If you want to use an older version of CommmandStudio, you can download it on your computer from <a href="https://github.com/commandstudio/commandstudio/releases" target="_blank">this page</a>. Then extract the archive and open index.html.
+</p>
 
 </div>
 
