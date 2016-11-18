@@ -43,10 +43,10 @@ require( [
     $( '.code' ).each( function() {
       var html = this.innerHTML,
         indentation = html.match( /^\n */ );
-
       if( indentation !== null ) {
         html = html.replace( new RegExp( indentation[0], "g" ), "\n" );
       }
+      html = html.replace( /&gt;/g, ">" );
 
       snippetOptions.value = html.trim();
       this.innerHTML = '';
@@ -374,6 +374,61 @@ require( [
       <b class="b-i"></b><b class="b-0"></b> <span class="command">execute @e[type=Bat] ~ ~ ~ setblock ~ ~ ~ tnt</span><br>
       <b class="b-c"></b><b class="b-1"></b> <span class="command">kill @e[type=Bat]</span><br>
       <b class="b-c"></b><b class="b-1"></b> <span class="command">tp @p 50 37 70</span>
+    </div>
+  </div>
+</div>
+
+<h2>Auto /stats</h2>
+
+<p>
+  You can tell the compiler to use the Minecraft command <span class="char cm-keyword">/stats</span> on a certain command block. To do so, place the operator <span class="char">=></span> in the line following the target command block. The syntax is the same as the original command.<br>
+  You can even append an init value to set the score at importation time.
+</p>
+
+<div class="example">
+  <div class="example-code">
+    <div class="example-title">Code</div>
+    <div class="example-content code">
+      chain ~2 ~ ~:
+        i0:testfor @e[type=zombie]
+        => SuccessCount playerName objective
+        // with an init value
+        time query daytime
+        => QueryResult playerName objective 0
+    </div>
+    <div class="example-title">Output</div>
+    <div class="example-content output">
+      <b class="b-i"></b><b class="b-0"></b> <span class="command">testfor @e[type=zombie]</span><br>
+      <b></b><b></b> <span class="command">stats ~2 ~ ~ block set SuccessCount playerName objective</span><br>
+      <b class="b-c"></b><b class="b-1"></b> <span class="command">time query daytime</span><br>
+      <b></b><b></b> <span class="command">stats ~2 ~1 ~ block set QueryResult playerName objective</span><br>
+      <b></b><b></b> <span class="command">scoreboard players set playerName objective 0</span>
+    </div>
+  </div>
+</div>
+
+<h2>Nesting your code</h2>
+
+<p>
+  Placing a <span class="char">:</span> at the end of a command or a command block allows you to indent the following line without causing a compilation error. It has no incidence on the final commands/command blocks, it is only here to help you orginizing your code.
+</p>
+
+<div class="example">
+  <div class="example-code">
+    <div class="example-title">Code</div>
+    <div class="example-content code">
+      chain ~2 ~ ~:
+        i0:testfor @p[tag=lost]:
+          ?:say You lost
+          ?:kill @p[tag=lost]
+        say Thank you for playing
+    </div>
+    <div class="example-title">Output</div>
+    <div class="example-content output">
+      <b class="b-i"></b><b class="b-0"></b> <span class="command">testfor @p[tag=lost]</span><br>
+      <b class="b-cc"></b><b class="b-1"></b> <span class="command">say You lost</span><br>
+      <b class="b-cc"></b><b class="b-1"></b> <span class="command">kill @p[tag=lost]</span><br>
+      <b class="b-cc"></b><b class="b-1"></b> <span class="command">say Thank you for playing</span>
     </div>
   </div>
 </div>
