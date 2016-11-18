@@ -536,36 +536,59 @@ define( [
       content;
 
     while( ! parser.eol() ) {
-      content = this.parseUntil( parser, context, [ "eol", "def" ] );
+      content = this.parseUntil( parser, context, [ "eol", "def", ":" ] );
       output.feed( content );
 
       if( parser.current.type === "def" ) {
         this.parseDefCall( parser, context );
+      }
+      else if( parser.current.type === ":" ) {
+        if( parser.peek().type === "eol" ) {
+          break;
+        }
+        else {
+          output.feed( ":" );
+          parser.next();
+        }
       }
     }
   };
 
   Compiler.prototype.parseCommand = function( parser, context ) {
     var output = context.get( "output" ),
-      lastToken;
+      lastToken, nestContext;
 
     this.parseLine( parser, context );
     lastToken = parser.current;
-    parser.skip( "eol" );
 
-    if( this.compareIndentation( parser, context ) > 0 ) {
-      var indentation = parser.current.value;
-      while( parser.current.type === "spaces" && parser.current.value === indentation ) {
-        parser.next();
-        if( parser.current.type === "+" ) parser.next();
-        else output.feed( " " );
-        this.parseLine( parser, context );
-        lastToken = parser.current;
-        parser.skip( "eol" );
-      }
+    if( parser.current.type === ":" ) {
+      parser.eat( ":" );
+      parser.eat( "eol" );
+      output.flush();
+
+      nestContext = context.push();
+      nestContext.set( "indentation", this.requireIndentation( parser, context ) );
+      this.parseSection( parser, nestContext );
     }
-
-    if( lastToken.type === "eol" ) output.flush();
+    else {
+      parser.skip( "eol" );
+      if( this.compareIndentation( parser, context ) > 0 ) {
+        var indentation = parser.current.value;
+        while( parser.current.type === "spaces" && parser.current.value === indentation ) {
+          parser.next();
+          if( parser.current.type === "+" ) parser.next();
+          else output.feed( " " );
+          this.parseLine( parser, context );
+          if( parser.current.type === ":" ) {
+            output.feed( ":" );
+            parser.next();
+          }
+          lastToken = parser.current;
+          parser.skip( "eol" );
+        }
+      }
+      if( lastToken.type === "eol" ) output.flush();
+    }
   };
 
   Compiler.prototype.parseCommandBlock = function( parser, context ) {
