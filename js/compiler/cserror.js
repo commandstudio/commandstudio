@@ -9,12 +9,14 @@ define( function() {
     "UNDEFINED_VAR": "Undefined variable \"%value\"",
     "UNDEFINED_DEF": "Call to undefined def \"%value\"",
     "INCORRECT_DEFAULT": "Incorrect use of default",
+    "INCORRECT_STATS": "Incorrect use of stats",
     "INCLUDE_FAIL": "Failed to include file \"%data\", file not found",
     "INVALID_COORDINATES": "Invalid coordinates",
     "INVALID_DIRECTION": "Invalid direction",
     "INVALID_OPERATION": "Invalid operation",
     "DIVISION_BY_ZERO": "Division by zero",
     "TOO_MANY_ARGUMENTS": "Too many arguments on def \"%value\"",
+    "NO_COMMAND_BLOCK": "No command block",
     "NO_COMMAND": "Compilation resulted in no commands",
     "TOO_LONG": "Summon command is too long! (%data characters)"
   };

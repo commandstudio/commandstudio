@@ -17,6 +17,7 @@ define( [
     this.command = "";
     this.conditional = false;
     this.auto = true;
+    this.stats = null;
   }
 
   CommandBlock.prototype.applyAttr = function( attr ) {
@@ -46,6 +47,11 @@ define( [
     dataTag.TrackOutput = "0b";
 
     return CT.serialize( dataTag );
+  };
+
+  CommandBlock.prototype.pushStats = function( stats ) {
+    if( this.stats === null ) this.stats = [];
+    this.stats.push( stats );
   };
 
   return CommandBlock;

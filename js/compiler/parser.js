@@ -18,6 +18,7 @@ define( [
     { name: ")", pattern: /\)/ },
     { name: "|", pattern: /\|/ },
 
+    { name: "=>", pattern: /=>/ },
     { name: "~", pattern: /~/ },
     { name: "=", pattern: /=/ },
     { name: "+", pattern: /\+/ },

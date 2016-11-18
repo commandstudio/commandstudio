@@ -54,6 +54,10 @@ define( [
     this.resetBlock();
   };
 
+  Chain.prototype.getLastBlock = function() {
+    return this.commandBlocks[ this.index - 1 ];
+  };
+
   return Chain;
 
 } );

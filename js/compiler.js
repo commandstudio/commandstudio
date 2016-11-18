@@ -43,6 +43,7 @@ define( [
     context.set( "scope", scope );
     context.set( "mode", "commands" );
     context.set( "output", commandSet );
+    context.set( "commands", commandSet );
     context.set( "indentation", "" );
     context.set( "block_attr", "" );
     context.set( "chain_direction", "+y" );
@@ -373,6 +374,9 @@ define( [
       parser.skip( "spaces" );
       varValue = this.parseUntil( parser, context, "eol" );
     }
+    if( parser.current.type !== "eos" && parser.current.type !== "eol" ) {
+      throw new CSError( "UNEXPECTED_TOKEN", parser.current );
+    }
     parser.skip( "eol" );
 
     scope.setVar( varName, varValue );
@@ -412,6 +416,27 @@ define( [
     }
 
     return varValue;
+  };
+
+  Compiler.prototype.parseStats = function( parser, context ) {
+    var rawStats, parts,
+      statsToken = parser.current,
+      lastCommandBlock;
+
+    parser.eat( "=>" );
+    parser.skip( "spaces" );
+    rawStats = this.parseUntil( parser, context, "eol" );
+
+    if( context.get( "mode" ) !== "chain" ) throw new CSError( "INCORRECT_STATS", statsToken );
+    lastCommandBlock = context.get( "output" ).getLastBlock();
+
+    if( typeof lastCommandBlock === "undefined" ) throw new CSError( "NO_COMMAND_BLOCK", statsToken );
+
+    parts = rawStats.split( /\s+/ );
+    if( parts.length !== 3 && parts.length !== 4 ) throw new CSError( "INCORRECT_STATS", statsToken );
+    lastCommandBlock.pushStats( rawStats );
+
+    parser.skip( "eol" );
   };
 
   Compiler.prototype.parseDefDeclaration = function( parser, context ) {
@@ -674,6 +699,11 @@ define( [
         }
       }
 
+      if( token.type === "=>" ) {
+        this.parseStats( parser, context );
+        continue;
+      }
+
       if( token.type === "keyword" && token.value === "def" ) {
         parser.skipUntil( "eol" );
         parser.next();
@@ -722,13 +752,24 @@ define( [
 
   Compiler.prototype.compileChain = function( chain ) {
     var output = [],
-      command, commandBlock;
+      command, commandBlock, stats, statsParts;
 
     for( var i = 0, l = chain.commandBlocks.length ; i < l ; i++ ) {
       commandBlock = chain.commandBlocks[i];
       command = "setblock " + commandBlock.getPosition() + " ";
       command += commandBlock.type + " " + commandBlock.getDataValue() + " replace " + commandBlock.getDataTag();
       output.push( command );
+
+      if( commandBlock.stats !== null ) {
+        for( var j = 0, k = commandBlock.stats.length ; j < k ; j++ ) {
+          stats = commandBlock.stats[j];
+          statsParts = stats.split( /\s+/ );
+          output.push( "stats block " + commandBlock.getPosition() + " set " + statsParts.slice( 0, 3 ).join( " " ) );
+          if( statsParts.length === 4 ) {
+            output.push( "scoreboard players set " + statsParts.slice( 1, 4 ).join( " " ) );
+          }
+        }
+      }
     }
     output.push( "setblock " + chain.currentBlock.getPosition() + " air" );
 
