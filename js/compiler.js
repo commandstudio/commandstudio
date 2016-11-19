@@ -420,6 +420,37 @@ define( [
     return varValue;
   };
 
+  Compiler.prototype.parseInvert = function( parser, context ) {
+    var invertToken = parser.current;
+    parser.eat( "keyword", "invert" );
+    if( context.get( "mode" ) === "chain" ) {
+      var chain = context.get( "output" ),
+        currentBlock = chain.currentBlock,
+        lastBlock = chain.getLastBlock(),
+        relativePosition;
+
+      if( lastBlock == null ) throw new CSError( "INCORRECT_INVERT", invertToken );
+
+      relativePosition = CT.numsOp( "-", lastBlock.position, currentBlock.position );
+      relativePosition = CT.numsOp( "+", [ "~", "~", "~" ], relativePosition );
+
+      currentBlock.applyAttr( "c1!" );
+      chain.feed( "testforblock " + relativePosition.join( " " ) );
+      chain.feed( " " + lastBlock.type + " -1 {SuccessCount:0}" );
+      chain.flush();
+    }
+    parser.skip( "eol" );
+  };
+
+  Compiler.prototype.parseVoid = function( parser, context ) {
+    parser.eat( "keyword", "void" );
+    if( context.get( "mode" ) === "chain" ) {
+      var chain = context.get( "output" );
+      chain.next();
+    }
+    parser.skip( "eol" );
+  };
+
   Compiler.prototype.parseStats = function( parser, context ) {
     var rawStats, parts,
       statsToken = parser.current,
@@ -646,17 +677,23 @@ define( [
   Compiler.prototype.parseCommandBlock = function( parser, context ) {
     var chain = context.get( "output" ),
       commandBlock = chain.currentBlock,
-      part;
+      buffer = "";
 
     commandBlock.applyAttr( context.get( "block_attr" ) );
 
-    part = this.parseUntil( parser, context, [ "eol", ":" ] );
-    if( parser.current.type === ":" && attrRe.test( part ) ) {
-      commandBlock.applyAttr( part );
+    parser.save();
+    while( attrRe.test( parser.current.value ) ) {
+      buffer += parser.current.value;
+      parser.next();
+    }
+    parser.skip( "spaces" );
+
+    if( parser.current.type === ":" && attrRe.test( buffer ) ) {
+      commandBlock.applyAttr( buffer );
       parser.next();
     }
     else {
-      chain.feed( part + ":" );
+      parser.restore();
     }
 
     this.parseCommand( parser, context );
@@ -745,8 +782,18 @@ define( [
         continue;
       }
 
+      if( token.type === "keyword" && token.value === "invert" ) {
+        this.parseInvert( parser, context );
+        continue;
+      }
+
       if( token.type === "keyword" && token.value === "var" ) {
         this.parseVarDeclaration( parser, context );
+        continue;
+      }
+
+      if( token.type === "keyword" && token.value === "void" ) {
+        this.parseVoid( parser, context );
         continue;
       }
 

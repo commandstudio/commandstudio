@@ -10,6 +10,7 @@ define( function() {
     "UNDEFINED_DEF": "Call to undefined def \"%value\"",
     "NATIVE_DEF_ERROR": "Error using native def \"%value\"",
     "INCORRECT_DEFAULT": "Incorrect use of default",
+    "INCORRECT_INVERT": "Incorrect use of invert",
     "INCORRECT_STATS": "Incorrect use of stats",
     "INCLUDE_FAIL": "Failed to include file \"%data\", file not found",
     "INVALID_COORDINATES": "Invalid coordinates",

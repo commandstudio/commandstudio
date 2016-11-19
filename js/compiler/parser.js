@@ -29,7 +29,7 @@ define( [
 
     { name: "spaces", pattern: /[ \t]+/ },
     { name: "number", pattern: /\d+/ },
-    { name: "keyword", pattern: /(?:chain|default|def|include|var)\b/ },
+    { name: "keyword", pattern: /(?:chain|default|def|include|invert|var|void)\b/ },
     { name: "def", pattern: /\^\w+/ },
     { name: "var", pattern: /\$\w+/ }
   ];
