@@ -4,6 +4,7 @@ define( [
   "compiler/scope",
   "compiler/output",
   "compiler/chain",
+  "compiler/native",
   "compiler/cserror",
   "utils/commandtools"
 ], function(
@@ -12,6 +13,7 @@ define( [
   Scope,
   Output,
   Chain,
+  Native,
   CSError,
   CT
 ) {
@@ -505,54 +507,79 @@ define( [
 
     var scope = context.get( "scope" ),
       defToken = parser.eat( "def" ),
-      def = scope.getDef( defToken.value );
+      def = Native.defs[ defToken.value ] != null ? Native.defs[ defToken.value ] : scope.getDef( defToken.value );
 
     if( def === null ) throw new CSError( "UNDEFINED_DEF", defToken );
-
-    var defContext = context.push(),
-      defScope = scope.push(),
-      defParser = new Parser( def.body ),
-      defOutput;
-
-    defContext.set( "scope", defScope );
-    defContext.set( "indentation", "" );
-    if( read === true ) {
-      defOutput = new Output();
-      defContext.set( "mode", "output" );
-      defContext.set( "output", defOutput );
-    }
 
     parser.skip( "spaces" );
     parser.eat( "(" );
     parser.skip( "spaces" );
 
-    var part, i = def.arguments.length;
-    while( i-- ) {
-      defScope.declareVar( def.arguments[i].name );
-      defScope.setVar( def.arguments[i].name, def.arguments[i].defaultValue );
-    }
-
-    i = 0;
+    var part, args = [];
     while( parser.current.type !== ")" ) {
       part = this.parseUntil( parser, context, [ ";", ")", "eol" ], true );
       if( parser.current.type !== ")" ) {
         parser.eat( ";" );
         parser.skip( "spaces" );
       }
-      if( i >= def.arguments.length ) {
-        throw new CSError( "TOO_MANY_ARGUMENTS", defToken );
-      }
-      defScope.setVar( def.arguments[i].name, part );
+      args.push( part );
       i++;
     }
 
     parser.eat( ")" );
 
-    this.parseSection( defParser, defContext );
+    // Native def
+    if( typeof def === "function" ) {
+      var output = context.get( "output" ),
+        result;
 
-    if( read === true ) {
-      defOutput.flush();
-      return defOutput.values.join( " " );
+      try {
+        result = def( args, context );
+      }
+      catch( exception ) {
+        throw new CSError( "NATIVE_DEF_ERROR", defToken );
+      }
+
+      if( read === true ) {
+        return result;
+      }
+      else {
+        output.feed( result );
+      }
+    }
+    // User def
+    else {
+      var defContext = context.push(),
+        defScope = scope.push(),
+        defParser = new Parser( def.body ),
+        defOutput;
+
+      defContext.set( "scope", defScope );
+      defContext.set( "indentation", "" );
+      if( read === true ) {
+        defOutput = new Output();
+        defContext.set( "mode", "output" );
+        defContext.set( "output", defOutput );
+      }
+
+      var i = def.arguments.length;
+      while( i-- ) {
+        if( i >= def.arguments.length ) {
+          throw new CSError( "TOO_MANY_ARGUMENTS", defToken );
+        }
+        defScope.declareVar( def.arguments[i].name );
+        defScope.setVar( def.arguments[i].name, def.arguments[i].defaultValue );
+        if( args[i] != null ) {
+          defScope.setVar( def.arguments[i].name, args[i] );
+        }
+      }
+
+      this.parseSection( defParser, defContext );
+
+      if( read === true ) {
+        defOutput.flush();
+        return defOutput.values.join( " " );
+      }
     }
   };
 
@@ -617,20 +644,19 @@ define( [
   };
 
   Compiler.prototype.parseCommandBlock = function( parser, context ) {
-    var commandBlock = context.get( "output" ).currentBlock,
+    var chain = context.get( "output" ),
+      commandBlock = chain.currentBlock,
       part;
 
     commandBlock.applyAttr( context.get( "block_attr" ) );
 
-    parser.save();
     part = this.parseUntil( parser, context, [ "eol", ":" ] );
     if( parser.current.type === ":" && attrRe.test( part ) ) {
       commandBlock.applyAttr( part );
       parser.next();
-      parser.popSave();
     }
     else {
-      parser.restore();
+      chain.feed( part + ":" );
     }
 
     this.parseCommand( parser, context );

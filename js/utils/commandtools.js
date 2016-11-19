@@ -74,11 +74,18 @@ define( [ "utils/scanner" ], function( Scanner ) {
     return serialized;
   };
 
+  CT.numRelative = function( num ) {
+    return num[0] === "~";
+  };
+
+  CT.numVal = function( num ) {
+    return +( num[0] === "~" ? num.substr( 1 ) : num );
+  };
+
   CT.numOp = function( operator, n1, n2 ) {
     var n1Relative = n1[0] === "~",
-      n2Relative = n2[0] === "~",
-      n1Value = +( n1Relative ? n1.substr( 1 ) : n1 ),
-      n2Value = +( n2Relative ? n2.substr( 1 ) : n2 ),
+      n1Value = CT.numVal( n1 ),
+      n2Value = CT.numVal( n2 ),
       result = n1Relative ? "~" : "";
 
     if( operator === "+" ) {
@@ -97,6 +104,8 @@ define( [ "utils/scanner" ], function( Scanner ) {
     else if( operator === "%" ) {
       result += n1Value % n2Value;
     }
+
+    if( result === "~0" ) result = "~";
 
     return result;
   };

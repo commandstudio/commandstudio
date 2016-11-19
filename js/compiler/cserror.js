@@ -8,6 +8,7 @@ define( function() {
     "UNDECLARED_VAR": "Undeclared variable \"%value\"",
     "UNDEFINED_VAR": "Undefined variable \"%value\"",
     "UNDEFINED_DEF": "Call to undefined def \"%value\"",
+    "NATIVE_DEF_ERROR": "Error using native def \"%value\"",
     "INCORRECT_DEFAULT": "Incorrect use of default",
     "INCORRECT_STATS": "Incorrect use of stats",
     "INCLUDE_FAIL": "Failed to include file \"%data\", file not found",
