@@ -482,6 +482,10 @@ define( [
     defToken = parser.eat( "def" );
     def.name = defToken.value;
 
+    if( Native.defs[ def.name ] != null ) {
+      throw new CSError( "NATIVE_DEF_DECLARATION", defToken );
+    }
+
     parser.skip( "spaces" );
     parser.eat( "(" );
     parser.skip( "spaces" );

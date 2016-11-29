@@ -72,7 +72,7 @@ require( [
 
   <div class="logo">
     <div class="logo-img"><img src="img/logo.png" alt="CommandStudio"></div>
-    <div class="logo-text">CommandStudio<br> Manual v0.2.1-beta</div>
+    <div class="logo-text">CommandStudio<br> Manual v0.2.2-beta</div>
   </div>
 
   <div class="menu">
@@ -378,6 +378,43 @@ require( [
   </div>
 </div>
 
+<h2>Native procedures</h2>
+
+<p>
+  CommandStudio comes with a set of predifined procedures. Those procedures allow you to perform special operations.
+</p>
+
+<h3>Available procedures</h3>
+
+<div class="example">
+  <div class="example-code">
+    <div class="example-title">Code</div>
+    <div class="example-content code">
+      ^pos_current()
+      // Outputs the current command block position (if relative, relative to
+      // the summoner command block)
+      ^pos_abs( $position )
+      // Outputs a new position from $position, which is relative to the
+      // summoner command block instead of the current block
+
+      ^min( $n1 ; $n2 ; $n3 ; ... )
+      // Outputs the smaller given number
+      ^max( $n1 ; $n2 ; $n3 ; ... )
+      // Outputs the larger given number
+      ^round( $n ; $precision )
+      // Round the number $n and keep $precision decimals
+      ^abs( $n )
+      // Gives the absolute value of $n
+      ^pow( $n ; $power )
+      // Gives the $n power $power
+      ^sin( $n ; $precision )
+      // Gives the sinus of $n and keep $precision decimals
+      ^cos( $n ; $precision )
+      // Gives the cosinus of $n and keep $precision decimals
+    </div>
+  </div>
+</div>
+
 <h2>Auto /stats</h2>
 
 <p>
@@ -403,6 +440,53 @@ require( [
       <b class="b-c"></b><b class="b-1"></b> <span class="command">time query daytime</span><br>
       <b></b><b></b> <span class="command">stats ~2 ~1 ~ block set QueryResult playerName objective</span><br>
       <b></b><b></b> <span class="command">scoreboard players set playerName objective 0</span>
+    </div>
+  </div>
+</div>
+
+<h2>Inverting success</h2>
+
+<p>
+  The <span class="char cm-header">invert</span> keyword place a command block which its success is the opposite of the previous command block.
+</p>
+
+<div class="example">
+  <div class="example-code">
+    <div class="example-title">Code</div>
+    <div class="example-content code">
+      chain ~2 ~ ~:
+        i0:testfor @e[type=cow]
+        invert
+        ?:say there is no cow
+    </div>
+    <div class="example-title">Output</div>
+    <div class="example-content output">
+      <b class="b-i"></b><b class="b-0"></b> <span class="command">testfor @e[type=cow]</span><br>
+      <b class="b-c"></b><b class="b-1"></b> <span class="command">testforblock ~ ~-1 ~ command_block -1 {SuccessCount:0}</span><br>
+      <b class="b-cc"></b><b class="b-1"></b> <span class="command">say there is no cow</span>
+    </div>
+  </div>
+</div>
+
+<h2>Void keyword</h2>
+
+<p>
+  The <span class="char cm-header">void</span> keyword allows you to leave an empty space instead of a command block.
+</p>
+
+<div class="example">
+  <div class="example-code">
+    <div class="example-title">Code</div>
+    <div class="example-content code">
+      chain ~2 ~ ~:
+        say ^pos_current()
+        void
+        say ^pos_current()
+    </div>
+    <div class="example-title">Output</div>
+    <div class="example-content output">
+      <b class="b-c"></b><b class="b-1"></b> <span class="command">say ~2 ~-3 ~</span><br>
+      <b class="b-c"></b><b class="b-1"></b> <span class="command">say ~2 ~-1 ~</span>
     </div>
   </div>
 </div>
