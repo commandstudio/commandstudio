@@ -65,8 +65,13 @@ require( [
     $menuSections.each(function() {
       var $section = $( this );
       $section.find( ".menu-link" ).on( "click", function() {
-        $menuSections.removeClass( "menu-section--active" );
-        $section.addClass( "menu-section--active" );
+        if( ! $section.hasClass( "menu-section--active" ) ) {
+          $menuSections.removeClass( "menu-section--active" );
+          $section.addClass( "menu-section--active" );
+        }
+        else {
+          $menuSections.removeClass( "menu-section--active" );
+        }
       } );
     } );
 

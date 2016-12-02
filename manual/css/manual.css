@@ -120,12 +120,11 @@ a:hover {
 
 .menu-link i {
   float: right;
-  display: none;
   color: #aaa;
 }
 
-.menu-link:hover i, .menu-section--active i {
-  display: inline-block;
+.menu-link:hover i {
+  color: #eee;
 }
 
 .menu-section--active i {
