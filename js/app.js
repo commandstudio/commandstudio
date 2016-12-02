@@ -16,7 +16,7 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
   }
 
   function App() {
-    this.version = "0.2.2";
+    this.version = "0.2.3";
 
     this.ui = new UI();
     this.compiler = new Compiler();
