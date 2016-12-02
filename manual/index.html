@@ -61,6 +61,15 @@ require( [
       this.pause();
     });
 
+    var $menuSections = $( ".menu-section" );
+    $menuSections.each(function() {
+      var $section = $( this );
+      $section.find( ".menu-link" ).on( "click", function() {
+        $menuSections.removeClass( "menu-section--active" );
+        $section.addClass( "menu-section--active" );
+      } );
+    } );
+
   } );
 } );
 </script>
@@ -72,13 +81,42 @@ require( [
 
   <div class="logo">
     <div class="logo-img"><img src="img/logo.png" alt="CommandStudio"></div>
-    <div class="logo-text">CommandStudio<br> Manual v0.2.2-beta</div>
+    <div class="logo-text">CommandStudio<br> Manual v0.2.3-beta</div>
   </div>
 
   <div class="menu">
-    <a href="#getting-started">Getting Started</a>
-    <a href="#reference">Reference</a>
-    <a href="#interface">Interface</a>
+    <div class="menu-section">
+      <a class="menu-link" href="#getting-started"><i class="fa fa-angle-down"></i> Getting Started</a>
+      <a class="menu-sublink" href="#what-is-commandstudio">What is CommandStudio?</a>
+      <a class="menu-sublink" href="#commands">Commands</a>
+      <a class="menu-sublink" href="#command-blocks">Command blocks</a>
+    </div>
+
+    <div class="menu-section">
+      <a class="menu-link" href="#reference"><i class="fa fa-angle-down"></i> Reference</a>
+      <a class="menu-sublink" href="#command-block-attributes">Command block attributes</a>
+      <a class="menu-sublink" href="#orienting-chains">Orienting chains</a>
+      <a class="menu-sublink" href="#commands-on-multiple-lines">Commands on multiple lines</a>
+      <a class="menu-sublink" href="#math-operations">Math operations</a>
+      <a class="menu-sublink" href="#variables">Variables</a>
+      <a class="menu-sublink" href="#procedures">Procedures</a>
+      <a class="menu-sublink" href="#native-procedures">Native procedures</a>
+      <a class="menu-sublink" href="#auto-stats">Auto /stats</a>
+      <a class="menu-sublink" href="#marker-keyword">Marker keyword</a>
+      <a class="menu-sublink" href="#inverting-success">Inverting success</a>
+      <a class="menu-sublink" href="#void-keyword">Void keyword</a>
+      <a class="menu-sublink" href="#nesting-your-code">Nesting your code</a>
+      <a class="menu-sublink" href="#escaping">Escaping</a>
+      <a class="menu-sublink" href="#commenting">Commenting</a>
+      <a class="menu-sublink" href="#including-other-files">Including other files</a>
+    </div>
+
+    <div class="menu-section">
+      <a class="menu-link" href="#interface"><i class="fa fa-angle-down"></i> Interface</a>
+      <a class="menu-sublink" href="#keyboard-shortcuts">Keyboard shortcuts</a>
+      <a class="menu-sublink" href="#commandstudio-as-a-desktop-application">CommandStudio as a desktop application</a>
+      <a class="menu-sublink" href="#using-older-versions">Using older versions</a>
+    </div>
   </div>
 
 </div>
@@ -87,7 +125,7 @@ require( [
 
 <h1 id="getting-started">Getting Started</h1>
 
-<h2>What is CommandStudio?</h2>
+<h2 id="what-is-commandstudio">What is CommandStudio?</h2>
 
 <p>
   CommandStudio is a code editor with a compilation engine that translates code into command blocks.
@@ -96,7 +134,7 @@ require( [
   All these features are explained in this manual.
 </p>
 
-<h2>Commands</h2>
+<h2 id="commands">Commands</h2>
 
 <p>
   CommandStudio works with code, each line of this code represents a command.
@@ -121,7 +159,7 @@ require( [
   </div>
 </div>
 
-<h2>Command blocks</h2>
+<h2 id="command-blocks">Command blocks</h2>
 
 <p>
   CommandStudio also can generate command blocks. The <span class="char cm-header">chain</span>
@@ -151,7 +189,7 @@ require( [
 
 <h1 id="reference">Reference</h1>
 
-<h2>Command block attributes</h2>
+<h2 id="command-block-attributes">Command block attributes</h2>
 
 <p>
   By default, all command blocks will be chained command blocks and will be in
@@ -211,7 +249,7 @@ require( [
   </div>
 </div>
 
-<h2>Orienting chains</h2>
+<h2 id="orienting-chains">Orienting chains</h2>
 
 <p>
   A command block chain will be orientated in the direction that follows its position.
@@ -239,7 +277,7 @@ require( [
   </div>
 </div>
 
-<h2>Commands on multiple lines</h2>
+<h2 id="commands-on-multiple-lines">Commands on multiple lines</h2>
 
 <p>
   If you write very long commands you might want to split them on multiple lines. You can do it by adding spaces at the beginning of lines you want
@@ -279,7 +317,7 @@ require( [
   </div>
 </div>
 
-<h2>Math operations</h2>
+<h2 id="math-operations">Math operations</h2>
 
 <p>
   Operation placed between <span class="char">(</span> and <span class="char">)</span> will be evaluated. The parentheses will be replaced by the result of this operation. Supported operators are <span class="char">+</span>, <span class="char">-</span>, <span class="char">*</span>, <span class="char">/</span> and <span class="char">%</span>.
@@ -321,7 +359,7 @@ require( [
   </div>
 </div>
 
-<h2>Variables</h2>
+<h2 id="variables">Variables</h2>
 
 <p>
   Variables allow us to save data and re-use them later. They are declared with the <span class="char cm-header">var</span> keyword. A variable name begins by a <span class="char">$</span>.
@@ -346,7 +384,7 @@ require( [
   </div>
 </div>
 
-<h2>Procedures</h2>
+<h2 id="procedures">Procedures</h2>
 
 <p>
   A procedure will let you re-use one or more commands.
@@ -378,7 +416,7 @@ require( [
   </div>
 </div>
 
-<h2>Native procedures</h2>
+<h2 id="native-procedures">Native procedures</h2>
 
 <p>
   CommandStudio comes with a set of predifined procedures. Those procedures allow you to perform special operations.
@@ -415,7 +453,7 @@ require( [
   </div>
 </div>
 
-<h2>Auto /stats</h2>
+<h2 id="auto-stats">Auto /stats</h2>
 
 <p>
   You can tell the compiler to use the Minecraft command <span class="char cm-keyword">/stats</span> on a certain command block. To do so, place the operator <span class="char">=></span> in the line following the target command block. The syntax is the same as the original command.<br>
@@ -444,7 +482,34 @@ require( [
   </div>
 </div>
 
-<h2>Inverting success</h2>
+<h2 id="marker-keyword">Marker keyword</h2>
+
+<p>
+  The <span class="char cm-header">marker</span> keyword will tell the compiler to summon an entity at the position of the following command block. It is possible to summon more than one marker entity per block.
+</p>
+
+<div class="example">
+  <div class="example-code">
+    <div class="example-title">Code</div>
+    <div class="example-content code">
+      chain ~2 ~ ~:
+        marker armor_stand {CustomName:"label",CustomNameVisible:1,NoGravity:1b}
+        i0:say hi!
+    </div>
+    <div class="example-title">Output</div>
+    <div class="example-content output">
+      <b class="b-i"></b><b class="b-0"></b> <span class="command">say hi!</span><br>
+      <b></b><b></b> <span class="command">summon armor_stand ~2 ~ ~ {CustomName:"label",CustomNameVisible:1,NoGravity:1b}</span>
+    </div>
+  </div>
+</div>
+
+<p class="note">
+  <span class="note-title"><i class="fa fa-warning"></i> Warning:</span><br>
+  Marker entities are summoned at each importation. Consider placing a <span class="char cm-keyword">/kill</span> at the top of your code which targets older marker entities, otherwise they will stack!
+</p>
+
+<h2 id="inverting-success">Inverting success</h2>
 
 <p>
   The <span class="char cm-header">invert</span> keyword place a command block which its success is the opposite of the previous command block.
@@ -468,7 +533,7 @@ require( [
   </div>
 </div>
 
-<h2>Void keyword</h2>
+<h2 id="void-keyword">Void keyword</h2>
 
 <p>
   The <span class="char cm-header">void</span> keyword allows you to leave an empty space instead of a command block.
@@ -485,13 +550,13 @@ require( [
     </div>
     <div class="example-title">Output</div>
     <div class="example-content output">
-      <b class="b-c"></b><b class="b-1"></b> <span class="command">say ~2 ~-3 ~</span><br>
-      <b class="b-c"></b><b class="b-1"></b> <span class="command">say ~2 ~-1 ~</span>
+      <b class="b-c"></b><b class="b-1"></b> <span class="command">say ~2 ~ ~</span><br>
+      <b class="b-c"></b><b class="b-1"></b> <span class="command">say ~2 ~2 ~</span>
     </div>
   </div>
 </div>
 
-<h2>Nesting your code</h2>
+<h2 id="nesting-your-code">Nesting your code</h2>
 
 <p>
   Placing a <span class="char">:</span> at the end of a command or a command block allows you to indent the following lines without merging them. It has no incidence on the final commands/command blocks, it is only here to help you organizing your code.
@@ -517,7 +582,7 @@ require( [
   </div>
 </div>
 
-<h2>Escaping</h2>
+<h2 id="escaping">Escaping</h2>
 
 <p>
   You can prevent characters from being interpreted. To do it, insert a <span class="char cm-hr">`</span> before it.
@@ -544,7 +609,7 @@ require( [
   </div>
 </div>
 
-<h2>Commenting</h2>
+<h2 id="commenting">Commenting</h2>
 
 <p>
   You can add comments to your file using the <span class="char cm-comment">//</span> syntax. Every characters following this symbol wii be ignored.
@@ -563,7 +628,7 @@ require( [
   </div>
 </div>
 
-<h2>Including other files</h2>
+<h2 id="including-other-files">Including other files</h2>
 
 <p>
   You can import other files into a compiling file using the <span class="char cm-header">include</span> keyword.
@@ -611,7 +676,7 @@ require( [
 
 <h1 id="interface">Interface</h1>
 
-<h2>Keyboard shortcuts</h2>
+<h2 id="keyboard-shortcuts">Keyboard shortcuts</h2>
 
 <p>
   Available keyboard shortcuts:
@@ -640,13 +705,13 @@ require( [
   </tr>
 </table>
 
-<h2>CommandStudio as a desktop application</h2>
+<h2 id="commandstudio-as-a-desktop-application">CommandStudio as a desktop application</h2>
 
 <p>
   If you are using Chrome you can create an app-like shortcut to open CommandStudio in its own window, just like a regular application. To do this, first go on CommandStudio. Click the menu button at the top-right corner of the Chrome window, then click "More tools", and select "Add to taskbar". Tick "Open as window" and then click "Add".
 </p>
 
-<h2>Using older versions</h2>
+<h2 id="using-older-versions">Using older versions</h2>
 
 <p>
   If you want to use an older version of CommmandStudio, you can download it on your computer from <a href="https://github.com/commandstudio/commandstudio/releases" target="_blank">this page</a>. Then extract the archive and open index.html.

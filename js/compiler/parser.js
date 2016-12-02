@@ -29,7 +29,7 @@ define( [
 
     { name: "spaces", pattern: /[ \t]+/ },
     { name: "number", pattern: /\d+/ },
-    { name: "keyword", pattern: /(?:chain|default|def|include|invert|var|void)\b/ },
+    { name: "keyword", pattern: /(?:chain|default|def|include|invert|marker|var|void)\b/ },
     { name: "def", pattern: /\^\w+/ },
     { name: "var", pattern: /\$\w+/ }
   ];
@@ -150,7 +150,8 @@ define( [
   Parser.prototype.require = function( tokenType, tokenValue ) {
     var currentToken = this.current;
     if( currentToken.type !== tokenType || tokenValue != null && currentToken.value !== tokenValue ) {
-      throw new CSError( "UNEXPECTED_TOKEN", currentToken );
+      var expectedToken = ( tokenValue == null ) ? tokenType : tokenValue;
+      throw new CSError( "UNEXPECTED_TOKEN", currentToken, expectedToken );
     }
   };
 

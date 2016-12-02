@@ -18,6 +18,7 @@ define( [
     this.conditional = false;
     this.auto = true;
     this.stats = null;
+    this.markers = null;
   }
 
   CommandBlock.prototype.applyAttr = function( attr ) {
@@ -47,6 +48,11 @@ define( [
     dataTag.TrackOutput = "0b";
 
     return CT.serialize( dataTag );
+  };
+
+  CommandBlock.prototype.pushMarkers = function( marker ) {
+    if( this.markers === null ) this.markers = [];
+    this.markers.push( marker );
   };
 
   CommandBlock.prototype.pushStats = function( stats ) {

@@ -442,6 +442,28 @@ define( [
     parser.skip( "eol" );
   };
 
+  Compiler.prototype.parseMarker = function( parser, context ) {
+    var markerToken = parser.current;
+    parser.eat( "keyword", "marker" );
+    parser.eat( "spaces" );
+    var rawEntityInfos = this.parseUntil( parser, context, "eol" ).split( " " );
+
+    if( context.get( "mode" ) === "chain" ) {
+      var chain = context.get( "output" ),
+        currentBlock = chain.currentBlock,
+        marker = {};
+      if( rawEntityInfos.length === 0 || rawEntityInfos[0] === "" ) {
+        throw new CSError( "INVALID_MARKER", markerToken );
+      }
+      marker.entityName = rawEntityInfos.shift();
+      if( rawEntityInfos.length > 0 ) {
+        marker.dataTag = rawEntityInfos.join( " " );
+      }
+      currentBlock.pushMarkers( marker );
+    }
+    parser.skip( "eol" );
+  };
+
   Compiler.prototype.parseVoid = function( parser, context ) {
     parser.eat( "keyword", "void" );
     if( context.get( "mode" ) === "chain" ) {
@@ -791,6 +813,11 @@ define( [
         continue;
       }
 
+      if( token.type === "keyword" && token.value === "marker" ) {
+        this.parseMarker( parser, context );
+        continue;
+      }
+
       if( token.type === "keyword" && token.value === "var" ) {
         this.parseVarDeclaration( parser, context );
         continue;
@@ -829,16 +856,28 @@ define( [
 
   Compiler.prototype.compileChain = function( chain ) {
     var output = [],
-      command, commandBlock, stats, statsParts;
+      command, commandBlock, stats, statsParts, marker, buffer;
 
-    for( var i = 0, l = chain.commandBlocks.length ; i < l ; i++ ) {
+    var i, l, j, k;
+    for( i = 0, l = chain.commandBlocks.length ; i < l ; i++ ) {
       commandBlock = chain.commandBlocks[i];
       command = "setblock " + commandBlock.getPosition() + " ";
       command += commandBlock.type + " " + commandBlock.getDataValue() + " replace " + commandBlock.getDataTag();
       output.push( command );
 
+      if( commandBlock.markers !== null ) {
+        for( j = 0, k = commandBlock.markers.length ; j < k ; j++ ) {
+          marker = commandBlock.markers[j];
+          buffer = "summon " + marker.entityName + " " + commandBlock.getPosition();
+          if( marker.dataTag != null ) {
+            buffer += " " + marker.dataTag;
+          }
+          output.push( buffer );
+        }
+      }
+
       if( commandBlock.stats !== null ) {
-        for( var j = 0, k = commandBlock.stats.length ; j < k ; j++ ) {
+        for( j = 0, k = commandBlock.stats.length ; j < k ; j++ ) {
           stats = commandBlock.stats[j];
           statsParts = stats.split( /\s+/ );
           output.push( "stats block " + commandBlock.getPosition() + " set " + statsParts.slice( 0, 3 ).join( " " ) );

@@ -1,7 +1,7 @@
 define( function() {
 
   var errorMessages = {
-    "UNEXPECTED_TOKEN": "Unexpected token \"%type\"",
+    "UNEXPECTED_TOKEN": "Unexpected token \"%type\", expected \"%data\"",
     "INCORRECT_INDENTATION": "Incorrect indentation",
     "NOT_A_NUMBER": "Not a number \"%value\"",
     "INCORRECT_NAME": "Incorrect name \"%data\"",
@@ -15,6 +15,7 @@ define( function() {
     "INCORRECT_STATS": "Incorrect use of stats",
     "INCLUDE_FAIL": "Failed to include file \"%data\", file not found",
     "INVALID_COORDINATES": "Invalid coordinates",
+    "INVALID_MARKER": "Invalid marker",
     "INVALID_DIRECTION": "Invalid direction",
     "INVALID_OPERATION": "Invalid operation",
     "DIVISION_BY_ZERO": "Division by zero",
@@ -36,7 +37,7 @@ define( function() {
     var error = this,
       message = errorMessages[ this.code ];
 
-    message = message.replace( /%(\w+)/, function( match, attr ) {
+    message = message.replace( /%(\w+)/g, function( match, attr ) {
       if( attr === "data" ) return error.data;
       return error.token[attr];
     } );
