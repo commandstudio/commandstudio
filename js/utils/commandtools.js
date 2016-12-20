@@ -1,4 +1,4 @@
-define( [ "utils/scanner" ], function( Scanner ) {
+define( function() {
   var CT = {};
 
   CT.relativeDirections = {
@@ -24,51 +24,81 @@ define( [ "utils/scanner" ], function( Scanner ) {
   CT.serialize = function( data ) {
     var serialized = "",
       elements = [];
-    if( typeof data === "object" ) {
-      if( typeof data.length === "undefined" ) {
-        var value;
-        for( var attr in data ) {
-          value = CT.serialize( data[attr] );
-          elements.push( attr + ":" + value );
-        }
-        serialized = "{" + elements.join( "," ) + "}";
-      } else {
-        data.forEach( function( value ) {
-          elements.push( CT.serialize( value ) );
-        } );
-        serialized = "[" + elements.join( "," ) + "]";
+
+    if( typeof data === "object" && typeof data.length === "undefined" ) {
+      var value;
+      for( var attr in data ) {
+        value = CT.serialize( data[attr] );
+        elements.push( attr + ":" + value );
       }
-    } else if( typeof data === "string" ) {
-      serialized = data;
-      var scanner = new Scanner( data ),
-        balance = [],
-        specialChars = /[\[\]\{\}\"\\]/;
+      serialized = "{" + elements.join( "," ) + "}";
+    }
 
-      while( !scanner.eos() ) {
-        scanner.scanUntil( specialChars );
-        var specialChar = scanner.scan( specialChars );
+    else if( typeof data === "object" && typeof data.length !== "undefined" ) {
+      data.forEach( function( value ) {
+        elements.push( CT.serialize( value ) );
+      } );
+      serialized = "[" + elements.join( "," ) + "]";
+    }
 
-        if( specialChar === "" ) continue;
+    else if( typeof data === "string" ) {
+      var balance = [],
+        specialChars = /[\[\]\{\}\"\\,]/,
+        tail = data,
+        escape = false,
+        pos = 0, len = data.length,
+        match, specialChar;
 
-        else if( specialChar === "\\" ) scanner.scan( /[.\n]/ );
-        else if( specialChar.match( /[\[\{]/ ) ) {
-          balance.unshift( specialChar );
-        }
-        else if( specialChar === "]" && balance[0] === "[" || specialChar === "}" && balance[0] === "{" ) {
-          balance.shift();
-        } else if( specialChar === "\"" ) {
-          if( balance[0] === "\"" ) balance.shift();
-          else balance.unshift( specialChar );
-        } else {
-          balance.unshift( "lol" );
+      while( pos < len ) {
+        match = tail.match( specialChars );
+
+        if( match === null ) {
           break;
         }
-      }
-      if( typeof balance[0] !== "undefined" ) {
-        serialized = "\"" + serialized.replace( /(["\\])/g, "\\$1" ) + "\"";
+        else {
+          specialChar = match[0];
+        }
+
+        if( specialChar === "\\" ) {
+          escape = true;
+          break;
+        }
+        else {
+
+          if( specialChar === "{" || specialChar === "[" ) {
+            balance.unshift( specialChar );
+          }
+          else if( specialChar === "]" && balance[0] === "[" || specialChar === "}" && balance[0] === "{" ) {
+            balance.shift();
+          }
+          else if( specialChar === "\"" ) {
+            if( balance[0] === "\"" ) balance.shift();
+            else balance.unshift( specialChar );
+          }
+          else if( specialChar === "," ) {
+            if( balance[0] == null ) {
+              escape = true;
+              break;
+            }
+          }
+          else {
+            escape = true;
+            break;
+          }
+
+          pos += match.index;
+          tail = tail.slice( match.index + specialChar.length );
+        }
       }
 
-    } else {
+      escape = escape || balance[0] != null;
+
+      serialized = data;
+      if( escape === true ) {
+        serialized = "\"" + serialized.replace( /(["\\])/g, "\\$1" ) + "\"";
+      }
+    }
+    else {
       serialized = data;
     }
     return serialized;
