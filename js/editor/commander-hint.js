@@ -1,6 +1,5 @@
 define( [
   "codemirror",
-  "utils/scanner",
   "codemirror/addon/hint/show-hint"
 ], function( CodeMirror ) {
   var Pos = CodeMirror.Pos;
