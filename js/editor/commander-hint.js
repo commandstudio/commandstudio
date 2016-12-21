@@ -27,8 +27,8 @@ define( [
       [ "entitydata", "@e", "dataTag" ],
       [
         "execute", "#selector", "~", "~", "~", [
-          [ "detect", "~", "~", "~", "#block", "dataValue", "#command" ],
-          [ "#command" ]
+          [ "detect", "~", "~", "~", "#block", "dataValue", "#/command" ],
+          [ "#/command" ],
         ]
       ],
       [
@@ -44,6 +44,7 @@ define( [
       [ "kick", "#player", "reason" ],
       [ "kill", "#selector" ],
       [ "list", "uuids" ],
+      [ "locate", "*EndCity|Fortress|Mansion|Mineshaft|Monument|Stronghold|Temple|Village" ],
       [ "me", "action" ],
       [ "op", "#player" ],
       [ "pardon", "name" ],
@@ -177,6 +178,181 @@ define( [
         ]
       ],
       [ "xp", "amount", "#player" ],
+
+      [ "=>", "#stat", "playerName", "objective", "initValue" ]
+    ],
+    "/command": [
+      [ "/achievement", "*give|take", "#achievement", "#player" ],
+      [ "/ban", "name", "reason" ],
+      [ "/ban-ip", "*address|name", "reason" ],
+      [ "/banlist", "*ips|players" ],
+      [ "/blockdata", "x", "y", "z", "dataTag" ],
+      [ "/clear", "#player", "#item", "dataValue", "maxCount", "dataTag" ],
+      [ "/clone", "x1", "y1", "z1", "x2", "y2", "z2", "x", "y", "z", "*filtered|masked|replace", "*force|move|normal", "#block" ],
+      [ "/debug", "*start|stop" ],
+      [ "/defaultgamemode", "#gamemode" ],
+      [ "/deop", "#player" ],
+      [ "/difficulty", "*peaceful|easy|normal|hard" ],
+      [
+        "/effect", "#player", [
+          [ "clear" ],
+          [ "#effect", "seconds", "amplifier", "hideParticles" ]
+        ]
+      ],
+      [ "/enchant", "#player", "#enchantment", "enchantmentLevel" ],
+      [ "/entitydata", "@e", "dataTag" ],
+      [
+        "/execute", "#selector", "~", "~", "~", [
+          [ "detect", "~", "~", "~", "#block", "dataValue", "#/command" ],
+          [ "#/command" ]
+        ]
+      ],
+      [
+        "/fill", "x1", "y1", "z1", "x2", "y2", "z2", "#block", "dataValue", [
+          [ "*destroy|hollow|keep|outline", "dataValue" ],
+          [ "replace", "#block", "dataValue" ]
+        ]
+      ],
+      [ "/gamemode", "#gamemode", "#player" ],
+      [ "/gamerule", "*commandBlockOutput|disableElytraMovementCheck|doDaylightCycle|doEntityDrops|doFireTick|doMobLoot|doMobSpawning|doTileDrops|keepInventory|logAdminCommands|mobGriefing|naturalRegeneration|randomTickSpeed|reducedDebugInfo|sendCommandFeedback|showDeathMessages|spawnRadius|spectatorsGenerateChunks", "value" ],
+      [ "/give", "#player", "#item", "amout", "dataValue", "dataTag" ],
+      [ "/help", "*command|page" ],
+      [ "/kick", "#player", "reason" ],
+      [ "/kill", "#selector" ],
+      [ "/list", "uuids" ],
+      [ "/me", "action" ],
+      [ "/op", "#player" ],
+      [ "/pardon", "name" ],
+      [ "/pardon-ip", "address" ],
+      [ "/particle", "#particle", "x", "y", "z", "xd", "yd", "zd", "speed", "count", "mode", "#player", "params" ],
+      [ "/playsound", "#sound", "#soundSource", "#selector", "x", "y", "z", "volume", "pitch", "minimumVolume" ],
+      [ "/publish" ],
+      [
+        "/replaceitem", [
+          [ "block", "x", "y", "z", "#slot", "#item", "amount", "dataValue", "dataTag" ],
+          [ "entity", "#selector", "#slot", "#item", "amount", "dataValue", "dataTag" ]
+        ]
+      ],
+      [ "/save" ],
+      [ "/save-all" ],
+      [ "/save-off" ],
+      [ "/save-on" ],
+      [ "/say", "message" ],
+      [
+        "/scoreboard", [
+          [
+            "objectives", [
+              [ "add", "objectiveName", "#criteria", "displayName" ],
+              [ "list" ],
+              [ "remove", "objectiveName" ],
+              [ "setdisplay", "#displaySlot", "objectiveName" ]
+            ]
+          ],
+          [
+            "players", [
+              [ "*add|remove|set", "#selector", "objectiveName", "value", "dataTag" ],
+              [ "enable", "#player", "triggerName" ],
+              [ "list", "#selector" ],
+              [ "operation", "#selector", "objectiveName", "*+=|-=|*=|/=|%=|=|<|>|><", "#selector", "objectiveName" ],
+              [
+                "tag", "#player", [
+                  [ "*add|remove", "tagName", "dataTag" ],
+                  [ "list" ]
+                ]
+              ],
+              [ "test", "#selector", "objectiveName", "min", "max" ]
+            ]
+          ],
+          [
+            "teams", [
+              [ "add", "teamName", "displayName" ],
+              [ "*empty|list|remove", "teamName" ],
+              [ "join", "teamName", "#selector" ],
+              [ "leave", "#selector" ],
+              [
+                "option", "teamName", [
+                  [ "color", "#color" ],
+                  [ "*friendlyfire|seeFriendlyInvisibles", "#boolean" ],
+                  [ "*nametagVisibility|deathMessageVisibility", "*never|hideForOtherTeams|hideForOwnTeam|always" ],
+                  [ "collisionRule", "*always|never|pushOwnTeam|pushOtherTeams" ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      [ "/seed" ],
+      [ "/setblock", "x", "y", "z", "#block", "dataValue", "*destroy|keep|replace", "dataTag" ],
+      [ "/setidletimeout", "minutes" ],
+      [ "/setworldspawn", "x", "y", "z" ],
+      [ "/spawnpoint", "#player", "x", "y", "z" ],
+      [ "/spreadplayers", "x", "z", "spreadDistance", "maxRange", "respectTeams", "#player" ],
+      [
+        "/stats", [
+          [
+            "block", "x", "y", "z", [
+              [ "clear", "#stat" ],
+              [ "set", "#stat", "#selector", "objective" ]
+            ]
+          ],
+          [
+            "entity", "#selector", [
+              [ "clear", "#stat" ],
+              [ "set", "#stat", "#selector", "objective" ]
+            ]
+          ]
+        ]
+      ],
+      [ "/stop" ],
+      [ "/stopsound", "#player", "#soundSource", "#sound" ],
+      [ "/summon", "#entity", "~", "~", "~", "dataTag" ],
+      [ "/teleport", "#selector", "x", "y", "z", "y-rot", "x-rot" ],
+      [ "/tell", "#player", "message" ],
+      [ "/tellraw", "#player", "jsonText" ],
+      [ "/testfor", "#selector", "dataTag" ],
+      [ "/testforblock", "x", "y", "z", "#block", "dataValue", "dataTag" ],
+      [ "/testforblocks", "x1", "y1", "z1", "x2", "y2", "z2", "x", "y", "z", "*all|masked" ],
+      [
+        "/time", [
+          [ "add", "value" ],
+          [ "query", "*day|daytime|gametime" ],
+          [ "set", "*value|day|night" ]
+        ]
+      ],
+      [
+        "/title", "#player", [
+          [ "*clear|reset" ],
+          [ "*title|subtitle|actionbar", "jsonText" ],
+          [ "times", "fadeIn", "stay", "fadeOut" ]
+        ]
+      ],
+      [ "/toggledownfall" ],
+      [
+        "/tp", "#selector", [
+          [ "x", "y", "z", "y-rot", "x-rot" ],
+          [ "#selector" ]
+        ]
+      ],
+      [ "/trigger", "objective", "*add|set", "value" ],
+      [ "/weather", "*clear|rain|thunder", "duration" ],
+      [
+        "/whitelist", [
+          [ "*add|remove", "#player" ],
+          [ "*list|off|on|reload" ]
+        ]
+      ],
+      [
+        "/worldborder",
+        [
+          [ "add", "distance", "time" ],
+          [ "center", "x", "z" ],
+          [ "damage", "*amount|buffer", "value" ],
+          [ "get" ],
+          [ "set", "distance", "time" ],
+          [ "warning", "*distance|time", "value" ]
+        ]
+      ],
+      [ "/xp", "amount", "#player" ],
 
       [ "=>", "#stat", "playerName", "objective", "initValue" ]
     ],
