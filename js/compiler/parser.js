@@ -77,8 +77,10 @@ define( [
           nextTokenPosition = code.match( /(?:\n|$)/ ).index;
         }
         else if( nextToken.type === "comment_start" ) {
-          currentLine += code.match(/[\s\S]*\*\//)[0].split(/\r\n|\r|\n/).length-1;
+          console.log(currentLine);
+          if(code.match( /\*\// ) == null) throw new CSError( "BAD_COMMENT", "",currentLine );
           nextTokenPosition = code.match( /\*\// ).index+2;
+          currentLine += code.match(/[\s\S]*\*\//)[0].split(/\r\n|\r|\n/).length-1;
         }
         else {
           tokens.push( nextToken );
