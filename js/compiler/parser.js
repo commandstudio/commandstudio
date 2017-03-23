@@ -9,6 +9,7 @@ define( [
     { name: "escaped", pattern: /`.?/ },
 
     { name: "comment", pattern: /\/\// },
+    { name: "comment_start", pattern: /\/\*/},
 
     { name: ".", pattern: /\./ },
     { name: ",", pattern: /,/ },
@@ -74,6 +75,10 @@ define( [
 
         if( nextToken.type === "comment" ) {
           nextTokenPosition = code.match( /(?:\n|$)/ ).index;
+        }
+        else if( nextToken.type === "comment_start" ) {
+          currentLine += code.match(/[\s\S]*\*\//)[0].split(/\r\n|\r|\n/).length-1;
+          nextTokenPosition = code.match( /\*\// ).index+2;
         }
         else {
           tokens.push( nextToken );

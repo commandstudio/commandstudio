@@ -14,6 +14,7 @@ define( [ "codemirror", "codemirror/addon/mode/simple" ], function( CodeMirror )
       { regex: /\$\w+/, token: "variable" },
       { regex: /\^\w+/, token: "variable-2" },
       { regex: /\/\/.*/, token: "comment" },
+      { regex: /\/\*/, token: "comment", next: "comment" },
 
       // Minecraft Specific
       { regex: /@[aepr]\b/, token: "string" },
@@ -32,6 +33,10 @@ define( [ "codemirror", "codemirror/addon/mode/simple" ], function( CodeMirror )
 
       // Pass
       { regex: /(?:\w+)/ }
+    ],
+    comment: [
+    { regex: /.*?\*\//, token: "comment", next: "start" },
+    { regex: /.*/, token: "comment" }
     ],
     meta: {
       dontIndentStates: [ "comment" ],
