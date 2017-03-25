@@ -13,6 +13,7 @@ define( [ "codemirror", "codemirror/addon/mode/simple" ], function( CodeMirror )
       // Commander specific
       { regex: /\$\w+/, token: "variable" },
       { regex: /\^\w+/, token: "variable-2" },
+      { regex: /\=\>.*/, token: "tag"},
       { regex: /\/\/.*/, token: "comment" },
       { regex: /\/\*/, token: "comment", next: "comment" },
 
