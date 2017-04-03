@@ -617,21 +617,27 @@ require( [
 <h2 id="commenting">Commenting</h2>
 
 <p>
-  You can add comments to your file using the <span class="char cm-comment">//</span> syntax. Every characters following this symbol wii be ignored.
+  You can add comments to your file using the <span class="char cm-comment">//</span> syntax. Every characters following this symbol will be ignored. You can also use <span class="char cm-comment">/*</span> to begin a multi-line comment and <span class="char cm-comment">*/</span> to end it.
 </p>
 
 <div class="example">
   <div class="example-code">
     <div class="example-title">Code</div>
     <div class="example-content code">
-      say hello // very important command
+      say hello
+      /*multi 
+        line 
+        comment!*/
+      say goodbye // very important command
     </div>
     <div class="example-title">Output</div>
     <div class="example-content output">
-      <span class="command">say hello</span>
+      <span class="command">say hello</span><br>
+      <span class="command">say goodbye</span>
     </div>
   </div>
 </div>
+
 
 <h2 id="including-other-files">Including other files</h2>
 

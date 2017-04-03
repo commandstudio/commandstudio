@@ -22,7 +22,8 @@ define( function() {
     "TOO_MANY_ARGUMENTS": "Too many arguments on def \"%value\"",
     "NO_COMMAND_BLOCK": "No command block",
     "NO_COMMAND": "Compilation resulted in no commands",
-    "TOO_LONG": "Summon command is too long! (%data characters)"
+    "TOO_LONG": "Summon command is too long! (%data characters)",
+    "BAD_COMMENT": "The block comment on line %data has no end!"
   };
 
   function CSError( code, token, data ) {

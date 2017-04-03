@@ -13,13 +13,15 @@ define( [ "codemirror", "codemirror/addon/mode/simple" ], function( CodeMirror )
       // Commander specific
       { regex: /\$\w+/, token: "variable" },
       { regex: /\^\w+/, token: "variable-2" },
+      { regex: /\=\>.*/, token: "tag"},
       { regex: /\/\/.*/, token: "comment" },
+      { regex: /\/\*/, token: "comment", next: "comment" },
 
       // Minecraft Specific
       { regex: /@[aepr]\b/, token: "string" },
-      { regex: /(?:Item|XPOrb|LeashKnot|Painting|ItemFrame|ArmorStand|EnderCrystal|ThrownEgg|Arrow|Snowball|Fireball|SmallFireball|ThrownEnderpearl|EyeOfEnderSignal|ThrownPotion|ThrownExpBottle|WitherSkull|FireworksRocketEntity|PrimedTnt|FallingSand|MinecartCommandBlock|Boat|MinecartRideable|MinecartChest|MinecartFurnace|MinecartTNT|MinecartHopper|MinecartSpawner|Mob|Monster|Creeper|Skeleton|Spider|Giant|Zombie|Slime|Ghast|PigZombie|Enderman|CaveSpider|Silverfish|Blaze|LavaSlime|EnderDragon|WitherBoss|Witch|Endermite|Guardian|Shulker|Rabbit|Bat|Pig|Sheep|Cow|Chicken|Squid|Wolf|MushroomCow|SnowMan|Ozelot|VillagerGolem|EntityHorse|Rabbit|Villager)\b/,
+      { regex: /(?:area_effect_cloud|armor_stand|arrow|bat|blaze|boat|cave_spider|chest_minecart|chicken|commandblock_minecart|cow|creeper|donkey|dragon_fireball|egg|elder_guardian|ender_crystal|ender_dragon|ender_pearl|enderman|endermite|evocation_fangs|evocation_illager|eye_of_ender_signal|falling_block|fireball|fireworks_rocket|furnace_minecart|ghast|giant|guardian|hopper_minecart|horse|husk|item|item_frame|leash_knot|lightning_bolt|llama|llama_spit|magma_cube|minecart|mooshroom|mule|ocelot|painting|pig|polar_bear|potion|rabbit|sheep|shulker|shulker_bullet|silverfish|skeleton|skeleton_horse|slime|small_fireball|snowball|snowman|spawner_minecart|spectral_arrow|spider|squid|stray|tnt|tnt_minecart|vex|villager|villager_golem|vindication_illager|witch|wither|wither_skeleton|wither_skull|wolf|xp_bottle|xp_orb|zombie|zombie_horse|zombie_pigman|zombie_villager)\b/,
         token: "property" },
-      { regex: /\/?(?:achievement|ban|ban-ip|banlist|blockdata|clear|clone|debug|defaultgamemode|deop|difficulty|effect|enchant|entitydata|execute|fill|gamemode|gamerule|give|help|kick|kill|list|me|op|pardon|particle|playsound|publish|replaceitem|save-all|save-off|save-on|say|scoreboard|seed|setblock|setidletimeout|setworldspawn|spawnpoint|spreadplayers|stats|stop|summon|tell|tellraw|testfor|testforblock|testforblocks|time|title|toggledownfall|tp|trigger|weather|whitelist|worldborder|xp)\b/i,
+      { regex: /\/?(?:achievement|ban|ban-ip|banlist|blockdata|clear|clone|debug|defaultgamemode|deop|difficulty|effect|enchant|entitydata|execute|fill|gamemode|gamerule|give|help|kick|kill|list|locate|me|msg|op|pardon|pardon-ip|particle|playsound|replaceitem|save-all|save-off|save-on|say|scoreboard|seed|setblock|setidletimeout|setworldspawn|spawnpoint|spreadplayers|stats|stop|stopsound|summon|teleport|tell|tellraw|testfor|testforblock|testforblocks|time|title|toggledownfall|tp|trigger|w|weather|whitelist|worldborder|xp)\b/i,
         token: "keyword" },
 
       // Numbers
@@ -32,6 +34,10 @@ define( [ "codemirror", "codemirror/addon/mode/simple" ], function( CodeMirror )
 
       // Pass
       { regex: /(?:\w+)/ }
+    ],
+    comment: [
+    { regex: /.*?\*\//, token: "comment", next: "start" },
+    { regex: /.*/, token: "comment" }
     ],
     meta: {
       dontIndentStates: [ "comment" ],
