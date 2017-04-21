@@ -43,7 +43,7 @@ define( function() {
 
     else if( typeof data === "string" ) {
       var balance = [],
-        specialChars = /[\[\]\{\}\"\\,]/,
+        specialChars = /[\[\]\{\}\"\\, ]/,
         tail = data,
         escape = false,
         pos = 0, len = data.length,
@@ -59,7 +59,7 @@ define( function() {
           specialChar = match[0];
         }
 
-        if( specialChar === "\\" ) {
+        if( specialChar === "\\" || specialChar === " " ) {
           escape = true;
           break;
         }

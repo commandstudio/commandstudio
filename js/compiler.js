@@ -912,10 +912,10 @@ define( [
     }
 
     if( this.options.resetCommandBlock === true ) {
-      commands.push( "blockdata ~ ~-3 ~ {Command:,auto:0}" );
+      commands.push( "blockdata ~ ~-3 ~ {Command:\"\",auto:0}" );
     }
 
-    commands.push( "setblock ~ ~-1 ~ command_block 0 1 {auto:1,Command:kill @e[type=" + entityNames["commandblock_minecart"] + ",r=1]}" );
+    commands.push( "setblock ~ ~-1 ~ command_block 0 1 {auto:1,Command:\"kill @e[type=" + entityNames["commandblock_minecart"] + ",r=1]\"}" );
 
     for( i = 0, l = commands.length ; i < l ; i++ ) {
       minecarts.push( { id: entityNames["commandblock_minecart"], Command: commands[i] } );
