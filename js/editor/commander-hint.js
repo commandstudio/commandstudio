@@ -7,6 +7,7 @@ define( [
   var dictionnary = {
     "command": [
       [ "achievement", "*give|take", "#achievement", "#player" ],
+      [ "advancement", "*grant|revoke|test", "#player", "*everything|from|only|through|until", "#advancement" ],
       [ "ban", "name", "reason" ],
       [ "ban-ip", "*address|name", "reason" ],
       [ "banlist", "*ips|players" ],
@@ -37,8 +38,9 @@ define( [
           [ "replace", "#block", "dataValue" ]
         ]
       ],
+      [ "function", "name" ],
       [ "gamemode", "#gamemode", "#player" ],
-      [ "gamerule", "*commandBlockOutput|disableElytraMovementCheck|doDaylightCycle|doEntityDrops|doFireTick|doMobLoot|doMobSpawning|doTileDrops|keepInventory|logAdminCommands|mobGriefing|naturalRegeneration|randomTickSpeed|reducedDebugInfo|sendCommandFeedback|showDeathMessages|spawnRadius|spectatorsGenerateChunks", "value" ],
+      [ "gamerule", "*announceAdvancements|commandBlockOutput|disableElytraMovementCheck|doDaylightCycle|doEntityDrops|doFireTick|doLimitedCrafting|doMobLoot|doMobSpawning|doTileDrops|doWeatherCycle|gameLoopFunction|keepInventory|logAdminCommands|maxCommandChainLength|maxEntityCramming|mobGriefing|naturalRegeneration|randomTickSpeed|reducedDebugInfo|sendCommandFeedback|showDeathMessages|spawnRadius|spectatorsGenerateChunks", "value" ],
       [ "give", "#player", "#item", "amout", "dataValue", "dataTag" ],
       [ "help", "*command|page" ],
       [ "kick", "#player", "reason" ],
@@ -52,6 +54,7 @@ define( [
       [ "particle", "#particle", "x", "y", "z", "xd", "yd", "zd", "speed", "count", "mode", "#player", "params" ],
       [ "playsound", "#sound", "#soundSource", "#selector", "x", "y", "z", "volume", "pitch", "minimumVolume" ],
       [ "publish" ],
+      [ "recipe", "*give|take", "#player", "#recipe" ],
       [
         "replaceitem", [
           [ "block", "x", "y", "z", "#slot", "#item", "amount", "dataValue", "dataTag" ],
@@ -183,6 +186,7 @@ define( [
     ],
     "/command": [
       [ "/achievement", "*give|take", "#achievement", "#player" ],
+      [ "/advancement", "*grant|revoke|test", "#player", "*everything|from|only|through|until", "#advancement" ],
       [ "/ban", "name", "reason" ],
       [ "/ban-ip", "*address|name", "reason" ],
       [ "/banlist", "*ips|players" ],
@@ -213,8 +217,9 @@ define( [
           [ "replace", "#block", "dataValue" ]
         ]
       ],
+      [ "/function", "name" ],
       [ "/gamemode", "#gamemode", "#player" ],
-      [ "/gamerule", "*commandBlockOutput|disableElytraMovementCheck|doDaylightCycle|doEntityDrops|doFireTick|doMobLoot|doMobSpawning|doTileDrops|keepInventory|logAdminCommands|mobGriefing|naturalRegeneration|randomTickSpeed|reducedDebugInfo|sendCommandFeedback|showDeathMessages|spawnRadius|spectatorsGenerateChunks", "value" ],
+      [ "/gamerule", "*announceAdvancements|commandBlockOutput|disableElytraMovementCheck|doDaylightCycle|doEntityDrops|doFireTick|doLimitedCrafting|doMobLoot|doMobSpawning|doTileDrops|doWeatherCycle|gameLoopFunction|keepInventory|logAdminCommands|maxCommandChainLength|maxEntityCramming|mobGriefing|naturalRegeneration|randomTickSpeed|reducedDebugInfo|sendCommandFeedback|showDeathMessages|spawnRadius|spectatorsGenerateChunks", "value" ],
       [ "/give", "#player", "#item", "amout", "dataValue", "dataTag" ],
       [ "/help", "*command|page" ],
       [ "/kick", "#player", "reason" ],
@@ -227,6 +232,7 @@ define( [
       [ "/particle", "#particle", "x", "y", "z", "xd", "yd", "zd", "speed", "count", "mode", "#player", "params" ],
       [ "/playsound", "#sound", "#soundSource", "#selector", "x", "y", "z", "volume", "pitch", "minimumVolume" ],
       [ "/publish" ],
+      [ "/recipe", "*give|take", "#player", "#recipe" ],
       [
         "/replaceitem", [
           [ "block", "x", "y", "z", "#slot", "#item", "amount", "dataValue", "dataTag" ],
