@@ -7,7 +7,17 @@ define( [
   var dictionnary = {
     "command": [
       [ "achievement", "*give|take", "#achievement", "#player" ],
-      [ "advancement", "*grant|revoke|test", "#player", "*everything|from|only|through|until", "#advancement" ],
+      [
+        "advancement", [
+          [
+            "*grant|revoke", "#player", [
+              [ "everything" ],
+              [ "*from|only|through|until", "#advancement" ]
+            ]
+          ],
+          [ "test", "#player",  "#advancement" ]
+        ]
+      ],
       [ "ban", "name", "reason" ],
       [ "ban-ip", "*address|name", "reason" ],
       [ "banlist", "*ips|players" ],
@@ -187,7 +197,17 @@ define( [
     ],
     "/command": [
       [ "/achievement", "*give|take", "#achievement", "#player" ],
-      [ "/advancement", "*grant|revoke|test", "#player", "*everything|from|only|through|until", "#advancement" ],
+      [
+        "/advancement", [
+          [
+            "*grant|revoke", "#player", [
+              [ "everything" ],
+              [ "*from|only|through|until", "#advancement" ]
+            ]
+          ],
+          [ "test", "#player",  "#advancement" ]
+        ]
+      ],
       [ "/ban", "name", "reason" ],
       [ "/ban-ip", "*address|name", "reason" ],
       [ "/banlist", "*ips|players" ],
@@ -366,6 +386,7 @@ define( [
       [ "=>", "#stat", "playerName", "objective", "initValue" ]
     ],
     "achievement": "*acquireIron|bakeCake|blazeRod|bookcase|breedCow|buildBetterPickaxe|buildFurnace|buildHoe|buildPickaxe|buildSword|buildWorkBench|cookFish|diamonds|diamondsToYou|enchantments|exploreAllBiomes|flyPig|fullBeacon|ghast|killCow|killEnemy|killWither|makeBread|mineWood|onARail|openInventory|overkill|overpowered|portal|potion|snipeSkeleton|spawnWither|theEnd|theEnd2",
+    "advancement": "*custom|adventure/adventuring_time|adventure/kill_a_mob|adventure/kill_all_mobs|adventure/root|adventure/shoot_arrow|adventure/sleep_in_bed|adventure/sniper_duel|adventure/summon_iron_golem|adventure/totem_of_undying|adventure/trade|end/dragon_breath|end/dragon_egg|end/elytra|end/enter_end_gateway|end/find_end_city|end/kill_dragon|end/levitate|end/respawn_dragon|end/root|husbandry/balanced_diet|husbandry/break_diamond_hoe|husbandry/bred_all_animals|husbandry/breed_an_animal|husbandry/plant_seed|husbandry/root|husbandry/tame_an_animal|nether/all_effects|nether/all_potions|nether/brew_potion|nether/create_beacon|nether/create_full_beacon|nether/fast_travel|nether/find_fortress|nether/get_wither_skull|nether/obtain_blaze_rod|nether/return_to_sender|nether/root|nether/summon_wither|nether/uneasy_alliance|story/cure_zombie_villager|story/deflect_arrow|story/enchant_item|story/enter_the_end|story/enter_the_nether|story/follow_ender_eye|story/form_obsidian|story/iron_tools|story/lava_bucket|story/mine_diamond|story/mine_stone|story/obtain_armor|story/root|story/shiny_gear|story/smelt_iron|story/upgrade_tools",
     "block": "*acacia_door|acacia_fence|acacia_fence_gate|acacia_stairs|activator_rail|air|anvil|barrier|beacon|bed|bedrock|beetroots|birch_door|birch_fence|birch_fence_gate|birch_stairs|black_glazed_terracotta|black_shulker_box|blue_glazed_terracotta|blue_shulker_box|bone_block|bookshelf|brewing_stand|brick_block|brick_stairs|brown_glazed_terracotta|brown_mushroom|brown_mushroom_block|brown_shulker_box|cactus|cake|carpet|carrots|cauldron|chain_command_block|chest|chorus_flower|chorus_plant|clay|coal_block|coal_ore|cobblestone|cobblestone_wall|cocoa|command_block|concrete|concrete_powder|crafting_table|cyan_glazed_terracotta|cyan_shulker_box|dark_oak_door|dark_oak_fence|dark_oak_fence_gate|dark_oak_stairs|daylight_detector|daylight_detector_inverted|deadbush|detector_rail|diamond_block|diamond_ore|dirt|dispenser|double_plant|double_stone_slab|double_stone_slab2|double_wooden_slab|dragon_egg|dropper|emerald_block|emerald_ore|enchanting_table|end_bricks|end_gateway|end_portal|end_portal_frame|end_rod|end_stone|ender_chest|farmland|fence|fence_gate|fire|flower_pot|flowing_lava|flowing_water|frosted_ice|furnace|glass|glass_pane|glowstone|gold_block|gold_ore|golden_rail|grass|grass_path|gravel|gray_glazed_terracotta|gray_shulker_box|green_glazed_terracotta|green_shulker_box|hardened_clay|hay_block|heavy_weighted_pressure_plate|hopper|ice|iron_bars|iron_block|iron_door|iron_ore|iron_trapdoor|jukebox|jungle_door|jungle_fence|jungle_fence_gate|jungle_stairs|ladder|lapis_block|lapis_ore|lava|leaves|leaves2|lever|light_blue_glazed_terracotta|light_blue_shulker_box|light_weighted_pressure_plate|lime_glazed_terracotta|lime_shulker_box|lit_furnace|lit_pumpkin|lit_redstone_lamp|lit_redstone_ore|log|log2|magenta_glazed_terracotta|magenta_shulker_box|magma|melon_block|melon_stem|mob_spawner|monster_egg|mossy_cobblestone|mycelium|nether_brick|nether_brick_fence|nether_brick_stairs|nether_wart|nether_wart_block|netherrack|noteblock|oak_stairs|observer|obsidian|orange_glazed_terracotta|orange_shulker_box|packed_ice|pink_glazed_terracotta|pink_shulker_box|piston|piston_extension|piston_head|planks|portal|potatoes|powered_comparator|powered_repeater|prismarine|pumpkin|pumpkin_stem|purple_glazed_terracotta|purple_shulker_box|purpur_block|purpur_double_slab|purpur_pillar|purpur_slab|purpur_stairs|quartz_block|quartz_ore|quartz_stairs|rail|red_flower|red_glazed_terracotta|red_mushroom|red_mushroom_block|red_nether_brick|red_sandstone|red_sandstone_stairs|red_shulker_box|redstone_block|redstone_lamp|redstone_ore|redstone_torch|redstone_wire|reeds|repeating_command_block|sand|sandstone|sandstone_stairs|sapling|sea_lantern|silver_glazed_terracotta|silver_shulker_box|skull|slime|snow|snow_layer|soul_sand|sponge|spruce_door|spruce_fence|spruce_fence_gate|spruce_stairs|stained_glass|stained_glass_pane|stained_hardened_clay|standing_banner|standing_sign|sticky_piston|stone|stone_brick_stairs|stone_button|stone_pressure_plate|stone_slab|stone_slab2|stone_stairs|stonebrick|structure_block|structure_void|tallgrass|tnt|torch|trapdoor|trapped_chest|tripwire|tripwire_hook|unlit_redstone_torch|unpowered_comparator|unpowered_repeater|vine|wall_banner|wall_sign|water|waterlily|web|wheat|white_glazed_terracotta|white_shulker_box|wooden_button|wooden_door|wooden_pressure_plate|wooden_slab|wool|yellow_flower|yellow_glazed_terracotta|yellow_shulker_box",
     "boolean": "*true|false",
     "color": "*reset|black|dark_blue|dark_green|dark_aqua|dark_red|dark_purple|gold|gray|dark_gray|blue|green|aqua|red|light_purple|yellow|white",
