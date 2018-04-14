@@ -32,6 +32,10 @@ define( [ "codemirror", "codemirror/addon/mode/simple" ], function( CodeMirror )
         // Commands
       { regex: /\/?(?:achievement|advancement|ban|ban-ip|banlist|blockdata|clear|clone|debug|defaultgamemode|deop|difficulty|effect|enchant|entitydata|execute|fill|function|gamemode|gamerule|give|help|kick|kill|list|locate|me|msg|op|pardon|pardon-ip|particle|playsound|recipe|reload|replaceitem|save-all|save-off|save-on|say|scoreboard|seed|setblock|setidletimeout|setworldspawn|spawnpoint|spreadplayers|stats|stop|stopsound|summon|teleport|tell|tellraw|testfor|testforblock|testforblocks|time|title|toggledownfall|tp|trigger|w|weather|whitelist|worldborder|xp)\b/i,
         token: "keyword" },
+      
+      // Minecraft Variables
+      { regex: /(?:address|amount|amplifier|custom|dataValue|dataTag|enchantmentLevel|maxCount|minutes|name|reason|seconds)\b/,
+        token: "em" },
 
       // Numbers
       { regex: /(?:~?-?(?:\.\d+|\d+\.?\d*)[bfs]?|~)/, token: "number" },
