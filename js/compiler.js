@@ -911,6 +911,9 @@ define( [
       throw new CSError( "NO_COMMAND" );
     }
 
+    if( this.options.outputMcfunction ) {
+      return commands.join("\n")
+    }
     if( this.options.resetCommandBlock === true ) {
       commands.push( "blockdata ~ ~-3 ~ {Command:\"\",auto:0}" );
     }

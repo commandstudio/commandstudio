@@ -23,7 +23,8 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
 
     this.options = {
       useOldEntityNames: false,
-      resetCommandBlock: true
+      resetCommandBlock: true,
+      outputMcfunction: false
     };
     this.loadOptions();
 
@@ -129,6 +130,7 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
         "action:save": function() {
           app.options.useOldEntityNames = this.$popin.find( "#option-useOldEntityNames" ).prop( "checked" );
           app.options.resetCommandBlock = this.$popin.find( "#option-resetCommandBlock" ).prop( "checked" );
+          app.options.outputMcfunction = this.$popin.find( "#option-outputMcfunction" ).prop( "checked" );
           app.saveOptions();
           this.hide();
         }
