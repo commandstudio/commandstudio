@@ -862,7 +862,13 @@ define( [
     for( i = 0, l = chain.commandBlocks.length ; i < l ; i++ ) {
       commandBlock = chain.commandBlocks[i];
       command = "setblock " + commandBlock.getPosition() + " ";
-      command += commandBlock.type + " " + commandBlock.getDataValue() + " replace " + commandBlock.getDataTag();
+      if (this.options.mc1_13) {
+        let facing = ["down", "up", "north", "south", "west", "east"][commandBlock.getDataValue() % 8]
+        let conditional = commandBlock.getDataValue() > 7;
+        command += `${commandBlock.type}[conditional=${conditional},facing=${facing}]${commandBlock.getDataTag()} replace`
+      } else {
+        command += commandBlock.type + " " + commandBlock.getDataValue() + " replace " + commandBlock.getDataTag();
+      }
       output.push( command );
 
       if( commandBlock.markers !== null ) {
@@ -918,7 +924,11 @@ define( [
       commands.push( "blockdata ~ ~-3 ~ {Command:\"\",auto:0}" );
     }
 
-    commands.push( "setblock ~ ~-1 ~ command_block 0 1 {auto:1,Command:\"kill @e[type=" + entityNames["commandblock_minecart"] + ",r=1]\"}" );
+    if (this.options.mc1_13) {
+      commands.push("setblock ~ ~-1 ~ command_block{auto:1,Command:\"kill @e[type=" + entityNames["commandblock_minecart"] + ",r=1]\"} replace");
+    } else {
+      commands.push("setblock ~ ~-1 ~ command_block 0 1 {auto:1,Command:\"kill @e[type=" + entityNames["commandblock_minecart"] + ",r=1]\"}");
+    }
 
     for( i = 0, l = commands.length ; i < l ; i++ ) {
       minecarts.push( { id: entityNames["commandblock_minecart"], Command: commands[i] } );
